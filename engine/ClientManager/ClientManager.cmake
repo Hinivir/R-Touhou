@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27.7)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CLIENT_MANAGER_BINARY_NAME "R-Touhou-Client-Manager")
+set(CLIENT_MANAGER_BINARY_NAME "L-Type-ClientManager")
 
 project(${CLIENT_MANAGER_BINARY_NAME} LANGUAGES CXX)
 

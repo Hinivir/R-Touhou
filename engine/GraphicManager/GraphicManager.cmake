@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27.7)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(GRAPHIC_MANAGER_BINARY_NAME "R-Touhou-GraphicManager")
+set(GRAPHIC_MANAGER_BINARY_NAME "L-Type-GraphicManager")
 
 project(${GRAPHIC_MANAGER_BINARY_NAME} LANGUAGES CXX)
 
