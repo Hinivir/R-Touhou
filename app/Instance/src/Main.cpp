@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2023
-** engine/ServerManager/src/Main.cpp
+** app/Instance/src/Main.cpp
 ** File description:
 ** -
 */
@@ -9,6 +9,6 @@
 
 int main(void)
 {
-    std::cout << "Hello from ServerManager" << std::endl;
+    std::cout << "Hello from L-Type" << std::endl;
     return 0;
 }

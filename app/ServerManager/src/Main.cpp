@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2023
-** engine/GraphicManager/src/Main.cpp
+** app/ServerManager/src/Main.cpp
 ** File description:
 ** -
 */
@@ -9,6 +9,6 @@
 
 int main(void)
 {
-    std::cout << "Hello from GraphicManager" << std::endl;
+    std::cout << "Hello from ServerManager" << std::endl;
     return 0;
 }
