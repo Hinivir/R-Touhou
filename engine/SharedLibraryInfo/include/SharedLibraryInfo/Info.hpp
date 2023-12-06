@@ -8,6 +8,8 @@
 /// @file
 /// @brief Structure used when loading shared libraries
 
+#pragma once
+
 #include <string>
 
 namespace SharedLibraryInfo {
