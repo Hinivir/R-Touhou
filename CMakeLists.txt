@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27.7)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(PROJECT_NAME "R-Touhou")
+set(PROJECT_NAME "L-Type")
 
 include(FetchContent)
 FetchContent_Declare(SFML
