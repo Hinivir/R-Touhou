@@ -21,6 +21,11 @@ class Loader {
 // PUBLIC ATTRIBUTES //
 public:
 
+// Destructor
+
+    /// @brief Destructor
+    ~Loader();
+
 // Functions
 
     // Loading and Unloading shared libraries

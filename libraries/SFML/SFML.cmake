@@ -30,5 +30,7 @@ endfunction()
 
 # BASE
 sfml_add_directory_base(libraries/SFML)
+# Directories WITHOUT sources
+sfml_add_directory_no_src(engine/SharedLibraryInfo)
 
 set_target_properties(${SFML_BINARY_NAME} PROPERTIES PREFIX "")

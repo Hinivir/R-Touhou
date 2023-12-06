@@ -11,6 +11,13 @@
 
 #define CHECK_UNLOAD_DLFCN(CALL_VALUE, FUNCTION_NAME) if (!CALL_VALUE) { unload(); throw SharedLibraryLoader::Exception::DLFcn(std::string(SHARED_LIBRARY_LOADER_EXCEPTION_DLFCN_WHAT) + ": " + FUNCTION_NAME + " returned '" + std::string(dlerror()) + "'"); }
 
+// DESTRUCTOR
+
+SharedLibraryLoader::Loader::~Loader()
+{
+    unload();
+}
+#include <iostream>
 // LOADING AND UNLOADING
 
 void SharedLibraryLoader::Loader::load(std::string const &filepath)

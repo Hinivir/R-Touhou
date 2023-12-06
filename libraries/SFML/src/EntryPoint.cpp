@@ -5,12 +5,19 @@
 ** -
 */
 
+#include <SharedLibraryInfo/Info.hpp>
+
 extern "C" void entryPoint(void)
 {
     return;
 }
 
-extern "C" void info(void)
+extern "C" SharedLibraryInfo::Info info(void)
 {
-    return;
+    SharedLibraryInfo::Info information;
+
+    information.name = "SFML";
+    information.version = "1.0.0";
+    information.type = SharedLibraryInfo::InfoType::LIBRARY;
+    return information;
 }

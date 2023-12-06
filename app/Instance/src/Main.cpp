@@ -5,20 +5,27 @@
 ** -
 */
 
+#include <exception>
 #include <iostream>
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Loader.hpp>
 
 int main(void)
 {
-    SharedLibraryInfo::Info info = {
-        SharedLibraryInfo::InfoType::UNDEFINED,
-        "Unknown",
-        "1.0"
-    };
+    SharedLibraryInfo::Info info;
     SharedLibraryLoader::Loader loader;
 
     std::cout << "Hello from L-Type" << std::endl;
-    std::cout << info.name << std::endl;
+    try {
+        loader.load("./L-Type-Library-SFML.so");
+    } catch (std::exception const &e) {
+        std::cerr << e.what() << std::endl;
+    }
+    if (loader.isLoaded() && loader.callInfo) {
+        info = loader.callInfo();
+        std::cout << info.name << " - " << info.version << std::endl;
+    } else {
+        std::cerr << "loader is not Loaded" << std::endl;
+    }
     return 0;
 }
