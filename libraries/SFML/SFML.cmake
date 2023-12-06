@@ -30,6 +30,8 @@ endfunction()
 
 # BASE
 sfml_add_directory_base(libraries/SFML)
+# Directories WITH sources
+sfml_add_directory(engine/Graphic)
 # Directories WITHOUT sources
 sfml_add_directory_no_src(engine/SharedLibraryInfo)
 

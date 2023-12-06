@@ -5,11 +5,13 @@
 ** -
 */
 
+#include <Graphic/GraphicInstance.hpp>
+#include <LibrarySFML/Instance.hpp>
 #include <SharedLibraryInfo/Info.hpp>
 
-extern "C" void entryPoint(void)
+extern "C" Graphic::GraphicInstance entryPoint(void)
 {
-    return;
+    return Graphic::createGraphicInstance<LibrarySFML::Instance>();
 }
 
 extern "C" SharedLibraryInfo::Info info(void)

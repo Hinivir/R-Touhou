@@ -17,7 +17,7 @@ SharedLibraryLoader::Loader::~Loader()
 {
     unload();
 }
-#include <iostream>
+
 // LOADING AND UNLOADING
 
 void SharedLibraryLoader::Loader::load(std::string const &filepath)

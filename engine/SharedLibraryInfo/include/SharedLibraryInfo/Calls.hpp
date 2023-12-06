@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include "Graphic/GraphicInstance.hpp"
 #include "SharedLibraryInfo/Info.hpp"
 
 #define SHARED_LIBRARY_INFO_CALLS_DEFAULT "entryPoint"
@@ -18,7 +19,7 @@
 
 namespace SharedLibraryInfo { namespace Calls {
 
-using Default = void (*)();
+using Default = void *(*)();
 using Info = SharedLibraryInfo::Info (*)();
 
 }}

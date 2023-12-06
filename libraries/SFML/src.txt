@@ -1,1 +1,2 @@
 libraries/SFML/src/EntryPoint.cpp
+libraries/SFML/src/Instance.cpp

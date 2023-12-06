@@ -7,13 +7,14 @@
 
 #include <exception>
 #include <iostream>
+#include <GraphicManager/Manager.hpp>
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Loader.hpp>
 
 int main(void)
 {
     SharedLibraryInfo::Info info;
-    SharedLibraryLoader::Loader loader;
+    GraphicManager::Manager loader;
 
     std::cout << "Hello from L-Type" << std::endl;
     try {
@@ -25,7 +26,8 @@ int main(void)
         info = loader.callInfo();
         std::cout << info.name << " - " << info.version << std::endl;
     } else {
-        std::cerr << "loader is not Loaded" << std::endl;
+        std::cerr << "Loader has not been loaded correctly" << std::endl;
     }
+    loader.instantiate();
     return 0;
 }

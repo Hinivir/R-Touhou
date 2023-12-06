@@ -18,7 +18,7 @@ namespace SharedLibraryLoader {
 
 class Loader {
 
-// PUBLIC ATTRIBUTES //
+// PUBLIC ATTRIBUTES
 public:
 
 // Destructor
