@@ -5,7 +5,8 @@
 ** Server.cpp
 */
 
-#include "../../../include/Server/Server.hpp"
+#include <thread>
+#include "../include/Server.hpp"
 
 Server::Server(std::string ip, std::size_t port)
 {
@@ -52,7 +53,7 @@ void Server::setServer()
     std::cout << "Server is listening on port " << this->port << std::endl;
 }
 
-void Server::connectUser()//to upgrade (multithread)
+void Server::connectUser()
 {
     while (1) {
         clientSocket = accept(serverSocket, nullptr, nullptr);
@@ -62,6 +63,30 @@ void Server::connectUser()//to upgrade (multithread)
             exit(84);
         }
         std::cout << "Client connected" << std::endl;
-        this->clients.push_back(clientSocket);
+        std::thread clientThread(&Server::handleClient, this, clientSocket);
+        clientThread.detach();
+    }
+}
+
+void Server::handleClient(int clientSocket)
+{
+    while (1) {
+        char buffer[1024] = {0};
+        std::string message = "le serv à bien recu le message \n";
+        int valread = read(clientSocket, buffer, sizeof(buffer) - 1);
+
+        std::cout << valread << std::endl;
+        std::cout << "Client: " << buffer << std::endl;
+        if (valread == -1) {
+            std::cerr << "ERROR: cannot read from client" << std::endl;
+            close(clientSocket);
+            exit(84);
+        } else if (valread == 0) {
+            std::cout << "Client disconnected" << std::endl;
+            close(clientSocket);
+            return;
+        }
+        buffer[valread] = '\0';
+        send(clientSocket, message.c_str(), message.size(), 0);
     }
 }

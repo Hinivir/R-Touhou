@@ -5,7 +5,7 @@
 ** server_init.cpp
 */
 
-#include "../../include/Server/Server.hpp"
+#include "include/Server.hpp"
 #include <sstream>
 
 static bool handle_error(int const argc, char const * const * const argv) {

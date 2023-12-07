@@ -23,17 +23,18 @@ class Server
     private:
         std::string ip;
         std::size_t port;
-        std::vector<std::size_t> clients;//tmp
+        std::vector<std::size_t> clients;
         std::size_t axio;//tmp
-        std::size_t serverSocket = 0;
-        std::size_t clientSocket = 0;
+        int serverSocket = 0;
+        int clientSocket = 0;
         sockaddr_in serverAddress;
-    
+
     public:
         Server(std::string ip, std::size_t port);
-        ~Server();
-        void setServer();
-        void connectUser();
-        void closeServer();
+        ~Server(void);
+        void setServer(void);
+        void connectUser(void);
+        void closeServer(void);
+        void handleClient(int clientSocket);
 };
 #endif
