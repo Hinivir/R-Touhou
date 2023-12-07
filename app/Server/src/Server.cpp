@@ -8,7 +8,7 @@
 #include <thread>
 #include "../include/Server.hpp"
 
-Server::Server(std::string ip, std::size_t port)
+Server::Server(std::string const ip, std::size_t const port)
 {
     this->ip = ip;
     this->port = port;
@@ -69,7 +69,7 @@ void Server::connectUser()
     }
 }
 
-void Server::handleClient(int clientSocket)
+void Server::handleClient(int const clientSocket)
 {
     while (1) {
         char buffer[1024] = {0};

@@ -30,11 +30,11 @@ class Server
         sockaddr_in serverAddress;
 
     public:
-        Server(std::string ip, std::size_t port);
+        Server(std::string const ip, std::size_t const port);
         ~Server(void);
         void setServer(void);
         void connectUser(void);
         void closeServer(void);
-        void handleClient(int clientSocket);
+        void handleClient(int const clientSocket);
 };
 #endif
