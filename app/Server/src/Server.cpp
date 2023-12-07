@@ -14,12 +14,12 @@ Server::Server(std::string const ip, std::size_t const port)
     this->port = port;
 }
 
-Server::~Server()
+Server::~Server(void)
 {
     closeServer();
 }
 
-void Server::closeServer()
+void Server::closeServer(void)
 {
     while (!this->clients.empty()) {
         close(this->clients.back());
@@ -30,7 +30,7 @@ void Server::closeServer()
     std::cout << "Server closed" << std::endl;
 }
 
-void Server::setServer()
+void Server::setServer(void)
 {
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket == -1) {
@@ -53,7 +53,7 @@ void Server::setServer()
     std::cout << "Server is listening on port " << this->port << std::endl;
 }
 
-void Server::connectUser()
+void Server::connectUser(void)
 {
     while (1) {
         clientSocket = accept(serverSocket, nullptr, nullptr);
