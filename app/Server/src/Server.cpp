@@ -63,6 +63,7 @@ void Server::connectUser()
             exit(84);
         }
         std::cout << "Client connected" << std::endl;
+        this->clients.push_back(clientSocket); // Store the client socket
         std::thread clientThread(&Server::handleClient, this, clientSocket);
         clientThread.detach();
     }
@@ -84,9 +85,14 @@ void Server::handleClient(int clientSocket)
         } else if (valread == 0) {
             std::cout << "Client disconnected" << std::endl;
             close(clientSocket);
+            close(this->clients.back());
+            this->clients.pop_back();
             return;
         }
         buffer[valread] = '\0';
         send(clientSocket, message.c_str(), message.size(), 0);
+        for (int socket : this->clients)
+            if (socket != clientSocket)
+                send(socket, buffer, strlen(buffer), 0);
     }
 }
