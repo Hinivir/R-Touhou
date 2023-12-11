@@ -85,3 +85,13 @@ bool LibrarySFML::Instance::isWindowIdOpen(Graphic::WindowId const windowId) con
 {
     return (windowId == GRAPHIC_WINDOWID_DEFAULT && _renderWindow.isOpen());
 }
+
+// << MEMORY >>
+
+// Clear/Reset
+
+void LibrarySFML::Instance::reloadHard(void)
+{
+    closeWindowAll();
+    openWindow();
+}

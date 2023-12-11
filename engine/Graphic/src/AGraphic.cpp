@@ -103,3 +103,15 @@ bool Graphic::AGraphic::isWindowIdOpen(Graphic::WindowId const _windowId) const
 {
     return false;
 }
+
+// << MEMORY >>
+
+// Clear/Reset
+
+void Graphic::AGraphic::reload(void)
+{ }
+
+void Graphic::AGraphic::reloadHard(void)
+{
+    reload();
+}

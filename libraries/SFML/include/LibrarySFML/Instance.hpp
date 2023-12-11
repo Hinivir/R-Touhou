@@ -29,6 +29,9 @@ public:
     void drawWindowId(Graphic::WindowId const windowId) override;
     // IsOpen
     bool isWindowIdOpen(Graphic::WindowId const windowId) const override;
+    // << MEMORY >>
+    // Clear/Reset
+    void reloadHard(void) override;
 private:
     sf::RenderWindow _renderWindow;
 };

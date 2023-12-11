@@ -41,6 +41,10 @@ public:
     bool isWindowOpen(void) const final;
     bool isWindowAnyOpen(void) const override;
     bool isWindowIdOpen(Graphic::WindowId const windowId) const override;
+    // << MEMORY >>
+    // Clear/Reset
+    void reload(void) override;
+    void reloadHard(void) override;
 protected:
     // InputMap
     Input::InputMapRef _inputMap = nullptr;

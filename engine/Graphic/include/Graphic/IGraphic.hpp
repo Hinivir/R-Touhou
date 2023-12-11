@@ -45,6 +45,10 @@ public:
     virtual bool isWindowOpen(void) const = 0;
     virtual bool isWindowAnyOpen(void) const = 0;
     virtual bool isWindowIdOpen(Graphic::WindowId const windowId) const = 0;
+    // << MEMORY >>
+    // Clear/Reset
+    virtual void reload(void) = 0;
+    virtual void reloadHard(void) = 0;
 };
 
 }
