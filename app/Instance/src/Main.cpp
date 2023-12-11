@@ -11,9 +11,6 @@
 #include <Input/InputMapRef.hpp>
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Exception.hpp>
-#include <SharedLibraryLoader/Loader.hpp>
-
-#include <unistd.h>
 
 int main(void)
 {
