@@ -28,7 +28,7 @@ void Graphic::AGraphic::refreshInputMap(void)
     refreshInputMapWindowId(GRAPHIC_WINDOWID_DEFAULT);
 }
 
-void Graphic::AGraphic::refreshInputMapWindowId(Graphic::WindowId const windowId)
+void Graphic::AGraphic::refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId)
 {
     if (!_inputMap) return;
     auto defaultWindowInputMap = _inputMap->window.find(windowId);
@@ -42,7 +42,7 @@ void Graphic::AGraphic::refreshInputMapWindowId(Graphic::WindowId const windowId
     return refreshInputMapWindowIdOnWindow(windowId, defaultWindowInputMap->second);
 }
 
-void Graphic::AGraphic::refreshInputMapWindowIdOnWindow(Graphic::WindowId const _windowId, Input::InputMapWindow &_inputMapWindow)
+void Graphic::AGraphic::refreshInputMapWindowIdOnWindow(GraphicClientProtocol::WindowId const _windowId, Input::InputMapWindow &_inputMapWindow)
 { }
 
 // << WINDOW >>
@@ -54,7 +54,7 @@ void Graphic::AGraphic::openWindow(void)
     openWindowId(GRAPHIC_WINDOWID_DEFAULT);
 }
 
-void Graphic::AGraphic::openWindowId(Graphic::WindowId const _windowId)
+void Graphic::AGraphic::openWindowId(GraphicClientProtocol::WindowId const _windowId)
 { }
 
 // Close
@@ -69,7 +69,7 @@ void Graphic::AGraphic::closeWindowAll(void)
     closeWindow();
 }
 
-void Graphic::AGraphic::closeWindowId(Graphic::WindowId const _windowId)
+void Graphic::AGraphic::closeWindowId(GraphicClientProtocol::WindowId const _windowId)
 { }
 
 // Draw
@@ -84,7 +84,7 @@ void Graphic::AGraphic::drawWindowAll(void)
     drawWindow();
 }
 
-void Graphic::AGraphic::drawWindowId(Graphic::WindowId const _windowId)
+void Graphic::AGraphic::drawWindowId(GraphicClientProtocol::WindowId const _windowId)
 { }
 
 // IsOpen
@@ -99,7 +99,7 @@ bool Graphic::AGraphic::isWindowAnyOpen(void) const
     return isWindowOpen();
 }
 
-bool Graphic::AGraphic::isWindowIdOpen(Graphic::WindowId const _windowId) const
+bool Graphic::AGraphic::isWindowIdOpen(GraphicClientProtocol::WindowId const _windowId) const
 {
     return false;
 }

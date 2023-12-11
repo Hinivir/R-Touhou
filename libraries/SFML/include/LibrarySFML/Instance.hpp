@@ -19,16 +19,16 @@ public:
 public:
     // << INPUTS >>
     // Refresh
-    void refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow) override;
+    void refreshInputMapWindowIdOnWindow(GraphicClientProtocol::WindowId const windowId, Input::InputMapWindow &inputMapWindow) override;
     // << WINDOW >>
     // Open
-    void openWindowId(Graphic::WindowId const windowId) override;
+    void openWindowId(GraphicClientProtocol::WindowId const windowId) override;
     // Close
-    void closeWindowId(Graphic::WindowId const windowId) override;
+    void closeWindowId(GraphicClientProtocol::WindowId const windowId) override;
     // Draw
-    void drawWindowId(Graphic::WindowId const windowId) override;
+    void drawWindowId(GraphicClientProtocol::WindowId const windowId) override;
     // IsOpen
-    bool isWindowIdOpen(Graphic::WindowId const windowId) const override;
+    bool isWindowIdOpen(GraphicClientProtocol::WindowId const windowId) const override;
     // << MEMORY >>
     // Clear/Reset
     void reloadHard(void) override;

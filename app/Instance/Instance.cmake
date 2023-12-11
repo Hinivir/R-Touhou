@@ -32,6 +32,7 @@ endfunction()
 l_type_add_directory_base(app/Instance)
 # Directories WITH sources
 l_type_add_directory(engine/Graphic)
+l_type_add_directory(engine/GraphicClientProtocol)
 l_type_add_directory(engine/GraphicManager)
 l_type_add_directory(engine/Input)
 l_type_add_directory(engine/SharedLibraryLoader)

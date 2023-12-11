@@ -9,10 +9,10 @@
 /// @brief Id of a window
 
 #pragma once
-#include <cstddef>
+#include "GraphicClientProtocol/WindowId.hpp"
 
 namespace Graphic {
 
-using WindowId = std::size_t;
+using WindowId = GraphicClientProtocol::WindowId;
 
 }

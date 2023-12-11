@@ -9,7 +9,7 @@
 /// @brief Interfaces for graphic libraries
 
 #pragma once
-#include "Graphic/WindowId.hpp"
+#include "GraphicClientProtocol/WindowId.hpp"
 #include "Input/InputMapRef.hpp"
 
 #define GRAPHIC_WINDOWID_DEFAULT 0
@@ -27,24 +27,24 @@ public:
     virtual Input::InputMapRef getInputMap(void) const = 0;
     // Refresh
     virtual void refreshInputMap(void) = 0;
-    virtual void refreshInputMapWindowId(Graphic::WindowId const windowId) = 0;
-    virtual void refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow) = 0;
+    virtual void refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
+    virtual void refreshInputMapWindowIdOnWindow(GraphicClientProtocol::WindowId const windowId, Input::InputMapWindow &inputMapWindow) = 0;
     // << WINDOW >>
     // Open
     virtual void openWindow(void) = 0;
-    virtual void openWindowId(Graphic::WindowId const windowId) = 0;
+    virtual void openWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
     // Close
     virtual void closeWindow(void) = 0;
     virtual void closeWindowAll(void) = 0;
-    virtual void closeWindowId(Graphic::WindowId const windowId) = 0;
+    virtual void closeWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
     // Draw
     virtual void drawWindow(void) = 0;
     virtual void drawWindowAll(void) = 0;
-    virtual void drawWindowId(Graphic::WindowId const windowId) = 0;
+    virtual void drawWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
     // IsOpen
     virtual bool isWindowOpen(void) const = 0;
     virtual bool isWindowAnyOpen(void) const = 0;
-    virtual bool isWindowIdOpen(Graphic::WindowId const windowId) const = 0;
+    virtual bool isWindowIdOpen(GraphicClientProtocol::WindowId const windowId) const = 0;
     // << MEMORY >>
     // Clear/Reset
     virtual void reload(void) = 0;
