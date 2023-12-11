@@ -8,6 +8,7 @@
 #include <exception>
 #include <iostream>
 #include <GraphicManager/Manager.hpp>
+#include <Input/InputMapRef.hpp>
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Exception.hpp>
 #include <SharedLibraryLoader/Loader.hpp>
@@ -18,6 +19,7 @@ int main(void)
 {
     SharedLibraryInfo::Info info;
     GraphicManager::Manager loader;
+    Input::InputMapRef inputMap;
 
     std::cout << "Hello from L-Type" << std::endl;
     try {
@@ -33,9 +35,18 @@ int main(void)
     } else {
         std::cerr << "Loader has not been loaded correctly" << std::endl;
     }
-    loader.instantiate();
-    if (loader.instance)
+    if (!loader.instantiate())
+        return 84;
+    inputMap = Input::createInputMapRef();
+    loader.instance->openWindow();
+    loader.instance->setInputMap(inputMap);
+    while (loader.instance->isWindowOpen()) {
+        loader.instance->refreshInputMap();
+        for (auto const &[windowId, window] : inputMap->window) {
+            if (window.getEvent(Input::InputMapEvent::CLOSE))
+                loader.instance->closeWindowId(windowId);
+        }
         loader.instance->drawWindowAll();
-    sleep(1);
+    }
     return 0;
 }

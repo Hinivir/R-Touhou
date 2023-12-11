@@ -17,21 +17,33 @@ namespace Graphic {
 class AGraphic : public Graphic::IGraphic
 {
 public:
+    // << INPUTS >>
+    // InputMap
+    void setInputMap(Input::InputMapRef const &inputMap) final;
+    Input::InputMapRef getInputMap(void) const final;
+    // Refresh
+    void refreshInputMap(void) override;
+    void refreshInputMapWindowId(Graphic::WindowId const windowId) final;
+    void refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow) override;
+    // << WINDOW >>
     // Open
-    void openWindow(void) override;
+    void openWindow(void) final;
     void openWindowId(Graphic::WindowId const windowId) override;
     // Close
-    void closeWindow(void) override;
+    void closeWindow(void) final;
     void closeWindowAll(void) override;
     void closeWindowId(Graphic::WindowId const windowId) override;
     // Draw
-    void drawWindow(void) override;
+    void drawWindow(void) final;
     void drawWindowAll(void) override;
     void drawWindowId(Graphic::WindowId const windowId) override;
     // IsOpen
-    bool isWindowOpen(void) const override;
+    bool isWindowOpen(void) const final;
     bool isWindowAnyOpen(void) const override;
     bool isWindowIdOpen(Graphic::WindowId const windowId) const override;
+protected:
+    // InputMap
+    Input::InputMapRef _inputMap = nullptr;
 };
 
 }

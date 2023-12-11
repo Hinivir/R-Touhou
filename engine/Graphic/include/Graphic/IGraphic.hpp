@@ -9,19 +9,27 @@
 /// @brief Interfaces for graphic libraries
 
 #pragma once
-#include <cstddef>
+#include "Graphic/WindowId.hpp"
+#include "Input/InputMapRef.hpp"
 
 #define GRAPHIC_WINDOWID_DEFAULT 0
 
 namespace Graphic {
-
-using WindowId = size_t;
 
 class IGraphic
 {
 public:
     virtual ~IGraphic() = default;
 public:
+    // << INPUTS >>
+    // InputMap
+    virtual void setInputMap(Input::InputMapRef const &inputMap) = 0;
+    virtual Input::InputMapRef getInputMap(void) const = 0;
+    // Refresh
+    virtual void refreshInputMap(void) = 0;
+    virtual void refreshInputMapWindowId(Graphic::WindowId const windowId) = 0;
+    virtual void refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow) = 0;
+    // << WINDOW >>
     // Open
     virtual void openWindow(void) = 0;
     virtual void openWindowId(Graphic::WindowId const windowId) = 0;

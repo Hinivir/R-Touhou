@@ -17,6 +17,10 @@ public:
     Instance(void);
     ~Instance();
 public:
+    // << INPUTS >>
+    // Refresh
+    void refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow) override;
+    // << WINDOW >>
     // Open
     void openWindowId(Graphic::WindowId const windowId) override;
     // Close
