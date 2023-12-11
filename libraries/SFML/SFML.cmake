@@ -36,3 +36,5 @@ sfml_add_directory(engine/Graphic)
 sfml_add_directory_no_src(engine/SharedLibraryInfo)
 
 set_target_properties(${SFML_BINARY_NAME} PROPERTIES PREFIX "")
+
+target_link_libraries(${SFML_BINARY_NAME} PRIVATE sfml-graphics)
