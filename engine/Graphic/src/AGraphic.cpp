@@ -25,7 +25,8 @@ Input::InputMapRef Graphic::AGraphic::getInputMap(void) const
 
 void Graphic::AGraphic::refreshInputMap(void)
 {
-    refreshInputMapWindowId(GRAPHIC_WINDOWID_DEFAULT);
+    for (GraphicClientProtocol::WindowId i = 0; i < GRAPHIC_WINDOWID_MAX; i++)
+        refreshInputMapWindowId(i);
 }
 
 void Graphic::AGraphic::refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId)
@@ -66,7 +67,8 @@ void Graphic::AGraphic::closeWindow(void)
 
 void Graphic::AGraphic::closeWindowAll(void)
 {
-    closeWindow();
+    for (GraphicClientProtocol::WindowId i = 0; i < GRAPHIC_WINDOWID_MAX; i++)
+        closeWindowId(i);
 }
 
 void Graphic::AGraphic::closeWindowId(GraphicClientProtocol::WindowId const _windowId)
@@ -81,7 +83,8 @@ void Graphic::AGraphic::drawWindow(void)
 
 void Graphic::AGraphic::drawWindowAll(void)
 {
-    drawWindow();
+    for (GraphicClientProtocol::WindowId i = 0; i < GRAPHIC_WINDOWID_MAX; i++)
+        drawWindowId(i);
 }
 
 void Graphic::AGraphic::drawWindowId(GraphicClientProtocol::WindowId const _windowId)
@@ -96,7 +99,10 @@ bool Graphic::AGraphic::isWindowOpen(void) const
 
 bool Graphic::AGraphic::isWindowAnyOpen(void) const
 {
-    return isWindowOpen();
+    for (GraphicClientProtocol::WindowId i = 0; i < GRAPHIC_WINDOWID_MAX; i++)
+        if (isWindowIdOpen(i))
+            return true;
+    return false;
 }
 
 bool Graphic::AGraphic::isWindowIdOpen(GraphicClientProtocol::WindowId const _windowId) const

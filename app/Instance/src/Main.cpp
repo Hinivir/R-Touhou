@@ -36,6 +36,8 @@ int main(void)
         return 84;
     inputMap = Input::createInputMapRef();
     loader.instance->openWindow();
+    loader.instance->openWindowId(3);
+    loader.instance->openWindowId(6);
     loader.instance->setInputMap(inputMap);
     while (loader.instance->isWindowOpen()) {
         loader.instance->refreshInputMap();

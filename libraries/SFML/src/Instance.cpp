@@ -29,10 +29,10 @@ LibrarySFML::Instance::~Instance()
 void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow)
 {
     inputMapWindow.clearEvent();
-    if (windowId != GRAPHIC_WINDOWID_DEFAULT) return;
+    if (!_renderWindow[windowId].isOpen()) return;
     sf::Event event;
 
-    while (_renderWindow.pollEvent(event)) {
+    while (_renderWindow[windowId].pollEvent(event)) {
         switch (event.type)
         {
         case sf::Event::Closed:
@@ -50,40 +50,36 @@ void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(Graphic::WindowId co
 
 void LibrarySFML::Instance::openWindowId(Graphic::WindowId const windowId)
 {
-    if (windowId != GRAPHIC_WINDOWID_DEFAULT)
-        return;
     closeWindowId(windowId);
-    _renderWindow.create(sf::VideoMode::getDesktopMode(), "L-Type", sf::Style::Resize | sf::Style::Close);
-    if (!_renderWindow.isOpen())
+    _renderWindow[windowId].create(sf::VideoMode::getDesktopMode(), "L-Type", sf::Style::Resize | sf::Style::Close);
+    if (!_renderWindow[windowId].isOpen())
         return;
-    _renderWindow.setFramerateLimit(60);
+    _renderWindow[windowId].setFramerateLimit(60);
 }
 
 // Close
 
 void LibrarySFML::Instance::closeWindowId(Graphic::WindowId const windowId)
 {
-    if (windowId != GRAPHIC_WINDOWID_DEFAULT)
-        return;
-    if (_renderWindow.isOpen())
-        _renderWindow.close();
+    if (_renderWindow[windowId].isOpen())
+        _renderWindow[windowId].close();
 }
 
 // Draw
 
 void LibrarySFML::Instance::drawWindowId(Graphic::WindowId const windowId)
 {
-    if (windowId != GRAPHIC_WINDOWID_DEFAULT || !_renderWindow.isOpen())
+    if (!_renderWindow[windowId].isOpen())
         return;
-    _renderWindow.clear(sf::Color::Black);
-    _renderWindow.display();
+    _renderWindow[windowId].clear(sf::Color::Black);
+    _renderWindow[windowId].display();
 }
 
 // IsOpen
 
 bool LibrarySFML::Instance::isWindowIdOpen(Graphic::WindowId const windowId) const
 {
-    return (windowId == GRAPHIC_WINDOWID_DEFAULT && _renderWindow.isOpen());
+    return _renderWindow[windowId].isOpen();
 }
 
 // << MEMORY >>

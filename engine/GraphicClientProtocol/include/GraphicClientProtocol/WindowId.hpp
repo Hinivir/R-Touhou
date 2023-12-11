@@ -11,6 +11,9 @@
 #pragma once
 #include <cstddef>
 
+#define GRAPHIC_WINDOWID_DEFAULT 0
+#define GRAPHIC_WINDOWID_MAX 8
+
 namespace GraphicClientProtocol {
 
 using WindowId = std::size_t;

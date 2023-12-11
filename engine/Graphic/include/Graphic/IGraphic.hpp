@@ -12,8 +12,6 @@
 #include "GraphicClientProtocol/WindowId.hpp"
 #include "Input/InputMapRef.hpp"
 
-#define GRAPHIC_WINDOWID_DEFAULT 0
-
 namespace Graphic {
 
 class IGraphic

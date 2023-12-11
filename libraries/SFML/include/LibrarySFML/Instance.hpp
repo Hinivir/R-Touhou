@@ -33,7 +33,7 @@ public:
     // Clear/Reset
     void reloadHard(void) override;
 private:
-    sf::RenderWindow _renderWindow;
+    sf::RenderWindow _renderWindow[GRAPHIC_WINDOWID_MAX];
 };
 
 }
