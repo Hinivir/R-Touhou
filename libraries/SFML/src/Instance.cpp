@@ -12,21 +12,18 @@
 // Constructor and Destructor
 
 LibrarySFML::Instance::Instance(void)
-{
-    std::cout << "SFML: open" << std::endl;
-}
+{ }
 
 LibrarySFML::Instance::~Instance()
 {
     closeWindowAll();
-    std::cout << "SFML: close" << std::endl;
 }
 
 // << INPUTS >>
 
 // Refresh
 
-void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(Graphic::WindowId const windowId, Input::InputMapWindow &inputMapWindow)
+void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(GraphicClientProtocol::WindowId const windowId, Input::InputMapWindow &inputMapWindow)
 {
     inputMapWindow.clearEvent();
     if (!_renderWindow[windowId].isOpen()) return;
@@ -48,7 +45,7 @@ void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(Graphic::WindowId co
 
 // Open
 
-void LibrarySFML::Instance::openWindowId(Graphic::WindowId const windowId)
+void LibrarySFML::Instance::openWindowId(GraphicClientProtocol::WindowId const windowId)
 {
     closeWindowId(windowId);
     _renderWindow[windowId].create(sf::VideoMode::getDesktopMode(), "L-Type", sf::Style::Resize | sf::Style::Close);
@@ -59,7 +56,7 @@ void LibrarySFML::Instance::openWindowId(Graphic::WindowId const windowId)
 
 // Close
 
-void LibrarySFML::Instance::closeWindowId(Graphic::WindowId const windowId)
+void LibrarySFML::Instance::closeWindowId(GraphicClientProtocol::WindowId const windowId)
 {
     if (_renderWindow[windowId].isOpen())
         _renderWindow[windowId].close();
@@ -67,7 +64,7 @@ void LibrarySFML::Instance::closeWindowId(Graphic::WindowId const windowId)
 
 // Draw
 
-void LibrarySFML::Instance::drawWindowId(Graphic::WindowId const windowId)
+void LibrarySFML::Instance::drawWindowId(GraphicClientProtocol::WindowId const windowId)
 {
     if (!_renderWindow[windowId].isOpen())
         return;
@@ -77,7 +74,7 @@ void LibrarySFML::Instance::drawWindowId(Graphic::WindowId const windowId)
 
 // IsOpen
 
-bool LibrarySFML::Instance::isWindowIdOpen(Graphic::WindowId const windowId) const
+bool LibrarySFML::Instance::isWindowIdOpen(GraphicClientProtocol::WindowId const windowId) const
 {
     return _renderWindow[windowId].isOpen();
 }

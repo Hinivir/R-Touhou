@@ -12,13 +12,15 @@
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Exception.hpp>
 
+#define OUTPUT_REGULAR  0
+#define OUTPUT_ERROR    84
+
 int main(void)
 {
     SharedLibraryInfo::Info info;
     GraphicManager::Manager loader;
     Input::InputMapRef inputMap;
 
-    std::cout << "Hello from L-Type" << std::endl;
     try {
         loader.load("./L-Type-Library-SFML.so");
     } catch (SharedLibraryLoader::Exception::DLFcn &e) {
@@ -33,11 +35,9 @@ int main(void)
         std::cerr << "Loader has not been loaded correctly" << std::endl;
     }
     if (!loader.instantiate())
-        return 84;
+        return OUTPUT_ERROR;
     inputMap = Input::createInputMapRef();
     loader.instance->openWindow();
-    loader.instance->openWindowId(3);
-    loader.instance->openWindowId(6);
     loader.instance->setInputMap(inputMap);
     while (loader.instance->isWindowOpen()) {
         loader.instance->refreshInputMap();
@@ -47,5 +47,5 @@ int main(void)
         }
         loader.instance->drawWindowAll();
     }
-    return 0;
+    return OUTPUT_REGULAR;
 }

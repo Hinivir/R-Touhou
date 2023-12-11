@@ -10,7 +10,7 @@
 
 #pragma once
 #include <map>
-#include "Graphic/WindowId.hpp"
+#include "GraphicClientProtocol/WindowId.hpp"
 #include "Input/InputMapWindow.hpp"
 
 namespace Input {
@@ -18,7 +18,7 @@ namespace Input {
 class InputMap {
 
 public:
-    std::map<Graphic::WindowId, Input::InputMapWindow> window;
+    std::map<GraphicClientProtocol::WindowId, Input::InputMapWindow> window;
 public:
     Input::InputMapWindow mergeWindows(void) const;
 
