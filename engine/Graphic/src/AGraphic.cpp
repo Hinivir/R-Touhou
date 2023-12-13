@@ -21,6 +21,18 @@ Input::InputMapRef Graphic::AGraphic::getInputMap(void) const
     return _inputMap;
 }
 
+// StackMap
+
+void Graphic::AGraphic::setStackMap(GraphicClientProtocol::Layer::StackMapRef const &stackMap)
+{
+    _stackMap = stackMap;
+}
+
+GraphicClientProtocol::Layer::StackMapRef Graphic::AGraphic::getStackMap(void) const
+{
+    return _stackMap;
+}
+
 // Refresh
 
 void Graphic::AGraphic::refreshInputMap(void)
@@ -31,7 +43,7 @@ void Graphic::AGraphic::refreshInputMap(void)
 
 void Graphic::AGraphic::refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId)
 {
-    if (!_inputMap) return;
+    if (!_inputMap || !isWindowIdOpen(windowId)) return;
     auto defaultWindowInputMap = _inputMap->window.find(windowId);
 
     if (defaultWindowInputMap == _inputMap->window.end()) {
@@ -87,7 +99,21 @@ void Graphic::AGraphic::drawWindowAll(void)
         drawWindowId(i);
 }
 
-void Graphic::AGraphic::drawWindowId(GraphicClientProtocol::WindowId const _windowId)
+void Graphic::AGraphic::drawWindowId(GraphicClientProtocol::WindowId const windowId)
+{
+    if (!_stackMap || !isWindowIdOpen(windowId)) return;
+    auto defaultWindowStack = _stackMap->find(windowId);
+
+    if (defaultWindowStack == _stackMap->end()) {
+        _stackMap->insert({windowId, GraphicClientProtocol::Layer::Stack()});
+        defaultWindowStack = _stackMap->find(windowId);
+        if (defaultWindowStack == _stackMap->end())
+            return;
+    }
+    return drawWindowIdOnStack(windowId, defaultWindowStack->second);
+}
+
+void Graphic::AGraphic::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack)
 { }
 
 // IsOpen

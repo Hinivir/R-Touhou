@@ -26,7 +26,7 @@ public:
     // Close
     void closeWindowId(GraphicClientProtocol::WindowId const windowId) override;
     // Draw
-    void drawWindowId(GraphicClientProtocol::WindowId const windowId) override;
+    void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack) override;
     // IsOpen
     bool isWindowIdOpen(GraphicClientProtocol::WindowId const windowId) const override;
     // << MEMORY >>

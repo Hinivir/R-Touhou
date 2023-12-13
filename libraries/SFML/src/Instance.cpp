@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <SFML/Window/Event.hpp>
+#include "LibrarySFML/Conversion.hpp"
 #include "LibrarySFML/Instance.hpp"
 
 // Constructor and Destructor
@@ -45,10 +46,17 @@ void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(GraphicClientProtoco
 
 // Open
 
+static std::string openWindowIdGetWindowName(GraphicClientProtocol::WindowId const windowId)
+{
+    if (windowId == GRAPHIC_WINDOWID_DEFAULT)
+        return "L-Type";
+    return "L-Type+";
+}
+
 void LibrarySFML::Instance::openWindowId(GraphicClientProtocol::WindowId const windowId)
 {
     closeWindowId(windowId);
-    _renderWindow[windowId].create(sf::VideoMode::getDesktopMode(), "L-Type", sf::Style::Resize | sf::Style::Close);
+    _renderWindow[windowId].create(sf::VideoMode::getDesktopMode(), openWindowIdGetWindowName(windowId), sf::Style::Resize | sf::Style::Close);
     if (!_renderWindow[windowId].isOpen())
         return;
     _renderWindow[windowId].setFramerateLimit(60);
@@ -64,11 +72,21 @@ void LibrarySFML::Instance::closeWindowId(GraphicClientProtocol::WindowId const 
 
 // Draw
 
-void LibrarySFML::Instance::drawWindowId(GraphicClientProtocol::WindowId const windowId)
+void LibrarySFML::Instance::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack)
 {
     if (!_renderWindow[windowId].isOpen())
         return;
     _renderWindow[windowId].clear(sf::Color::Black);
+    for (auto const &layer: stack) {
+        switch (layer.type)
+        {
+        case GraphicClientProtocol::Layer::LayerType::COLOR:
+            _renderWindow[windowId].clear(LibrarySFML::colorConversion(layer.value.color.color));
+            break;
+        default:
+            break;
+        }
+    }
     _renderWindow[windowId].display();
 }
 

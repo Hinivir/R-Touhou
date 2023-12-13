@@ -9,6 +9,7 @@
 /// @brief Interfaces for graphic libraries
 
 #pragma once
+#include "GraphicClientProtocol/Layer/StackMap.hpp"
 #include "GraphicClientProtocol/WindowId.hpp"
 #include "Input/InputMapRef.hpp"
 
@@ -23,6 +24,9 @@ public:
     // InputMap
     virtual void setInputMap(Input::InputMapRef const &inputMap) = 0;
     virtual Input::InputMapRef getInputMap(void) const = 0;
+    // StackMap
+    virtual void setStackMap(GraphicClientProtocol::Layer::StackMapRef const &stackMap) = 0;
+    virtual GraphicClientProtocol::Layer::StackMapRef getStackMap(void) const = 0;
     // Refresh
     virtual void refreshInputMap(void) = 0;
     virtual void refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
@@ -39,6 +43,7 @@ public:
     virtual void drawWindow(void) = 0;
     virtual void drawWindowAll(void) = 0;
     virtual void drawWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
+    virtual void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack) = 0;
     // IsOpen
     virtual bool isWindowOpen(void) const = 0;
     virtual bool isWindowAnyOpen(void) const = 0;

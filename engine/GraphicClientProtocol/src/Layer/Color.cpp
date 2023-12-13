@@ -10,3 +10,7 @@
 GraphicClientProtocol::Layer::Color::Color(GraphicClientProtocol::Color const &color) :
     color(color)
 { }
+
+GraphicClientProtocol::Layer::Color::Color(GraphicClientProtocol::Layer::Color const &other) :
+    color(other.color)
+{ }

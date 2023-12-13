@@ -5,9 +5,9 @@
 ** -
 */
 
-#include <Graphic/GraphicInstance.hpp>
-#include <LibrarySFML/Instance.hpp>
-#include <SharedLibraryInfo/Info.hpp>
+#include "Graphic/GraphicInstance.hpp"
+#include "LibrarySFML/Instance.hpp"
+#include "SharedLibraryInfo/Info.hpp"
 
 extern "C" Graphic::GraphicInstance entryPoint(void)
 {

@@ -8,6 +8,7 @@
 #include <exception>
 #include <iostream>
 #include <GraphicManager/Manager.hpp>
+#include <GraphicClientProtocol/Layer/StackMap.hpp>
 #include <Input/InputMapRef.hpp>
 #include <SharedLibraryInfo/Info.hpp>
 #include <SharedLibraryLoader/Exception.hpp>
@@ -19,6 +20,7 @@ int main(void)
 {
     SharedLibraryInfo::Info info;
     GraphicManager::Manager loader;
+    GraphicClientProtocol::Layer::StackMapRef stackMap;
     Input::InputMapRef inputMap;
 
     try {
@@ -37,8 +39,14 @@ int main(void)
     if (!loader.instantiate())
         return OUTPUT_ERROR;
     inputMap = Input::createInputMapRef();
+    stackMap = GraphicClientProtocol::Layer::createStackMapRef();
+    stackMap->insert({GRAPHIC_WINDOWID_DEFAULT, GraphicClientProtocol::Layer::Stack()});
+    auto defaultWindowInputMap = stackMap->find(GRAPHIC_WINDOWID_DEFAULT);
+    if (defaultWindowInputMap != stackMap->end())
+        defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color())));
     loader.instance->openWindow();
     loader.instance->setInputMap(inputMap);
+    loader.instance->setStackMap(stackMap);
     while (loader.instance->isWindowOpen()) {
         loader.instance->refreshInputMap();
         for (auto const &[windowId, window] : inputMap->window) {

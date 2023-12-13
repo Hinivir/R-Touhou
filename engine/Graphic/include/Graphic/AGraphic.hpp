@@ -21,6 +21,9 @@ public:
     // InputMap
     void setInputMap(Input::InputMapRef const &inputMap) final;
     Input::InputMapRef getInputMap(void) const final;
+    // StackMap
+    void setStackMap(GraphicClientProtocol::Layer::StackMapRef const &stackMap) final;
+    GraphicClientProtocol::Layer::StackMapRef getStackMap(void) const final;
     // Refresh
     void refreshInputMap(void) override;
     void refreshInputMapWindowId(GraphicClientProtocol::WindowId const windowId) final;
@@ -37,6 +40,7 @@ public:
     void drawWindow(void) final;
     void drawWindowAll(void) override;
     void drawWindowId(GraphicClientProtocol::WindowId const windowId) override;
+    void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack) override;
     // IsOpen
     bool isWindowOpen(void) const final;
     bool isWindowAnyOpen(void) const override;
@@ -48,6 +52,8 @@ public:
 protected:
     // InputMap
     Input::InputMapRef _inputMap = nullptr;
+    // StackMap
+    GraphicClientProtocol::Layer::StackMapRef _stackMap = nullptr;
 };
 
 }

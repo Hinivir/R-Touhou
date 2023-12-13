@@ -18,6 +18,7 @@ class Color : public GraphicClientProtocol::Layer::Base {
 
 public:
     Color(GraphicClientProtocol::Color const &color);
+    Color(GraphicClientProtocol::Layer::Color const &other);
 
 public:
     GraphicClientProtocol::Color color;
