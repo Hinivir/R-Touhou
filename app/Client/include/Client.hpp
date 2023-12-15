@@ -35,6 +35,6 @@ class Client
         void closeClient(void);
         void sendMessage(std::string const message);
         void getMessage(void);
-        void runningClient(void);
+        void runClient(void);
 };
 #endif
