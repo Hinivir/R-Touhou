@@ -26,25 +26,18 @@ static const std::map<char, std::string> inputHandler = {
     {27, "QUIT"}
 };
 
-char _getch()
+static int getch(void)
 {
-    char buf = 0;
-    struct termios old = {0};
-    if (tcgetattr(0, &old) < 0)
-        perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    if (tcsetattr(0, TCSANOW, &old) < 0)
-        perror("tcsetattr ICANON");
-    if (read(0, &buf, 1) < 0)
-        perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror("tcsetattr ~ICANON");
-    return (buf);
+    struct termios oldt, newt;
+    int ch;
+
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= static_cast<unsigned int>(~(ICANON | ECHO));
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
 }
 
 Client::Client(std::string const ip, std::size_t const port)
@@ -55,14 +48,16 @@ Client::Client(std::string const ip, std::size_t const port)
 
 Client::~Client(void)
 {
+    if (this->userSocket != 0)
+        this->closeClient();
 }
 
-void Client::connectClient(void)
+bool Client::connectClient(void)
 {
     this->userSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->userSocket == -1) {
         std::cerr << "ERROR: cannot create client socket" << std::endl;
-        exit(84);
+        return false;
     }
     this->serverAddress.sin_family = AF_INET;
     this->serverAddress.sin_addr.s_addr = inet_addr(this->ip.c_str());
@@ -70,10 +65,10 @@ void Client::connectClient(void)
     if (connect(this->userSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
         std::cerr << "ERROR: cannot connect to server" << std::endl;
         close(this->userSocket);
-        exit(84);
+        return false;
     }
     std::cout << "Connected to server" << std::endl;
-    close(this->userSocket);
+    return true;
 }
 
 void Client::closeClient(void)
@@ -85,19 +80,24 @@ void Client::closeClient(void)
 void Client::sendMessage(std::string const message)
 {
     std::cout << "Sending message: " << message << std::endl;
+    send(this->userSocket, message.c_str(), message.size(), 0);
 }
 
 void Client::getMessage(void)
 {
-    std::cout << "Getting message" << std::endl;
+    char buffer[1024] = {0};
+
+    read(this->userSocket, buffer, 1024);
+    std::cout << buffer << std::endl;
 }
 
 void Client::runClient(void)
 {
     while (1) {
-        char input = _getch();
-        if (inputHandler.find(input) != inputHandler.end()) {
-            this->sendMessage(inputHandler.at(input));
-        }
+        int const input = getch();
+        std::string const message = inputHandler.at(input);
+        if (message == "QUIT")
+            break;
+        this->sendMessage(message);
     }
 }

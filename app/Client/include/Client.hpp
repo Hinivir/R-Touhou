@@ -26,12 +26,13 @@ class Client
         std::size_t port;
         sockaddr_in serverAddress;
         int userSocket = 0;
+        int serverSocket = 0;
         std::queue<std::string> messageQueue;
 
     public:
         Client(std::string const ip, std::size_t const port);
         ~Client(void);
-        void connectClient(void);
+        bool connectClient(void);
         void closeClient(void);
         void sendMessage(std::string const message);
         void getMessage(void);
