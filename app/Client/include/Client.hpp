@@ -33,6 +33,7 @@ class Client
         Client(std::string const ip, std::size_t const port);
         ~Client(void);
         bool connectClient(void);
+        bool setClient(void);
         void closeClient(void);
         void sendMessage(std::string const message);
         void getMessage(void);

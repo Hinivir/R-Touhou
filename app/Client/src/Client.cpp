@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 static const std::map<char, std::string> inputHandler = {
     {'z', "UP"},
@@ -67,7 +68,27 @@ bool Client::connectClient(void)
         close(this->userSocket);
         return false;
     }
+    if (!this->setClient())
+        return false;
     std::cout << "Connected to server" << std::endl;
+    return true;
+}
+
+bool Client::setClient(void)
+{
+    int flags = fcntl(this->userSocket, F_GETFL, 0);
+
+    if (flags == -1) {
+        std::cerr << "ERROR: cannot get socket flags" << std::endl;
+        close(this->userSocket);
+        return false;
+    }
+    flags |= O_NONBLOCK;
+    if (fcntl(this->userSocket, F_SETFL, flags) == -1) {
+        std::cerr << "ERROR: cannot set socket flags" << std::endl;
+        close(this->userSocket);
+        return false;
+    }
     return true;
 }
 
@@ -88,16 +109,19 @@ void Client::getMessage(void)
     char buffer[1024] = {0};
 
     read(this->userSocket, buffer, 1024);
-    std::cout << buffer << std::endl;
+    std::cout << "message from server: " << buffer << std::endl;
 }
 
 void Client::runClient(void)
 {
     while (1) {
-        int const input = getch();
-        std::string const message = inputHandler.at(input);
-        if (message == "QUIT")
-            break;
-        this->sendMessage(message);
+        int input = getch();
+        if (inputHandler.find(input) != inputHandler.end()) {
+            std::string message = inputHandler.at(input);
+            this->sendMessage(message);
+            if (message == "QUIT")
+                break;
+        }
+        this->getMessage();
     }
 }
