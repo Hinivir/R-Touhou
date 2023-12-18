@@ -34,8 +34,8 @@ int main(int const argc, char const * const * const argv) {
     if (handle_error(argc, argv))
         return 84;
     std::size_t const port = get_port(argv[2]);
-    Server server(argv[1], port);
-    server.setServer();
-    server.connectUser();
+    std::string const ip = argv[1];
+    Server server(ip, port);
+    server.startServer();
     return 0;
 }
