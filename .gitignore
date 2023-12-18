@@ -2,6 +2,7 @@
 .vscode/
 build/
 private/
+copie*
 
 # OBJECTS
 *~
