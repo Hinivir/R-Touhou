@@ -10,12 +10,6 @@
 
     #include <iostream>
     #include <vector>
-    #include <cstdlib>
-    #include <cstring>
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
     #include <asio.hpp>
 
 using asio::ip::udp;
