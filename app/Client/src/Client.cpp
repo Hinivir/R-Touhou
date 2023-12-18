@@ -29,15 +29,18 @@ static const std::map<char, std::string> inputHandler = {
 
 static int getch(void)
 {
-    struct termios oldt, newt;
+    struct termios oldSettings, newSettings;
     int ch;
 
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= static_cast<unsigned int>(~(ICANON | ECHO));
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    tcgetattr(STDIN_FILENO, &oldSettings);
+    newSettings = oldSettings;
+    newSettings.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newSettings);
+
     ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldSettings);
+
     return ch;
 }
 
@@ -112,16 +115,34 @@ void Client::getMessage(void)
     std::cout << "message from server: " << buffer << std::endl;
 }
 
-void Client::runClient(void)
-{
+void Client::runClient(void) {
+    struct termios originalTerm, newTerm;
+    tcgetattr(STDIN_FILENO, &originalTerm);
+    newTerm = originalTerm;
+    newTerm.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newTerm);
+    int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+
     while (1) {
-        int input = getch();
-        if (inputHandler.find(input) != inputHandler.end()) {
-            std::string message = inputHandler.at(input);
-            this->sendMessage(message);
-            if (message == "QUIT")
-                break;
+        fd_set recvfds;
+        FD_ZERO(&recvfds);
+        FD_SET(STDIN_FILENO, &recvfds);
+        FD_SET(this->userSocket, &recvfds);
+
+        if (select(this->userSocket + 1, &recvfds, NULL, NULL, NULL) == -1) {
+            std::cerr << "ERROR: cannot select" << std::endl;
+            close(this->userSocket);
+            break;
         }
-        this->getMessage();
+        if (FD_ISSET(STDIN_FILENO, &recvfds)) {
+            char c = getch();
+            if (inputHandler.find(c) != inputHandler.end())
+                this->sendMessage(inputHandler.at(c));
+        }
+        if (FD_ISSET(this->userSocket, &recvfds))
+            this->getMessage();
     }
+    fcntl(STDIN_FILENO, F_SETFL, flags);
+    tcsetattr(STDIN_FILENO, TCSANOW, &originalTerm);
 }
