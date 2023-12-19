@@ -19,6 +19,7 @@ class Server
     private:
         asio::io_service io_service;
         udp::socket server_socket;
+        std::vector<udp::endpoint> connectedClients;
 
     public:
         Server(const std::string& ip, int const port);
@@ -27,5 +28,6 @@ class Server
         void startServer(void);
         void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
         void acceptClients(void);
+        void broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const udp::endpoint& sender);
 };
 #endif
