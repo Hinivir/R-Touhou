@@ -11,9 +11,10 @@
     #include <iostream>
     #include <queue>
     #include <vector>
+    #include <cstdlib>
 
     #include <asio.hpp>
-    #include <cstdlib>
+    #include <SFML/Graphics.hpp>
 
     class Client {
     private:
@@ -23,6 +24,7 @@
         std::array<char, 1024> recv_buf_;
         std::string input_buffer_;
         std::mutex input_mutex_;
+        std::queue<std::string> input_queue_;
 
     public:
         Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);

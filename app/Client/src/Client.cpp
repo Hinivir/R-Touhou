@@ -48,6 +48,11 @@ void Client::getNewMessage() {
         disconnectFlag_ = true;
         exit(0);
     }
+    for (auto& [key, value] : inputHandler)
+        if (std::strcmp(message.c_str(), value.c_str()) == 0)
+            this->input_queue_.push(message);
+    if (std::strcmp(message.c_str(), "Game is ready! Let the fun begin!") == 0)
+        start_game();
 }
 
 void Client::runClient() {
@@ -89,8 +94,9 @@ void Client::runClient() {
 
 void Client::start_game()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
-    sf::RectangleShape player(sf::Vector2f(50, 50));
+    sf::RenderWindow window(sf::VideoMode(1200, 800), "R-Type");
+    sf::Vector2i player_pos_ = sf::Vector2i(500, 500);
+    sf::Vector2i second_player_pos_ = sf::Vector2i(500, 500);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -100,13 +106,45 @@ void Client::start_game()
             }
         }
 
-        for (auto& [key, value] : inputHandler) {
-            if (sf::Keyboard::isKeyPressed(key)) {
+        ///////// GAME LOGIC /////////
+        for (auto& [key, value] : inputHandler)
+            if (sf::Keyboard::isKeyPressed(key))
                 sendMessage(value);
-            }
-        }
+
+        //manage the inputs of the user
+//        for (auto& [key, value] : inputHandler) {
+//            if (std::strcmp(value.c_str(), "UP") == 0)
+//                player_pos_.y -= speed;
+//            else if (std::strcmp(value.c_str(), "DOWN") == 0)
+//                player_pos_.y += speed;
+//            else if (std::strcmp(value.c_str(), "LEFT") == 0)
+//                player_pos_.x -= speed;
+//            else if (std::strcmp(value.c_str(), "RIGHT") == 0)
+//                player_pos_.x += speed;
+//            else if (std::strcmp(value.c_str(), "ACTION") == 0)
+//                std::cout << "ACTION" << std::endl;
+//            else if (std::strcmp(value.c_str(), "QUIT") == 0)
+//                window.close();
+//        }
+
+        //manage the inputs of the other player
+//        while (!input_queue_.empty()) {
+//            if (std::strcmp(input_queue_.front().c_str(), "UP") == 0)
+//                second_player_pos_.y -= speed;
+//            else if (std::strcmp(input_queue_.front().c_str(), "DOWN") == 0)
+//                second_player_pos_.y += speed;
+//            else if (std::strcmp(input_queue_.front().c_str(), "LEFT") == 0)
+//                second_player_pos_.x -= speed;
+//            else if (std::strcmp(input_queue_.front().c_str(), "RIGHT") == 0)
+//                second_player_pos_.x += speed;
+//            else if (std::strcmp(input_queue_.front().c_str(), "ACTION") == 0)
+//                std::cout << "ACTION FROM THE OTHER" << std::endl;
+//            input_queue_.pop();
+//        }        
+
 
         window.clear();
         window.display();
     }
+    this->~Client();
 }
