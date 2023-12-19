@@ -1,5 +1,6 @@
 # OTHERS
 private/
+build/
 
 # OBJECTS
 *~

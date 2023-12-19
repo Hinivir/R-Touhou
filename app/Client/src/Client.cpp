@@ -18,7 +18,7 @@ static const std::map<char, std::string> inputHandler = {
     {' ', "ACTION"},
     {27, "QUIT"}
 };
-
+/*
 static int getch(void)
 {
     struct termios oldSettings, newSettings;
@@ -35,7 +35,7 @@ static int getch(void)
 
     return ch;
 }
-
+*/
 Client::Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0)),
         server_endpoint_(asio::ip::address::from_string(server_ip), server_port) {}
@@ -66,15 +66,17 @@ void Client::runClient(void) {
     });
 
     while (true) {
-        char c = getch();
-        if (inputHandler.find(c) != inputHandler.end()) {
-            message = inputHandler.at(c);
-            this->sendMessage(message);
-        }
-        if (c == 27) {
-            std::terminate();
-            break;
-        }
+        std::string buffer = {0};
+        std::getline(std::cin, buffer);
+        this->sendMessage(buffer);
+//        if (inputHandler.find(c) != inputHandler.end()) {
+//            message = inputHandler.at(c);
+//            this->sendMessage(message);
+//        }
+//        if (c == 27) {
+//            std::terminate();
+//            break;
+//        }
     }
     readThread.join();
 }
