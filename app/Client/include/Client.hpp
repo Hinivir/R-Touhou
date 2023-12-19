@@ -16,15 +16,16 @@
     private:
         asio::ip::udp::socket socket_;
         asio::ip::udp::endpoint server_endpoint_;
-        std::queue<std::string> _messageQueue;
+        std::array<char, 1024> recv_buf_;
+        std::string input_buffer_;
+        std::mutex input_mutex_;
 
     public:
         Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);
         ~Client();
         void sendMessage(const std::string& message);
-        bool connectClient(void);
-        void getNewMessage(void);
-        void runClient(void);
+        void getNewMessage();
+        void runClient();
 };
 
 #endif

@@ -46,37 +46,48 @@ void Client::sendMessage(const std::string& message) {
     socket_.send_to(asio::buffer(message), server_endpoint_);
 }
 
-void Client::getNewMessage(void) {
-    std::array<char, 1024> recv_buf = {0};
+void Client::getNewMessage() {
     asio::error_code error;
-    std::size_t len = socket_.receive_from(asio::buffer(recv_buf), server_endpoint_, 0, error);
+    std::size_t len = socket_.receive_from(asio::buffer(recv_buf_), server_endpoint_, 0, error);
     if (error && error != asio::error::message_size)
         throw asio::system_error(error);
-    std::string message(recv_buf.data(), len);
-    this->_messageQueue.push(message);
-    std::cout << "received message: " << message << std::endl;
+    std::string message(recv_buf_.data(), len);
+    std::cout << "Received message: " << message << std::endl;
 }
 
-void Client::runClient(void) {
-    std::string message;
+void Client::runClient() {
     std::thread readThread([&]() {
         while (true) {
-            this->getNewMessage();
+            getNewMessage();
         }
     });
 
-    while (true) {
-        std::string buffer = {0};
-        std::getline(std::cin, buffer);
-        this->sendMessage(buffer);
-//        if (inputHandler.find(c) != inputHandler.end()) {
-//            message = inputHandler.at(c);
-//            this->sendMessage(message);
-//        }
-//        if (c == 27) {
-//            std::terminate();
-//            break;
-//        }
-    }
+    asio::io_context io_context;
+    asio::steady_timer timer(io_context, asio::chrono::milliseconds(100));
+
+    timer.async_wait([&](const asio::error_code&) {
+        std::unique_lock<std::mutex> lock(input_mutex_);
+        if (!input_buffer_.empty()) {
+            sendMessage(input_buffer_);
+            input_buffer_.clear();
+        }
+        timer.expires_at(timer.expiry() + asio::chrono::milliseconds(100));
+        timer.async_wait([&](const asio::error_code&) { runClient(); });
+    });
+
+    std::thread ioThread([&]() {
+        while (true) {
+            char c;
+            std::cin.get(c);
+
+            {
+                std::unique_lock<std::mutex> lock(input_mutex_);
+                input_buffer_.push_back(c);
+            }
+        }
+    });
+
+    io_context.run();
+    ioThread.join();
     readThread.join();
 }
