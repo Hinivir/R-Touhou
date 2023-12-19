@@ -59,14 +59,22 @@ void Client::getNewMessage(void) {
 
 void Client::runClient(void) {
     std::string message;
+    std::thread readThread([&]() {
+        while (true) {
+            this->getNewMessage();
+        }
+    });
+
     while (true) {
         char c = getch();
         if (inputHandler.find(c) != inputHandler.end()) {
             message = inputHandler.at(c);
             this->sendMessage(message);
         }
-        if (c == 27)
+        if (c == 27) {
+            std::terminate();
             break;
-        this->getNewMessage();
+        }
     }
+    readThread.join();
 }
