@@ -30,9 +30,9 @@ void GameManager::Base::process(void)
     LType::Delta delta = deltaRaw.count() / 1e3;
 
     deltaPhysicsStored += delta;
-    while (deltaPhysicsStored >= (1.0 / 10.0)) {
-        processPhysics(1.0 / 10.0);
-        deltaPhysicsStored -= (1.0 / 10.0);
+    while (deltaPhysicsStored >= deltaPhysicsCap) {
+        processPhysics(deltaPhysicsCap);
+        deltaPhysicsStored -= (deltaPhysicsCap);
     }
     processGraphic(delta);
     clock = clockNew;

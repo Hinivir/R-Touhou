@@ -50,6 +50,8 @@ protected:
     GameManager::Clock clock;
     // Physics delta stored for compensing lag and freezes
     LType::Delta deltaPhysicsStored = 0.0;
+    // Limit of deltaPhysicsStored, otherwise triggers processGraphic
+    LType::Delta deltaPhysicsCap = 1.0 / 10.0;
 };
 
 }
