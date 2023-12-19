@@ -13,9 +13,11 @@
     #include <vector>
 
     #include <asio.hpp>
+    #include <cstdlib>
 
     class Client {
     private:
+        bool disconnectFlag_ = false;
         asio::ip::udp::socket socket_;
         asio::ip::udp::endpoint server_endpoint_;
         std::array<char, 1024> recv_buf_;
