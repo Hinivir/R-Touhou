@@ -53,7 +53,7 @@ void Client::getNewMessage() {
         throw asio::system_error(error);
     std::string message(recv_buf_.data(), len);
     std::cout << message << std::endl;
-    if (std::strcmp(message.c_str(), "103:Disconnected!\n") == 0) {
+    if (std::strcmp(message.c_str(), "103:Disconnected!") == 0) {
         std::cout << "Server disconnected!" << std::endl;
         disconnectFlag_ = true;
         exit(0);
