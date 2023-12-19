@@ -17,9 +17,11 @@ using asio::ip::udp;
 class Server
 {
     private:
+        bool isChatLocked = false;
         asio::io_service io_service;
         udp::socket server_socket;
         std::vector<udp::endpoint> connectedClients;
+        std::vector<udp::endpoint> readyClients;
         std::string confirmationMessage = "101: You are connected!\n";
         std::string errorMessage = "102: Error sending confirmation message to client!\n";
 
@@ -31,5 +33,6 @@ class Server
         void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
         void acceptClients(void);
         void broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const udp::endpoint& sender);
+        void notifyGameReady(void);
 };
 #endif
