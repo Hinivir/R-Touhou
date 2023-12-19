@@ -65,6 +65,7 @@ int main(void)
             if (window.getEvent(Input::InputMapEvent::CLOSE))
                 graphic.instance->closeWindowId(windowId);
         }
+        game.process();
         graphic.instance->drawWindowAll();
     }
     return OUTPUT_REGULAR;

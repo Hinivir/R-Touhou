@@ -5,6 +5,7 @@
 ** -
 */
 
+#include <iostream>
 #include "GameManager/Base.hpp"
 
 bool GameManager::Base::instantiate(GraphicClientProtocol::Layer::StackMapRef const &stackMap, Input::InputMapRef const &inputMap)
@@ -17,5 +18,28 @@ bool GameManager::Base::instantiate(GraphicClientProtocol::Layer::StackMapRef co
     _inputMap = inputMap;
     _stackMap = stackMap;
     instance->init();
+    clock = std::chrono::high_resolution_clock::now();
+    deltaPhysicsStored = 0.0;
     return true;
 }
+
+void GameManager::Base::process(void)
+{
+    GameManager::Clock clockNew = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<LType::Delta, std::milli> deltaRaw = std::chrono::duration<LType::Delta, std::milli>(clockNew - clock);
+    LType::Delta delta = deltaRaw.count() / 1e3;
+
+    deltaPhysicsStored += delta;
+    while (deltaPhysicsStored >= (1.0 / 10.0)) {
+        processPhysics(1.0 / 10.0);
+        deltaPhysicsStored -= (1.0 / 10.0);
+    }
+    processGraphic(delta);
+    clock = clockNew;
+}
+
+void GameManager::Base::processGraphic(LType::Delta const _delta)
+{ }
+
+void GameManager::Base::processPhysics(LType::Delta const _delta)
+{ }

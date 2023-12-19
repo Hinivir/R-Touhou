@@ -39,4 +39,5 @@ l_type_add_directory(engine/GraphicManager)
 l_type_add_directory(engine/Input)
 l_type_add_directory(engine/SharedLibraryLoader)
 # Directories WITHOUT sources
+l_type_add_directory_no_src(engine/LType)
 l_type_add_directory_no_src(engine/SharedLibraryInfo)

@@ -9,6 +9,8 @@
 /// @brief Class used for managing games loaded dynamically
 
 #pragma once
+#include <chrono>
+#include "LType/Delta.hpp"
 #include "Game/GameInstance.hpp"
 #include "GraphicClientProtocol/Layer/StackMap.hpp"
 #include "Input/InputMapRef.hpp"
@@ -16,19 +18,38 @@
 
 namespace GameManager {
 
+using Clock = std::chrono::time_point<std::chrono::high_resolution_clock>;
+
 class Base : public SharedLibraryLoader::SpecializedLoader<Game::GameInstance>
 {
+// LOADER
 public:
     /// @brief Instantiate `callEntryPoint` inside of `instance`
     /// @param stackMap StackMap put inside of `self`
     /// @param inputMap InputMap put inside of `self`
     /// @return `true`, of `false` if a problem is encountered
     bool instantiate(GraphicClientProtocol::Layer::StackMapRef const &stackMap, Input::InputMapRef const &inputMap);
+// GAME MANAGER
+public:
+    /// << PROCESSES >>
+    /// @brief Executes a process tick, every frame, and converts it for other processes
+    void process(void);
+    /// @brief Executes a process tick, every frame
+    /// @param delta Time passed since last the process
+    virtual void processGraphic(LType::Delta const delta);
+    /// @brief Executes a physics tick, every engine frame
+    /// @param delta Time passed since last the process
+    virtual void processPhysics(LType::Delta const delta);
+// PROTECTED ATTRIBUTES
 protected:
     // InputMap
     Input::InputMapRef _inputMap = nullptr;
     // StackMap
     GraphicClientProtocol::Layer::StackMapRef _stackMap = nullptr;
+    // Clock used for managing the delta passed through processes
+    GameManager::Clock clock;
+    // Physics delta stored for compensing lag and freezes
+    LType::Delta deltaPhysicsStored = 0.0;
 };
 
 }
