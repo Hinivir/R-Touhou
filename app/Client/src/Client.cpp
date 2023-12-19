@@ -9,33 +9,23 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <thread>
+#include <SFML/Graphics.hpp>
 
-static const std::map<char, std::string> inputHandler = {
-    {'z', "UP"},
-    {'s', "DOWN"},
-    {'q', "LEFT"},
-    {'d', "RIGHT"},
-    {' ', "ACTION"},
-    {27, "QUIT"}
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
+
+static const std::size_t speed = 100;
+
+static const std::map<sf::Keyboard::Key, std::string> inputHandler = {
+    {sf::Keyboard::Z, "UP"},
+    {sf::Keyboard::S, "DOWN"},
+    {sf::Keyboard::Q, "LEFT"},
+    {sf::Keyboard::D, "RIGHT"},
+    {sf::Keyboard::Space, "ACTION"},
+    {sf::Keyboard::Escape, "QUIT"}
 };
-/*
-static int getch(void)
-{
-    struct termios oldSettings, newSettings;
-    int ch;
 
-    tcgetattr(STDIN_FILENO, &oldSettings);
-    newSettings = oldSettings;
-    newSettings.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newSettings);
-
-    ch = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldSettings);
-
-    return ch;
-}
-*/
 Client::Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0)),
         server_endpoint_(asio::ip::address::from_string(server_ip), server_port) {}
@@ -53,6 +43,8 @@ void Client::getNewMessage() {
         throw asio::system_error(error);
     std::string message(recv_buf_.data(), len);
     std::cout << "Received message: " << message << std::endl;
+    if (message == "Game is ready! Let the fun begin!\n\0")
+        start_game();
 }
 
 void Client::runClient() {
@@ -90,4 +82,28 @@ void Client::runClient() {
     io_context.run();
     ioThread.join();
     readThread.join();
+}
+
+void Client::start_game()
+{
+    sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
+    sf::RectangleShape player(sf::Vector2f(50, 50));
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+
+        for (auto& [key, value] : inputHandler) {
+            if (sf::Keyboard::isKeyPressed(key)) {
+                sendMessage(value);
+            }
+        }
+
+        window.clear();
+        window.display();
+    }
 }

@@ -10,6 +10,8 @@
 
     #include <iostream>
     #include <queue>
+    #include <vector>
+
     #include <asio.hpp>
 
     class Client {
@@ -26,6 +28,8 @@
         void sendMessage(const std::string& message);
         void getNewMessage();
         void runClient();
+
+        void start_game();
 };
 
 #endif
