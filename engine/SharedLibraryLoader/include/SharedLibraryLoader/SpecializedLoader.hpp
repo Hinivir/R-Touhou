@@ -9,6 +9,8 @@
 /// @brief Class inherting from Loader and using templates to generate instances of a type
 
 #pragma once
+#include "GraphicClientProtocol/Layer/StackMap.hpp"
+#include "Input/InputMapRef.hpp"
 #include "SharedLibraryLoader/Loader.hpp"
 
 namespace SharedLibraryLoader {
@@ -33,7 +35,17 @@ public:
 
     /// @brief Initialize the value of `instance` based on `callEntryPoint`
     /// @return True, of false if nothing was changed
-    bool instantiate(void) {if (!callEntryPoint) return false; instance = (reinterpret_cast<T_INSTANCE (*)()>(callEntryPoint))(); return true;}
+    bool instantiate(GraphicClientProtocol::Layer::StackMapRef const &stackMap, Input::InputMapRef const &inputMap)
+    {
+        if (!callEntryPoint)
+            return false;
+        instance = (reinterpret_cast<T_INSTANCE (*)()>(callEntryPoint))();
+        if (!instance)
+            return false;
+        instance->setStackMap(stackMap);
+        instance->setInputMap(inputMap);
+        return true;
+    }
 
 // Variables
     T_INSTANCE instance;

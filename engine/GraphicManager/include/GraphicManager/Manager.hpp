@@ -15,6 +15,10 @@
 
 namespace GraphicManager {
 
-using Manager = SharedLibraryLoader::SpecializedLoader<Graphic::GraphicInstance>;
+class Manager : public SharedLibraryLoader::SpecializedLoader<Graphic::GraphicInstance>
+{
+};
+
+//using Manager = SharedLibraryLoader::SpecializedLoader<Graphic::GraphicInstance>;
 
 }
