@@ -7,6 +7,7 @@
 
 #include <exception>
 #include <iostream>
+#include "GameManager/Client.hpp"
 #include "GraphicManager/Manager.hpp"
 #include "GraphicClientProtocol/Layer/StackMap.hpp"
 #include "Input/InputMapRef.hpp"
@@ -44,27 +45,31 @@
     }
 
 NEW_LOAD_DYNAMIC_LIBRARY(loadGraphicLibrary, GraphicManager::Manager, SharedLibraryInfo::InfoType::LIBRARY)
+NEW_LOAD_DYNAMIC_LIBRARY(loadGameLibrary, GameManager::Client, SharedLibraryInfo::InfoType::GAME)
 
 int main(void)
 {
-    GraphicManager::Manager loader;
+    GameManager::Client game;
+    GraphicManager::Manager graphic;
     GraphicClientProtocol::Layer::StackMapRef stackMap = GraphicClientProtocol::Layer::createStackMapRef();
     Input::InputMapRef inputMap = Input::createInputMapRef();
 
-    if (!loadGraphicLibrary(loader, "./L-Type-Library-SFML.so", stackMap, inputMap))
+    if (!loadGameLibrary(game, "./L-Type-Game-RTouhou.so", stackMap, inputMap))
+        return OUTPUT_ERROR;
+    if (!loadGraphicLibrary(graphic, "./L-Type-Library-SFML.so", stackMap, inputMap))
         return OUTPUT_ERROR;
     stackMap->insert({GRAPHIC_WINDOWID_DEFAULT, GraphicClientProtocol::Layer::Stack()});
     auto defaultWindowInputMap = stackMap->find(GRAPHIC_WINDOWID_DEFAULT);
     if (defaultWindowInputMap != stackMap->end())
         defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color())));
-    loader.instance->openWindow();
-    while (loader.instance->isWindowOpen()) {
-        loader.instance->refreshInputMap();
+    graphic.instance->openWindow();
+    while (graphic.instance->isWindowOpen()) {
+        graphic.instance->refreshInputMap();
         for (auto const &[windowId, window] : inputMap->window) {
             if (window.getEvent(Input::InputMapEvent::CLOSE))
-                loader.instance->closeWindowId(windowId);
+                graphic.instance->closeWindowId(windowId);
         }
-        loader.instance->drawWindowAll();
+        graphic.instance->drawWindowAll();
     }
     return OUTPUT_REGULAR;
 }

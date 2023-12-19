@@ -31,6 +31,8 @@ endfunction()
 # BASE
 l_type_add_directory_base(app/Instance)
 # Directories WITH sources
+l_type_add_directory(engine/Game)
+l_type_add_directory(engine/GameManager)
 l_type_add_directory(engine/Graphic)
 l_type_add_directory(engine/GraphicClientProtocol)
 l_type_add_directory(engine/GraphicManager)

@@ -6,11 +6,11 @@
 */
 
 #pragma once
-#include "Graphic/AGraphic.hpp"
+#include "Game/AGame.hpp"
 
 namespace RTouhou {
 
-class Instance : public Graphic::AGraphic
+class Instance : public Game::AGame
 {
 };
 

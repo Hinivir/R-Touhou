@@ -19,6 +19,4 @@ class Manager : public SharedLibraryLoader::SpecializedLoader<Graphic::GraphicIn
 {
 };
 
-//using Manager = SharedLibraryLoader::SpecializedLoader<Graphic::GraphicInstance>;
-
 }

@@ -5,13 +5,13 @@
 ** -
 */
 
-#include "Graphic/GraphicInstance.hpp"
-#include "LibrarySFML/Instance.hpp"
+#include "Game/GameInstance.hpp"
+#include "RTouhou/Instance.hpp"
 #include "SharedLibraryInfo/Info.hpp"
 
-extern "C" Graphic::GraphicInstance entryPoint(void)
+extern "C" Game::GameInstance entryPoint(void)
 {
-    return Graphic::createGraphicInstance<LibrarySFML::Instance>();
+    return Game::createGameInstance<RTouhou::Instance>();
 }
 
 extern "C" SharedLibraryInfo::Info info(void)
