@@ -18,7 +18,11 @@
 
 namespace GameManager {
 
+/// @brief Clock type used to compute deltas
 using Clock = std::chrono::time_point<std::chrono::high_resolution_clock>;
+
+/// @return GameManager::Clock containing the current time
+GameManager::Clock getClockNow(void);
 
 class Base : public SharedLibraryLoader::SpecializedLoader<Game::GameInstance>
 {

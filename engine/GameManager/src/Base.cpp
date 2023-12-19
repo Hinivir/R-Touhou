@@ -5,8 +5,12 @@
 ** -
 */
 
-#include <iostream>
 #include "GameManager/Base.hpp"
+
+GameManager::Clock GameManager::getClockNow(void)
+{
+    return std::chrono::high_resolution_clock::now();
+}
 
 bool GameManager::Base::instantiate(GraphicClientProtocol::Layer::StackMapRef const &stackMap, Input::InputMapRef const &inputMap)
 {
@@ -18,14 +22,14 @@ bool GameManager::Base::instantiate(GraphicClientProtocol::Layer::StackMapRef co
     _inputMap = inputMap;
     _stackMap = stackMap;
     instance->init();
-    clock = std::chrono::high_resolution_clock::now();
+    clock = GameManager::getClockNow();
     deltaPhysicsStored = 0.0;
     return true;
 }
 
 void GameManager::Base::process(void)
 {
-    GameManager::Clock clockNew = std::chrono::high_resolution_clock::now();
+    GameManager::Clock clockNew = GameManager::getClockNow();
     std::chrono::duration<LType::Delta, std::milli> deltaRaw = std::chrono::duration<LType::Delta, std::milli>(clockNew - clock);
     LType::Delta delta = deltaRaw.count() / 1e3;
 
