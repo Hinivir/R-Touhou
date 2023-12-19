@@ -50,7 +50,9 @@ void GameManager::Base::processPhysics(LType::Delta const delta)
 {
     if (!instance) return;
     Game::ProcessPhysicsStack const &processPhysicsStack = instance->getProcessPhysicsStack();
+    LType::GameRefenrence game = *instance.get();
 
     for (std::size_t i = 0; i < processPhysicsStack.size(); i++)
-        processPhysicsStack[i].second(delta, processPhysicsStack[i].first);
+        if (processPhysicsStack[i].function)
+            processPhysicsStack[i].function(game, processPhysicsStack[i].target.lock(), delta);
 }

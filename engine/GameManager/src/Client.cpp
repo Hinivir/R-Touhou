@@ -25,7 +25,9 @@ void GameManager::Client::processGraphic(LType::Delta const delta)
 {
     if (!instance) return;
     Game::ProcessGraphicStack const &processGraphicStack = instance->getProcessGraphicStack();
+    LType::GameRefenrence game = *instance.get();
 
     for (std::size_t i = 0; i < processGraphicStack.size(); i++)
-        processGraphicStack[i].second(delta, processGraphicStack[i].first);
+        if (processGraphicStack[i].function)
+            processGraphicStack[i].function(game, processGraphicStack[i].target.lock(), delta);
 }

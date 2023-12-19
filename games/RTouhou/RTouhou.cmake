@@ -32,8 +32,8 @@ endfunction()
 rtouhou_add_directory_base(games/RTouhou)
 # Directories WITH sources
 rtouhou_add_directory(engine/Game)
+rtouhou_add_directory(engine/LType)
 # Directories WITHOUT sources
-rtouhou_add_directory_no_src(engine/LType)
 rtouhou_add_directory_no_src(engine/SharedLibraryInfo)
 
 set_target_properties(${RTOUHOU_BINARY_NAME} PROPERTIES PREFIX "")
