@@ -52,12 +52,17 @@ void Client::getNewMessage() {
     if (error && error != asio::error::message_size)
         throw asio::system_error(error);
     std::string message(recv_buf_.data(), len);
-    std::cout << "Received message: " << message << std::endl;
+    std::cout << message << std::endl;
+    if (std::strcmp(message.c_str(), "103:Disconnected!\n") == 0) {
+        std::cout << "Server disconnected!" << std::endl;
+        disconnectFlag_ = true;
+        exit(0);
+    }
 }
 
 void Client::runClient() {
     std::thread readThread([&]() {
-        while (true) {
+        while (!disconnectFlag_) {
             getNewMessage();
         }
     });
@@ -76,7 +81,7 @@ void Client::runClient() {
     });
 
     std::thread ioThread([&]() {
-        while (true) {
+        while (!disconnectFlag_) {
             char c;
             std::cin.get(c);
 
