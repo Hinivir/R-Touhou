@@ -44,6 +44,25 @@ void Server::connectClient(const udp::endpoint& client_endpoint, const std::arra
 {
     std::cout << "Received " << bytes_received << " bytes from client at " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
     std::cout << "Message: " << std::string(buffer.data(), bytes_received) << std::endl;
+
+    if (std::find(connectedClients.begin(), connectedClients.end(), client_endpoint) == connectedClients.end())
+        connectedClients.push_back(client_endpoint);
+    broadcastMessage(buffer, bytes_received, client_endpoint);
+}
+
+void Server::broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const udp::endpoint& sender)
+{
+    std::string message(buffer.data(), bytes_received);
+
+    for (const auto& client : connectedClients) {
+        if (client != sender) {
+            try {
+                server_socket.send_to(asio::buffer(message), client);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
+            }
+        }
+    }
 }
 
 void Server::acceptClients()
