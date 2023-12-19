@@ -12,10 +12,10 @@ void Game::AGame::init(void)
 
 Game::ProcessGraphicStack const &Game::AGame::getProcessGraphicStack(void) const
 {
-    return processGraphicStack;
+    return _processGraphicStack;
 }
 
 Game::ProcessPhysicsStack const &Game::AGame::getProcessPhysicsStack(void) const
 {
-    return processPhysicsStack;
+    return _processPhysicsStack;
 }

@@ -9,15 +9,16 @@
 /// @brief Interfaces for games
 
 #pragma once
+#include <utility>
 #include <vector>
 #include "LType/Process.hpp"
 
 namespace Game {
 
 /// @brief List of multiple LType::ProcessGraphic elements
-using ProcessGraphicStack = std::vector<LType::ProcessGraphic>;
+using ProcessGraphicStack = std::vector<std::pair<LType::ProcessGraphicTarget, LType::ProcessGraphic>>;
 /// @brief List of multiple LType::ProcessPhysics elements
-using ProcessPhysicsStack = std::vector<LType::ProcessPhysics>;
+using ProcessPhysicsStack = std::vector<std::pair<LType::ProcessPhysicsTarget, LType::ProcessPhysics>>;
 
 class IGame
 {

@@ -30,9 +30,9 @@ public:
     Game::ProcessPhysicsStack const &getProcessPhysicsStack(void) const override;
 public:
     /// @brief Contains every processGraphic function
-    Game::ProcessGraphicStack processGraphicStack;
+    Game::ProcessGraphicStack _processGraphicStack;
     /// @brief Contains every processPhysics function
-    Game::ProcessPhysicsStack processPhysicsStack;
+    Game::ProcessPhysicsStack _processPhysicsStack;
 };
 
 }

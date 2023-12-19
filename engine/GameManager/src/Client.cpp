@@ -27,5 +27,5 @@ void GameManager::Client::processGraphic(LType::Delta const delta)
     Game::ProcessGraphicStack const &processGraphicStack = instance->getProcessGraphicStack();
 
     for (std::size_t i = 0; i < processGraphicStack.size(); i++)
-        processGraphicStack[i](delta);
+        processGraphicStack[i].second(delta, processGraphicStack[i].first);
 }

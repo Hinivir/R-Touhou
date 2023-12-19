@@ -51,5 +51,5 @@ void GameManager::Base::processPhysics(LType::Delta const delta)
     Game::ProcessPhysicsStack const &processPhysicsStack = instance->getProcessPhysicsStack();
 
     for (std::size_t i = 0; i < processPhysicsStack.size(); i++)
-        processPhysicsStack[i](delta);
+        processPhysicsStack[i].second(delta, processPhysicsStack[i].first);
 }
