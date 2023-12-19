@@ -19,3 +19,8 @@ Game::ProcessPhysicsStack const &Game::AGame::getProcessPhysicsStack(void) const
 {
     return _processPhysicsStack;
 }
+
+float Game::AGame::getProcessPhysicsPerSec(void) const
+{
+    return _processPhysicsPerSec;
+}

@@ -23,7 +23,7 @@ bool GameManager::Base::instantiate(GraphicClientProtocol::Layer::StackMapRef co
     _stackMap = stackMap;
     instance->init();
     clock = GameManager::getClockNow();
-    deltaPhysicsStored = 0.0;
+    _deltaPhysicsStored = 0.0;
     return true;
 }
 
@@ -33,10 +33,11 @@ void GameManager::Base::process(void)
     std::chrono::duration<LType::Delta, std::milli> deltaRaw = std::chrono::duration<LType::Delta, std::milli>(clockNew - clock);
     LType::Delta delta = deltaRaw.count() / 1e3;
 
-    deltaPhysicsStored += delta;
-    while (deltaPhysicsStored >= deltaPhysicsCap) {
-        processPhysics(deltaPhysicsCap);
-        deltaPhysicsStored -= (deltaPhysicsCap);
+    _deltaPhysicsCap = (instance ? (1.0 / instance->getProcessPhysicsPerSec()) : _deltaPhysicsCap);
+    _deltaPhysicsStored += delta;
+    while (_deltaPhysicsStored >= _deltaPhysicsCap) {
+        processPhysics(_deltaPhysicsCap);
+        _deltaPhysicsStored -= _deltaPhysicsCap;
     }
     processGraphic(delta);
     clock = clockNew;

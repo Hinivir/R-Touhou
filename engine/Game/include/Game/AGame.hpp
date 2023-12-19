@@ -22,17 +22,36 @@ public:
 
     void init(void) override;
 
-    // < PROCESS >
+    // << PROCESS >>
 
     // Stacks
 
     Game::ProcessGraphicStack const &getProcessGraphicStack(void) const override;
     Game::ProcessPhysicsStack const &getProcessPhysicsStack(void) const override;
-public:
+
+    // << ENGINE >>
+
+    // Stacks
+
+    /// @brief Amount of times the processPhysics should be called per seconds
+    float getProcessPhysicsPerSec(void) const override;
+
+protected:
+    // << PROCESS >>
+
+    // Stacks
+
     /// @brief Contains every processGraphic function
     Game::ProcessGraphicStack _processGraphicStack;
     /// @brief Contains every processPhysics function
     Game::ProcessPhysicsStack _processPhysicsStack;
+
+    // << ENGINE >>
+
+    // Stacks
+
+    /// @brief Amount of times the processPhysics should be called per seconds
+    float _processPhysicsPerSec = 10.0;
 };
 
 }

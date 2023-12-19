@@ -32,7 +32,7 @@ public:
     /// @brief Initialization of the game
     virtual void init(void) = 0;
 
-    // < PROCESS >
+    // << PROCESS >>
 
     // Stacks
 
@@ -40,6 +40,11 @@ public:
     virtual Game::ProcessGraphicStack const &getProcessGraphicStack(void) const = 0;
     /// @brief
     virtual Game::ProcessPhysicsStack const &getProcessPhysicsStack(void) const = 0;
+
+    // << ENGINE >>
+
+    /// @brief
+    virtual float getProcessPhysicsPerSec(void) const = 0;
 };
 
 }
