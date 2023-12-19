@@ -49,10 +49,10 @@ void Server::connectClient(const udp::endpoint& client_endpoint, const std::arra
     if (message == "connect\n") {
         std::cout << "Client connected: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
         connectedClients.push_back(client_endpoint);
-        std::string confirmationMessage = "You are connected!\n";
         try {
             server_socket.send_to(asio::buffer(confirmationMessage), client_endpoint);
         } catch (std::exception const &e) {
+            server_socket.send_to(asio::buffer(errorMessage), client_endpoint);
             std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
         }
     }

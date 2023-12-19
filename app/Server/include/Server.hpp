@@ -20,6 +20,8 @@ class Server
         asio::io_service io_service;
         udp::socket server_socket;
         std::vector<udp::endpoint> connectedClients;
+        std::string confirmationMessage = "101: You are connected!\n";
+        std::string errorMessage = "102: Error sending confirmation message to client!\n";
 
     public:
         Server(const std::string& ip, int const port);
