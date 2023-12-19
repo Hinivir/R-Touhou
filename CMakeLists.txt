@@ -22,4 +22,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 #include(app/Instance/Instance.cmake)
 #include(app/ServerManager/ServerManager.cmake)
+<<<<<<< HEAD
+=======
+include(app/Client/Client.cmake)
+>>>>>>> 09f0b96f061dec4febeb09094666bf33ee50d739
 include(app/Server/Server.cmake)

@@ -16,4 +16,8 @@ include(${SERVER_FOLDER}/ServerSrc.cmake)
 
 add_executable(${SERVER_BINARY_NAME} ${SRC})
 
+<<<<<<< HEAD
 target_include_directories(${SERVER_BINARY_NAME} PUBLIC ${SERVER_INCLUDE})
+=======
+target_include_directories(${SERVER_BINARY_NAME} PUBLIC ${SERVER_INCLUDE})
+>>>>>>> 09f0b96f061dec4febeb09094666bf33ee50d739
