@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2023
-** libraries/SFML/include/LibrarySFML/Instance.hpp
+** games/RTouhou/include/RTouhou/Instance.hpp
 ** File description:
 ** -
 */
@@ -12,6 +12,10 @@ namespace RTouhou {
 
 class Instance : public Game::AGame
 {
+public:
+    // << BASE >>
+    // Init
+    void init(void) override;
 };
 
 }

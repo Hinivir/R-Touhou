@@ -6,3 +6,6 @@
 */
 
 #include "Game/AGame.hpp"
+
+void Game::AGame::init(void)
+{ }

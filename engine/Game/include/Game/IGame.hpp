@@ -14,6 +14,12 @@ namespace Game {
 
 class IGame
 {
+public:
+    virtual ~IGame() = default;
+public:
+    // << BASE >>
+    // Init
+    virtual void init(void) = 0;
 };
 
 }

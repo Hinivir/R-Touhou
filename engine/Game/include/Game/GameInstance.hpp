@@ -9,8 +9,8 @@
 /// @brief Instance of IGame
 
 #pragma once
-#include <Game/IGame.hpp>
 #include <memory>
+#include "Game/IGame.hpp"
 
 namespace Game {
 

@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2023
-** libraries/SFML/src/EntryPoint.cpp
+** games/RTouhou/src/EntryPoint.cpp
 ** File description:
 ** -
 */

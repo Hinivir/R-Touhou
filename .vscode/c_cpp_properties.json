@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/engine/GameManager/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

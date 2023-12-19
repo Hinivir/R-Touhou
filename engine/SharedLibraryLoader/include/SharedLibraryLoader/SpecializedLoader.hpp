@@ -33,8 +33,10 @@ public:
 
 // Functions
 
-    /// @brief Initialize the value of `instance` based on `callEntryPoint`
-    /// @return True, of false if nothing was changed
+    /// @brief Instantiate `callEntryPoint` inside of `instance`
+    /// @param stackMap StackMap put inside of `instance`
+    /// @param inputMap InputMap put inside of `instance`
+    /// @return `true`, of `false` if a problem is encountered
     bool instantiate(GraphicClientProtocol::Layer::StackMapRef const &stackMap, Input::InputMapRef const &inputMap)
     {
         if (!callEntryPoint)

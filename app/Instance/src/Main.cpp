@@ -58,10 +58,6 @@ int main(void)
         return OUTPUT_ERROR;
     if (!loadGraphicLibrary(graphic, "./L-Type-Library-SFML.so", stackMap, inputMap))
         return OUTPUT_ERROR;
-    stackMap->insert({GRAPHIC_WINDOWID_DEFAULT, GraphicClientProtocol::Layer::Stack()});
-    auto defaultWindowInputMap = stackMap->find(GRAPHIC_WINDOWID_DEFAULT);
-    if (defaultWindowInputMap != stackMap->end())
-        defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color())));
     graphic.instance->openWindow();
     while (graphic.instance->isWindowOpen()) {
         graphic.instance->refreshInputMap();
