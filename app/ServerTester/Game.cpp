@@ -8,6 +8,7 @@
 //compilation => g++ Game.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 void handleCollisions(sf::RectangleShape& movingSquare, const sf::RectangleShape& stationarySquare, float speed) {
     sf::FloatRect movingRect = movingSquare.getGlobalBounds();
@@ -91,6 +92,22 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             square2.move(0, speed);
         }
+
+//        if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Z)
+            std::cout << "UP" << std::endl;
+        else if (event.key.code == sf::Keyboard::S)
+            std::cout << "DOWN" << std::endl;
+        else if (event.key.code == sf::Keyboard::Q)
+            std::cout << "LEFT" << std::endl;
+        else if (event.key.code == sf::Keyboard::D)
+            std::cout << "RIGHT" << std::endl;
+        else if (event.key.code == sf::Keyboard::Space)
+            std::cout << "ACTION" << std::endl;
+        else if (event.key.code == sf::Keyboard::Escape)
+            std::cout << "QUIT" << std::endl;
+            window.close();
+//        }
 
         window.clear();
 
