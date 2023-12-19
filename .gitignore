@@ -1,6 +1,9 @@
 # OTHERS
+.vscode/
+build/
 private/
 build/
+copie*
 
 # OBJECTS
 *~
@@ -23,3 +26,4 @@ _deps
 L-Type
 L-Type-*
 a.out
+game
