@@ -25,14 +25,8 @@ int main(int const argc, char const * const * const argv)
     }
     std::string const ip = argv[1];
     std::size_t const port = std::stoi(argv[2]);
-    try {
-        asio::io_context io_context;
-        Client Client(io_context, ip, port);
-        const std::string message = "Hello, server!";
-        Client.sendMessage(message);
-    } catch (const std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return 1;
-    }
+    asio::io_context io_context;
+    Client Client(io_context, ip, port);
+    Client.runClient();
     return 0;
 }
