@@ -17,8 +17,22 @@ class AGame : public Game::IGame
 {
 public:
     // << BASE >>
+
     // Init
+
     void init(void) override;
+
+    // < PROCESS >
+
+    // Stacks
+
+    Game::ProcessGraphicStack const &getProcessGraphicStack(void) const override;
+    Game::ProcessPhysicsStack const &getProcessPhysicsStack(void) const override;
+public:
+    /// @brief Contains every processGraphic function
+    Game::ProcessGraphicStack processGraphicStack;
+    /// @brief Contains every processPhysics function
+    Game::ProcessPhysicsStack processPhysicsStack;
 };
 
 }

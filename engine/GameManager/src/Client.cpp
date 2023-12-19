@@ -21,5 +21,11 @@ bool GameManager::Client::instantiate(GraphicClientProtocol::Layer::StackMapRef 
     return true;
 }
 
-void GameManager::Client::processGraphic(LType::Delta const _delta)
-{ }
+void GameManager::Client::processGraphic(LType::Delta const delta)
+{
+    if (!instance) return;
+    Game::ProcessGraphicStack const &processGraphicStack = instance->getProcessGraphicStack();
+
+    for (std::size_t i = 0; i < processGraphicStack.size(); i++)
+        processGraphicStack[i](delta);
+}

@@ -45,5 +45,11 @@ void GameManager::Base::process(void)
 void GameManager::Base::processGraphic(LType::Delta const _delta)
 { }
 
-void GameManager::Base::processPhysics(LType::Delta const _delta)
-{ }
+void GameManager::Base::processPhysics(LType::Delta const delta)
+{
+    if (!instance) return;
+    Game::ProcessPhysicsStack const &processPhysicsStack = instance->getProcessPhysicsStack();
+
+    for (std::size_t i = 0; i < processPhysicsStack.size(); i++)
+        processPhysicsStack[i](delta);
+}
