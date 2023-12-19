@@ -16,4 +16,8 @@ include(${CLIENT_FOLDER}/ClientSrc.cmake)
 
 add_executable(${CLIENT_BINARY_NAME} ${SRC})
 
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+target_link_libraries(${CLIENT_BINARY_NAME} sfml-graphics sfml-window sfml-system)
+
 target_include_directories(${CLIENT_BINARY_NAME} PUBLIC ${CLIENT_INCLUDE})
