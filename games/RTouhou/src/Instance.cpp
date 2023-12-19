@@ -12,13 +12,13 @@
 
 static LTYPE_FUNCTION_PROCESS_PHYSICS(fishProcessPhysics, fish, delta)
 {
-    std::cout << (fish ? "true" : "false") << std::endl;
+    std::cout << (fish ? "fish" : "fishn't") << std::endl;
     std::cout << _game.getProcessPhysicsPerSec() << " " << delta << std::endl;
 }
 
 void RTouhou::Instance::init(void)
 {
-    LType::EntityInstance fish = addEntity(LType::createEntityInstance<LType::Entity>());
+    LType::EntityInstance fish = addEntity(GAME_ENTITY);
 
     addFunctionProcessPhysics(fish, fishProcessPhysics);
 }

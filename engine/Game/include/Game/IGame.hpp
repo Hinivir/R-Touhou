@@ -15,8 +15,12 @@
 #include <vector>
 #include "LType/Attribute/FilePath.hpp"
 #include "LType/Attribute/Position.hpp"
+#include "LType/Entity.hpp"
 #include "LType/EntityInstance.hpp"
 #include "LType/Process.hpp"
+
+#define GAME_ENTITY LType::createEntityInstance<LType::Entity>()
+#define GAME_ENTITY_TYPE(ENTITY_TYPE) LType::createEntityInstance<ENTITY_TYPE>()
 
 namespace Game {
 
