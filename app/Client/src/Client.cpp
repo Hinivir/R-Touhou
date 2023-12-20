@@ -37,20 +37,17 @@ void Client::sendMessage(const std::string& message) {
 }
 
 void Client::getNewMessage() {
-    asio::error_code error;
-    std::size_t len = socket_.receive_from(asio::buffer(recv_buf_), server_endpoint_, 0, error);
-    if (error && error != asio::error::message_size)
-        throw asio::system_error(error);
+    std::size_t len = socket_.receive_from(asio::buffer(recv_buf_), server_endpoint_);
     std::string message(recv_buf_.data(), len);
-    std::cout << message << std::endl;
-    if (std::strcmp(message.c_str(), "103:Disconnected!") == 0) {
-        std::cout << "Server disconnected!" << std::endl;
+
+    if (message == "QUIT") {
         disconnectFlag_ = true;
-        exit(0);
     }
-    for (auto& [key, value] : inputHandler)
-        if (std::strcmp(message.c_str(), value.c_str()) == 0 && this->history_received_messages.size() < 10)
-            this->history_received_messages.push(message);
+    for (auto& [key, value] : inputHandler) {
+        if (message == value) {
+            history_received_messages.push(message);
+        }
+    }
     if (std::strcmp(message.c_str(), "Game is ready! Let the fun begin!") == 0)
         start_game();
 }
