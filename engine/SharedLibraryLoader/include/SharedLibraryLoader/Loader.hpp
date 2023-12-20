@@ -8,14 +8,23 @@
 /// @file
 /// @brief Class used for loading shared libraries dynamically
 
+#pragma once
+
 #include <string>
+#include "SharedLibraryInfo/Calls.hpp"
+#include <SharedLibraryInfo/Info.hpp>
 
 namespace SharedLibraryLoader {
 
 class Loader {
 
-// PUBLIC ATTRIBUTES //
+// PUBLIC ATTRIBUTES
 public:
+
+// Destructor
+
+    /// @brief Destructor
+    ~Loader();
 
 // Functions
 
@@ -34,9 +43,11 @@ public:
     bool isLoaded(void) const;
 
 // Variables
-    void *entryPoint = nullptr;
+    SharedLibraryInfo::Calls::Default callEntryPoint = nullptr;
+    SharedLibraryInfo::Calls::Info callInfo = nullptr;
     void *library = nullptr;
     std::string libraryPath = "";
+    SharedLibraryInfo::InfoType type = SharedLibraryInfo::InfoType::UNDEFINED;
 
 };
 
