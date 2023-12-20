@@ -10,31 +10,29 @@
 
     #include <iostream>
     #include <vector>
-    #include <cstdlib>
-    #include <cstring>
+    #include <asio.hpp>
 
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
+using asio::ip::udp;
 
 class Server
 {
     private:
-        std::string ip;
-        std::size_t port;
-        std::vector<std::size_t> clients;
-        std::size_t axio;//tmp
-        int serverSocket = 0;
-        int clientSocket = 0;
-        sockaddr_in serverAddress;
+        bool isChatLocked = false;
+        asio::io_service io_service;
+        udp::socket server_socket;
+        std::vector<udp::endpoint> connectedClients;
+        std::vector<udp::endpoint> readyClients;
+        std::string confirmationMessage = "101: You are connected!\n";
+        std::string errorMessage = "102: Error sending confirmation message to client!\n";
 
     public:
-        Server(std::string const ip, std::size_t const port);
+        Server(const std::string& ip, int const port);
         ~Server(void);
-        void setServer(void);
-        void connectUser(void);
         void closeServer(void);
-        void handleClient(int const clientSocket);
+        void startServer(void);
+        void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+        void acceptClients(void);
+        void broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const udp::endpoint& sender);
+        void notifyGameReady(void);
 };
 #endif

@@ -27,7 +27,9 @@ FetchContent_MakeAvailable(asiocmake)
 ]]
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-include(app/Instance/Instance.cmake)
-include(app/ServerManager/ServerManager.cmake)
+#include(app/Instance/Instance.cmake)
+#include(app/ServerManager/ServerManager.cmake)
+include(app/Client/Client.cmake)
+include(app/Server/Server.cmake)
 include(libraries/SFML/SFML.cmake)
 include(games/RTouhou/RTouhou.cmake)
