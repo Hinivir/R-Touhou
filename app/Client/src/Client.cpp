@@ -14,7 +14,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
-static const std::size_t speed = 0.5f;
+static const float speed = 0.005;
 
 static const std::map<sf::Keyboard::Key, std::string> inputHandler = {
     {sf::Keyboard::Z, "UP"},
@@ -99,12 +99,25 @@ void drawBlinkingZone(sf::RenderWindow& window, sf::RectangleShape& blinkingZone
     }
 }
 
+void handleCollisions(sf::RectangleShape& movingSquare, const sf::RectangleShape& stationarySquare, float speed) {
+    sf::FloatRect movingRect = movingSquare.getGlobalBounds();
+    sf::FloatRect stationaryRect = stationarySquare.getGlobalBounds();
+
+    if (movingRect.intersects(stationaryRect)) {
+        if (speed > 0) {
+            movingSquare.setPosition(stationaryRect.left - movingRect.width, movingRect.top);
+        } else {
+            movingSquare.setPosition(stationaryRect.left + stationaryRect.width, movingRect.top);
+        }
+    }
+}
+
 void Client::start_game()
 {
     asio::io_context io_context;
     asio::steady_timer timer(io_context, asio::chrono::milliseconds(100));
 
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "R-Type");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
     sf::RectangleShape square1(sf::Vector2f(50, 50));
     sf::RectangleShape square2(sf::Vector2f(50, 50));
     sf::RectangleShape blinkingZone(sf::Vector2f(200, 200));
@@ -129,32 +142,41 @@ void Client::start_game()
             }
         }
 
-        ///////// GAME LOGIC /////////
-//        for (auto& [key, value] : inputHandler) {
-//            if (sf::Keyboard::isKeyPressed(key))
-//                sendMessage(value);
-//        }
+        elapsed = clock.getElapsedTime();
+        if (elapsed.asMilliseconds() > 500) {
+            isVisible = !isVisible;
+            clock.restart();
+        }
 
-
+        handleCollisions(square1, square2, speed);
         //manage the inputs of the user
-        for (auto& [key, value] : inputHandler) {
-                if (sf::Keyboard::isKeyPressed(key)) {
-                    if (std::strcmp(value.c_str(), "UP") == 0)
-                        square1.move(0, -speed);
-                    else if (std::strcmp(value.c_str(), "DOWN") == 0)
-                        square1.move(0, speed);
-                    else if (std::strcmp(value.c_str(), "LEFT") == 0)
-                        square1.move(-speed, 0);
-                    else if (std::strcmp(value.c_str(), "RIGHT") == 0)
-                        square1.move(speed, 0);
-                    else if (std::strcmp(value.c_str(), "ACTION") == 0)
-                        std::cout << "ACTION" << std::endl;
-                    else if (std::strcmp(value.c_str(), "QUIT") == 0)
-                        exit(0);
-                }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+            sendMessage("UP");
+            square1.move(0, -speed);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            sendMessage("DOWN");
+            square1.move(0, speed);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+            sendMessage("LEFT");
+            square1.move(-speed, 0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            sendMessage("RIGHT");
+            square1.move(speed, 0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            sendMessage("ACTION");
+            std::cout << "ACTION" << std::endl;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            sendMessage("QUIT");
+            exit(0);
         }
 
         //manage the inputs of the other player
+        handleCollisions(square2, square1, speed);
         while (!history_received_messages.empty()) {
             std::string message = history_received_messages.front();
             history_received_messages.pop();
@@ -168,8 +190,6 @@ void Client::start_game()
                 square2.move(speed, 0);
             else if (std::strcmp(message.c_str(), "ACTION") == 0)
                 std::cout << "ACTION" << std::endl;
-            else if (std::strcmp(message.c_str(), "QUIT") == 0)
-                exit(0);
         }
         drawBlinkingZone(window, blinkingZone, isVisible);
 
@@ -177,7 +197,7 @@ void Client::start_game()
         window.draw(square1);
         window.draw(square2);
         window.display();
-        timer.async_wait([&](const asio::error_code&) { runClient(); });
+        timer.async_wait([&](const asio::error_code&) { start_game(); });
     }
     this->~Client();
 }
