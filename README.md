@@ -32,16 +32,6 @@ The purpose of the project is to implement a multithreaded server and a graphica
   
 ## <a id="titre2"></a>2. How to use R-Type  
   
----
-# installation before cmake:
-
-    sudo apt-get install libudev-dev
-    sudo apt-get install libfreetype6-dev
-    sudo apt-get install libopenal-dev
-    sudo apt-get install libvorbis-dev
-    sudo apt-get install libflac-dev
----
-
 Run the following commands:  
   
 ```bash  
