@@ -24,7 +24,7 @@
         std::array<char, 1024> recv_buf_;
         std::string input_buffer_;
         std::mutex input_mutex_;
-        std::queue<std::string> input_queue_;
+        std::queue<std::string> history_received_messages;
 
     public:
         Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);
