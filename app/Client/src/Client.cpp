@@ -33,12 +33,18 @@ Client::Client(asio::io_context& io_context, const std::string& server_ip, std::
 Client::~Client() {}
 
 void Client::sendMessage(const std::string& message) {
+    asio::io_context io_context;
+    asio::steady_timer timer(io_context, asio::chrono::milliseconds(1));
+
     socket_.send_to(asio::buffer(message), server_endpoint_);
+    timer.async_wait([&](const asio::error_code&) { sendMessage(message); });
 }
 
 void Client::getNewMessage() {
     std::size_t len = socket_.receive_from(asio::buffer(recv_buf_), server_endpoint_);
     std::string message(recv_buf_.data(), len);
+
+    std::cout << "Received: " << message << std::endl;
 
     if (message == "QUIT") {
         disconnectFlag_ = true;
