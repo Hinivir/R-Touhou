@@ -1,1 +1,2 @@
 engine/SharedLibraryLoader/src/Loader.cpp
+engine/SharedLibraryLoader/src/SpecializedLoader.cpp
