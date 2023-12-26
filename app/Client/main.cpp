@@ -23,10 +23,18 @@ int main(int const argc, char const * const * const argv)
         std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
         return 1;
     }
-    std::string const ip = argv[1];
-    std::size_t const port = std::stoi(argv[2]);
-    asio::io_context io_context;
-    Client Client(io_context, ip, port);
-    Client.runClient();
+    asio::io_context ioContext;
+    Client new_client(ioContext, argv[1], argv[2]);
+
+    new_client.getNewMessage();
+    std::thread ioThread([&ioContext]() { ioContext.run(); });
+    for (;;) {
+        std::string newMessage = {0};
+        std::getline(std::cin, newMessage);
+        newMessage += "\n";
+        new_client.sendMessage(newMessage);
+    }
+    ioContext.stop();
+    ioThread.join();
     return 0;
 }

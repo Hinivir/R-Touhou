@@ -9,31 +9,28 @@
 #define CLIENT_HPP
 
     #include <iostream>
-    #include <queue>
-    #include <vector>
     #include <cstdlib>
 
     #include <asio.hpp>
-    #include <SFML/Graphics.hpp>
 
     class Client {
     private:
-        bool disconnectFlag_ = false;
+        asio::io_context& ioContext_;
         asio::ip::udp::socket socket_;
-        asio::ip::udp::endpoint server_endpoint_;
-        std::array<char, 1024> recv_buf_;
-        std::string input_buffer_;
-        std::mutex input_mutex_;
-        std::queue<std::string> history_received_messages;
+        asio::ip::udp::endpoint serverEndpoint_;
+        asio::ip::udp::endpoint senderEndpoint_;
+        std::array<char, 1024> receiveBuffer_;
+
 
     public:
-        Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);
+        Client(
+            asio::io_context& ioContext,
+            const std::string& serverAddress,
+            const std::string& serverPort
+        );
         ~Client();
         void sendMessage(const std::string& message);
         void getNewMessage();
-        void runClient();
-
-        void start_game();
 };
 
 #endif
