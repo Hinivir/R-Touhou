@@ -39,6 +39,8 @@ public:
 public:
     /// @brief Filepath of the sprite
     std::string filepath;
+    /// @brief If the sprite has to be hidden
+    bool hidden = false;
     /// @brief Color to apply on the sprite, including the alpha channel
     LType::Color modulate;
 };

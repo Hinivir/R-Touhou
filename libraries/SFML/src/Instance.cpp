@@ -87,6 +87,8 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             continue;
         }
         LType::Sprite &sprite = entity->getSprite();
+        if (sprite.hidden)
+            goto drawWindowIdOnLayerSpritesEndOfLoop;
         filepath = sprite.filepath;
         if (filepath.empty())
             goto drawWindowIdOnLayerSpritesEndOfLoop;
