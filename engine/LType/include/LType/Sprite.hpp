@@ -37,7 +37,9 @@ public:
     /// @return False if all the attributes are the same. Otherwise, True
     bool operator!=(LType::Sprite const &other) const;
 public:
+    /// @brief Filepath of the sprite
     std::string filepath;
+    /// @brief Color to apply on the sprite, including the alpha channel
     LType::Color modulate;
 };
 
