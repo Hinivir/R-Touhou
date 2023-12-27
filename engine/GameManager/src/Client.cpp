@@ -16,8 +16,9 @@ bool GameManager::Client::instantiate(GraphicClientProtocol::Layer::StackMapRef 
         return false;
     stackMap->insert({GRAPHIC_WINDOWID_DEFAULT, GraphicClientProtocol::Layer::Stack()});
     auto defaultWindowInputMap = stackMap->find(GRAPHIC_WINDOWID_DEFAULT);
-    if (defaultWindowInputMap != stackMap->end())
-        defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color(0.0, 0.0, 0.0))));
+    if (defaultWindowInputMap == stackMap->end())
+        return true;
+    defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color(0.0, 0.0, 0.0))));
     return true;
 }
 

@@ -13,6 +13,15 @@
 
 namespace GameManager {
 
+namespace Layer {
+
+enum Layers_e {
+    STATIC_BACKGROUND,
+    SPRITES,
+};
+
+}
+
 class Client : public GameManager::Base
 {
 // LOADER
