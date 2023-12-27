@@ -77,6 +77,7 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
     auto content = layer.content;
     auto iterator = layer.content.begin();
     bool filepathLoaded;
+    sf::Vector2f position;
     std::size_t filepathLoadedAt;
     std::string filepath;
 
@@ -113,6 +114,15 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
             _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
             _generalSprite.setScale(sf::Vector2f((sprite.flipH ? -1.0 : 1.0), (sprite.flipV ? -1.0 : 1.0)));
+            //
+            position.x = entity->getPosition().x;
+            position.y = entity->getPosition().y;
+            if (sprite.center) {
+                position.x -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).x * 0.5 * _generalSprite.getScale().x;
+                position.y -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).y * 0.5 * _generalSprite.getScale().y;
+            }
+            _generalSprite.setPosition(position);
+            //
             _renderWindow[windowId].draw(_generalSprite);
         }
         drawWindowIdOnLayerSpritesEndOfLoop:

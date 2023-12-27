@@ -9,6 +9,7 @@
 /// @brief Interfaces for LType entities
 
 #pragma once
+#include "LType/Attribute/Position.hpp"
 #include "LType/Sprite.hpp"
 
 namespace LType {
@@ -35,6 +36,15 @@ public:
     virtual LType::Sprite const &getSprite(void) const = 0;
     /// @brief Gets a reference to the contained LType::Sprite
     virtual LType::Sprite &getSprite(void) = 0;
+
+    // Position
+
+    /// @brief Sets the value of the contained LType::Attribute::Position
+    virtual void setPosition(LType::Attribute::Position const &sprite) = 0;
+    /// @brief Gets a const reference to the contained LType::Attribute::Position
+    virtual LType::Attribute::Position const &getPosition(void) const = 0;
+    /// @brief Gets a reference to the contained LType::Attribute::Position
+    virtual LType::Attribute::Position &getPosition(void) = 0;
 };
 
 }
