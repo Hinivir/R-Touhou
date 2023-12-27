@@ -112,6 +112,7 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
         if (filepathLoaded) {
             _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
             _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
+            _generalSprite.setScale(sf::Vector2f((sprite.flipH ? -1.0 : 1.0), (sprite.flipV ? -1.0 : 1.0)));
             _renderWindow[windowId].draw(_generalSprite);
         }
         drawWindowIdOnLayerSpritesEndOfLoop:

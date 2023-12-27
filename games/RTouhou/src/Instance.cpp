@@ -22,6 +22,7 @@ void RTouhou::Instance::init(void)
 
     if (fish) {
         fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
+        fish->getSprite().flipV = false;
         addFunctionProcessPhysics(fish, fishProcessPhysics);
     }
     std::cout << "Game running at " << getProcessPhysicsPerSec() << " physics per second" << std::endl;

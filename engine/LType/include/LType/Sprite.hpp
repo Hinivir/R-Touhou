@@ -37,6 +37,10 @@ public:
     /// @return False if all the attributes are the same. Otherwise, True
     bool operator!=(LType::Sprite const &other) const;
 public:
+    /// @brief If the sprite has to be flipped horizontaly
+    bool flipH = false;
+    /// @brief If the sprite has to be flipped vertically
+    bool flipV = false;
     /// @brief Filepath of the sprite
     std::string filepath;
     /// @brief If the sprite has to be hidden
