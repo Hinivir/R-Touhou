@@ -18,6 +18,7 @@ namespace Layer {
 enum Layers_e {
     STATIC_BACKGROUND,
     SPRITES,
+    TOTAL,
 };
 
 }
@@ -36,6 +37,12 @@ public:
     /// @brief Executes a process tick, every frame
     /// @param delta Time passed since last the process
     void processGraphic(LType::Delta const delta) override;
+// REFERENCES
+public:
+    /// @brief References to every main layer
+    GraphicClientProtocol::Layer::StackElement *_stackElementPtr[GameManager::Layer::TOTAL] = {
+        nullptr, nullptr
+    };
 };
 
 }

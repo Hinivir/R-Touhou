@@ -43,7 +43,7 @@ public:
     virtual void drawWindow(void) = 0;
     virtual void drawWindowAll(void) = 0;
     virtual void drawWindowId(GraphicClientProtocol::WindowId const windowId) = 0;
-    virtual void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack) = 0;
+    virtual void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack &stack) = 0;
     // IsOpen
     virtual bool isWindowOpen(void) const = 0;
     virtual bool isWindowAnyOpen(void) const = 0;

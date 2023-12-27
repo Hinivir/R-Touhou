@@ -6,15 +6,21 @@
 */
 
 /// @file
-/// @brief Layer of multiple sprites
+/// @brief Layer of multiple entites, displaying their sprites on the same layer
 
 #pragma once
+#include <list>
 #include "GraphicClientProtocol/Layer/Base.hpp"
-#include "GraphicClientProtocol/Sprite.hpp"
+#include "LType/EntityInstance.hpp"
 
 namespace GraphicClientProtocol { namespace Layer {
 
+/// @brief Layer of multiple entities, displaying their sprites on the same layer
 class Sprites : public GraphicClientProtocol::Layer::Base {
+
+public:
+    /// @brief List containing every entity of the layer
+    std::list<LType::EntityInstancePtr> content;
 
 };
 
