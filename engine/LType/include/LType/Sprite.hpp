@@ -10,6 +10,7 @@
 
 #pragma once
 #include <iostream>
+#include "LType/Color.hpp"
 
 namespace LType {
 
@@ -37,6 +38,7 @@ public:
     bool operator!=(LType::Sprite const &other) const;
 public:
     std::string filepath;
+    LType::Color modulate;
 };
 
 }

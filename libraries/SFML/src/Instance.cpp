@@ -110,6 +110,7 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
         }
         if (filepathLoaded) {
             _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
+            _generalSprite.setColor(LibrarySFML::colorConversion(entity->getSprite().modulate));
             _renderWindow[windowId].draw(_generalSprite);
         }
         iterator++;
