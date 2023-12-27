@@ -86,11 +86,10 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             iterator = layer.content.erase(iterator);
             continue;
         }
-        filepath = entity->getSprite().filepath;
-        if (filepath.empty()) {
-            iterator++;
-            continue;
-        }
+        LType::Sprite &sprite = entity->getSprite();
+        filepath = sprite.filepath;
+        if (filepath.empty())
+            goto drawWindowIdOnLayerSpritesEndOfLoop;
         filepathLoaded = false;
         for (std::size_t i = 0; i < _textureKeys.size(); i++) {
             if (_textureKeys[i] != filepath)
@@ -110,9 +109,10 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
         }
         if (filepathLoaded) {
             _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
-            _generalSprite.setColor(LibrarySFML::colorConversion(entity->getSprite().modulate));
+            _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
             _renderWindow[windowId].draw(_generalSprite);
         }
+        drawWindowIdOnLayerSpritesEndOfLoop:
         iterator++;
     }
 }
