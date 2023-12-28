@@ -27,5 +27,6 @@ _deps
 # R-TYPE
 L-Type
 L-Type-*
+!L-Type*/
 a.out
 game

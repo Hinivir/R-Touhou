@@ -113,7 +113,7 @@ void Graphic::AGraphic::drawWindowId(GraphicClientProtocol::WindowId const windo
     return drawWindowIdOnStack(windowId, defaultWindowStack->second);
 }
 
-void Graphic::AGraphic::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack)
+void Graphic::AGraphic::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack &stack)
 { }
 
 // IsOpen

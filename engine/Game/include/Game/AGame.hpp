@@ -46,6 +46,12 @@ public:
     /// @param entity Reference to an `EntityInstance`
     /// @return Copy of the refence to the `EntityInstance`
     LType::EntityInstance addEntity(LType::EntityInstance entity) override;
+    /// @return A constant reference of `_entityStack`
+    Game::EntityStack const &getEntityStack(void) const override;
+    /// @return A constant reference of `_entityStackNew`
+    Game::EntityPtrStack const &getEntityStackNew(void) const;
+    /// @brief Empties `_entityStackNew`
+    void clearEntityStackNew(void);
 
     // << ENGINE >>
 
@@ -68,6 +74,8 @@ protected:
 
     /// @brief Contains entities added to the game
     Game::EntityStack _entityStack;
+    /// @brief Contains entities added to the game and still not treated by the engine
+    Game::EntityPtrStack _entityStackNew;
 
     // << ENGINE >>
 

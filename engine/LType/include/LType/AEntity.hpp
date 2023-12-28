@@ -22,6 +22,17 @@ public:
     // Init
 
     void init(void) override;
+
+    // << ATTRIBUTES >>
+
+    // Sprite
+
+    void setSprite(LType::Sprite const &sprite) override;
+    LType::Sprite const &getSprite(void) const override;
+    LType::Sprite &getSprite(void) override;
+protected:
+    // Sprite
+    LType::Sprite _sprite;
 };
 
 }

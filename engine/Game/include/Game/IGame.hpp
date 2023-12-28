@@ -26,6 +26,8 @@ namespace Game {
 
 /// @brief List of multiple LType::EntityInstance elements
 using EntityStack = std::vector<LType::EntityInstance>;
+/// @brief List of multiple LType::EntityInstancePtr elements
+using EntityPtrStack = std::vector<LType::EntityInstancePtr>;
 
 /// @brief Key of a AttributeStack
 using AttributeStackKey = LType::EntityInstancePtr;
@@ -79,6 +81,12 @@ public:
     /// @param entity Reference to an `EntityInstance`
     /// @return Copy of the refence to the `EntityInstance`
     virtual LType::EntityInstance addEntity(LType::EntityInstance entity) = 0;
+    /// @return A constant reference of `_entityStack`
+    virtual Game::EntityStack const &getEntityStack(void) const = 0;
+    /// @return A constant reference of `_entityStackNew`
+    virtual Game::EntityPtrStack const &getEntityStackNew(void) const = 0;
+    /// @brief Empties `_entityStackNew`
+    virtual void clearEntityStackNew(void) = 0;
 
     // << ENGINE >>
 
