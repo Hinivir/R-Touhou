@@ -14,6 +14,7 @@
     #include <cstdlib>
 
     #include <asio.hpp>
+    #include <asio/ip/address.hpp>
     #include <SFML/Graphics.hpp>
 
     class Client {

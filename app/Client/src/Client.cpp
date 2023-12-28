@@ -27,7 +27,7 @@ static const std::map<sf::Keyboard::Key, std::string> inputHandler = {
 
 Client::Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port)
     : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0)),
-        server_endpoint_(asio::ip::address::from_string(server_ip), server_port) {
+        server_endpoint_(asio::ip::make_address(server_ip), server_port) {
         }
 
 Client::~Client() {}
