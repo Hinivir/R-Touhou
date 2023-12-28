@@ -19,12 +19,12 @@ FetchContent_Declare(SFML
 )
 FetchContent_MakeAvailable(SFML)
 
-FetchContent_Declare(
-  asiocmake
-  GIT_REPOSITORY "https://github.com/OlivierLDff/asio.cmake"
-  GIT_TAG        "main"
+FetchContent_Declare(asiocmake
+  GIT_REPOSITORY https://github.com/OlivierLDff/asio.cmake.git
+  GIT_TAG        main
 )
 FetchContent_MakeAvailable(asiocmake)
+
 
 project(${PROJECT_NAME} LANGUAGES CXX)
 

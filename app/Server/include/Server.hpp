@@ -18,7 +18,7 @@ class Server
 {
     private:
         bool isChatLocked = false;
-        asio::io_service io_service;
+        asio::io_context io_service;
         udp::socket server_socket;
         std::vector<udp::endpoint> connectedClients;
         std::vector<udp::endpoint> readyClients;
