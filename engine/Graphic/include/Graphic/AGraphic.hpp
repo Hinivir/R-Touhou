@@ -40,7 +40,7 @@ public:
     void drawWindow(void) final;
     void drawWindowAll(void) override;
     void drawWindowId(GraphicClientProtocol::WindowId const windowId) override;
-    void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack) override;
+    void drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack &stack) override;
     // IsOpen
     bool isWindowOpen(void) const final;
     bool isWindowAnyOpen(void) const override;
