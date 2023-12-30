@@ -1,0 +1,59 @@
+name:  Tests build and check style
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+permissions:
+  contents: write
+  checks: write
+
+jobs:
+  check_compilation:
+    strategy:
+        max-parallel: 2
+        matrix:
+            os : [ubuntu-latest, windows-latest]
+            include:
+                - os: ubuntu-latest
+                  container: hinivir/r-touhou
+                  executables: app/Client/L-Type-Client, app/Server/L-Type-Server
+                - os: windows-latest
+                  executables: app/Client/Release/L-Type-Client.exe, app/Server/Release/L-Type-Server.exe
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    name: Check compilation
+    steps:
+        - name: Checkout file
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        - name: Build
+          run: ${{ matrix.os }}
+          timeout-minutes: 10
+
+        - name: Check file
+          uses: andstor/file-existence-action@v2
+          with:
+            files: "${{ matrix.executables }}"
+            fail: true
+
+  check_style:
+    needs: [check_compilation]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          clang_format: true
+          continue_on_error: false
