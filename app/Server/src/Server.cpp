@@ -55,15 +55,31 @@ void Server::notifyGameReady()
 void Server::connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
 {
     std::string message(buffer.data(), bytes_received);
-    if (std::strcmp(message.c_str(), "connect\n") == 0) {
-        std::cout << "Client connected: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
-        connectedClients.push_back(client_endpoint);
-        std::string confirmationMessage = "101:You are connected!";
-        try {
-            server_socket.send_to(asio::buffer(confirmationMessage), client_endpoint);
-        } catch (std::exception const &e) {
-            server_socket.send_to(asio::buffer("102:Error Connection!"), client_endpoint);
-            std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+    std::string confirmationMessage = "101:You are connected!\n";
+        if (std::strcmp(message.c_str(), "connect\n") == 0) {
+        if (playerCount < maxPlayers) {
+            std::string playerMessage = "You are connected as player " + std::to_string(playerCount + 1) + "!\n";
+            std::string nbPlayer = std::to_string(playerCount) + " players connected\n";
+            try {
+                server_socket.send_to(asio::buffer(confirmationMessage), client_endpoint);
+                server_socket.send_to(asio::buffer(playerMessage), client_endpoint);
+                server_socket.send_to(asio::buffer(nbPlayer), client_endpoint);
+            } catch (std::exception const &e) {
+                server_socket.send_to(asio::buffer("102:Error Connection!\n"), client_endpoint);
+                std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+            }
+            std::cout << playerMessage << playerCount + 1 << ": " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+            connectedClients.push_back(client_endpoint);
+            playerCount++;
+            if (playerCount == maxPlayers)
+                notifyGameReady();
+        } else {
+            std::string fullMessage = "102:Server is full. Cannot accept more players.\n";
+            try {
+                server_socket.send_to(asio::buffer(fullMessage), client_endpoint);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending full message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+            }
         }
     }
     else if (std::strcmp(message.c_str(), "disconnect\n") == 0) {
@@ -106,7 +122,6 @@ void Server::broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes
         }
     }
 }
-
 
 void Server::acceptClients()
 {
