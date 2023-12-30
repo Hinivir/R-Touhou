@@ -56,10 +56,12 @@ void Server::connectClient(const udp::endpoint& client_endpoint, const std::arra
 {
     std::string message(buffer.data(), bytes_received);
     std::string confirmationMessage = "101:You are connected!\n";
-        if (std::strcmp(message.c_str(), "connect\n") == 0) {
+    if (std::strcmp(message.c_str(), "connect\n") == 0) {
         if (playerCount < maxPlayers) {
             std::string playerMessage = "You are connected as player " + std::to_string(playerCount + 1) + "!\n";
             std::string nbPlayer = std::to_string(playerCount) + " players connected\n";
+            std::string newUserMessage = "New user connected: " + client_endpoint.address().to_string() + ":" + std::to_string(client_endpoint.port()) + "\n";
+            broadcastMessage(newUserMessage, newUserMessage.size(), client_endpoint);
             try {
                 server_socket.send_to(asio::buffer(confirmationMessage), client_endpoint);
                 server_socket.send_to(asio::buffer(playerMessage), client_endpoint);
@@ -101,23 +103,19 @@ void Server::connectClient(const udp::endpoint& client_endpoint, const std::arra
         }
     }
     else
-        broadcastMessage(buffer, bytes_received, client_endpoint);
+        broadcastMessage(buffer.data(), bytes_received, client_endpoint);
     if (std::find(connectedClients.begin(), connectedClients.end(), client_endpoint) == connectedClients.end())
         connectedClients.push_back(client_endpoint);
 }
 
-void Server::broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const asio::ip::udp::endpoint& sender)
+void Server::broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender)
 {
-    std::string message(buffer.data(), bytes_received);
-
     for (const auto& client : connectedClients) {
         if (client != sender) {
-            if (message != "connect") {
-                try {
-                    server_socket.send_to(asio::buffer(message), client);
-                } catch (std::exception const &e) {
-                    std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
-                }
+            try {
+                server_socket.send_to(asio::buffer(message.c_str(), messageSize), client);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
             }
         }
     }

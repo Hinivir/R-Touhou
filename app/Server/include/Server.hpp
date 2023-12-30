@@ -34,7 +34,7 @@ class Server
         void startServer(void);
         void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
         void acceptClients(void);
-        void broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const udp::endpoint& sender);
+        void broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender);
         void notifyGameReady(void);
 };
 #endif
