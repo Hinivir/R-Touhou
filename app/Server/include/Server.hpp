@@ -18,8 +18,6 @@
     #define ERROR "102: Error sending confirmation message to client!\n"
     #define READY "104: You are ready!\n"
     #define SERVER_FULL "105: Server is full!\n"
-
-
     using asio::ip::udp;
 
     class Server
