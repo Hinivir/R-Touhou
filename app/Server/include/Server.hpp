@@ -11,6 +11,7 @@
     #include <iostream>
     #include <vector>
     #include <asio.hpp>
+    #include <map>
 
 using asio::ip::udp;
 
@@ -30,6 +31,10 @@ class Server
     public:
         Server(const std::string& ip, int const port);
         ~Server(void);
+        static const std::map<std::string, std::function<void(Server &, const udp::endpoint&, const std::array<char, 2048>&, size_t)>> serverCommandHandler;
+        void handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+        void handleDisconnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+        void handleReady(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
         void closeServer(void);
         void startServer(void);
         void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
