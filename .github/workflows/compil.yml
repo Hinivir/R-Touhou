@@ -33,7 +33,6 @@ jobs:
             fetch-depth: 0
 
         - name: Build
-          on: ${{ matrix.os }}
           run: ${{ matrix.build }}
           timeout-minutes: 10
 
