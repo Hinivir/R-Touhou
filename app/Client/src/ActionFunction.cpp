@@ -7,35 +7,59 @@
 
 #include "../include/Client.hpp"
 
+static std::size_t SPEED = 5;
+
+bool Client::checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY) {
+    if (std::abs(newPosX - otherPosX) < 50 && std::abs(newPosY - otherPosY) < 50)
+        return true;
+    return false;
+}
+
 void Client::upFunction(bool isReceived) {
-    if (isReceived) {
-        this->other_player.pos_y -= 1;
-    } else {
-        this->player.pos_y -= 1;
+    int newPosY = isReceived ? this->other_player.pos_y - SPEED : this->player.pos_y - SPEED;
+    if (!checkCollision(this->player.pos_x, newPosY, this->other_player.pos_x, this->other_player.pos_y)) {
+        if (isReceived) {
+            this->other_player.pos_y -= SPEED;
+        } else {
+            this->player.pos_y -= SPEED;
+            this->sendMessage("UP");
+        }
     }
 }
 
 void Client::downFunction(bool isReceived) {
-    if (isReceived) {
-        this->other_player.pos_y += 1;
-    } else {
-        this->player.pos_y += 1;
+    int newPosY = isReceived ? this->other_player.pos_y + SPEED : this->player.pos_y + SPEED;
+    if (!checkCollision(this->player.pos_x, newPosY, this->other_player.pos_x, this->other_player.pos_y)) {
+        if (isReceived) {
+            this->other_player.pos_y += SPEED;
+        } else {
+            this->player.pos_y += SPEED;
+            this->sendMessage("DOWN");
+        }
     }
 }
 
 void Client::leftFunction(bool isReceived) {
-    if (isReceived) {
-        this->other_player.pos_x -= 1;
-    } else {
-        this->player.pos_x -= 1;
+    int newPosX = isReceived ? this->other_player.pos_x - SPEED : this->player.pos_x - SPEED;
+    if (!checkCollision(newPosX, this->player.pos_y, this->other_player.pos_x, this->other_player.pos_y)) {
+        if (isReceived) {
+            this->other_player.pos_x -= SPEED;
+        } else {
+            this->player.pos_x -= SPEED;
+            this->sendMessage("LEFT");
+        }
     }
 }
 
 void Client::rightFunction(bool isReceived) {
-    if (isReceived) {
-        this->other_player.pos_x += 1;
-    } else {
-        this->player.pos_x += 1;
+    int newPosX = isReceived ? this->other_player.pos_x + SPEED : this->player.pos_x + SPEED;
+    if (!checkCollision(newPosX, this->player.pos_y, this->other_player.pos_x, this->other_player.pos_y)) {
+        if (isReceived) {
+            this->other_player.pos_x += SPEED;
+        } else {
+            this->player.pos_x += SPEED;
+            this->sendMessage("RIGHT");
+        }
     }
 }
 

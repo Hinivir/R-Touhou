@@ -69,7 +69,7 @@ void Client::getNewMessage()
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
                 std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                std::cout << "Received message: " << message;
+                std::cout << message << std::endl;
                 this->ParseMessage(message);
                 this->getNewMessage();
             } else {
@@ -82,19 +82,35 @@ void Client::getNewMessage()
 //this is a temporary function, we will have to change it with the game code
 void Client::runGame()
 {
+    //setup players
+    if (this->player.player_number == 1)
+        this->other_player.player_number = 2;
+    else
+        this->other_player.player_number = 1;
+    this->player.pos_x = 50;
+    this->player.pos_y = this->player.player_number * 100 + 50;
+    this->other_player.pos_x = 50;
+    this->other_player.pos_y = this->other_player.player_number * 100 + 50;
+    //
     sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
 
-    sf::CircleShape player_shape(10.f);
+    sf::RectangleShape player_shape(sf::Vector2f(50.f, 50.f));
     sf::Vector2i player_pos(this->player.pos_x, this->player.pos_y);
 
-    sf::CircleShape other_shape(10.f);
+    sf::RectangleShape other_shape(sf::Vector2f(50.f, 50.f));
     sf::Vector2i other_pos(this->other_player.pos_x, this->other_player.pos_y);
 
     player_shape.setPosition(player_pos.x, player_pos.y);
-    player_shape.setFillColor(sf::Color::Green);
+    if (this->player.player_number == 1)
+        player_shape.setFillColor(sf::Color::Red);
+    else
+        player_shape.setFillColor(sf::Color::Green);
 
     other_shape.setPosition(other_pos.x, other_pos.y);
-    other_shape.setFillColor(sf::Color::Red);
+    if (this->other_player.player_number == 1)
+        other_shape.setFillColor(sf::Color::Red);
+    else
+        other_shape.setFillColor(sf::Color::Green);
 
     while (window.isOpen()) {
         sf::Vector2i new_player_pos(this->player.pos_x, this->player.pos_y);
@@ -104,7 +120,6 @@ void Client::runGame()
             if (event.type == sf::Event::KeyPressed) {
                 for (auto const& [key, value] : inputHandler) {
                     if (event.key.code == key) {
-                        this->sendMessage(value.first);
                         value.second(*this, false);
                     }
                 }

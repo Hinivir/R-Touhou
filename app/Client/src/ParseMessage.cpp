@@ -7,6 +7,8 @@
 
 #include "../include/Client.hpp"
 
+static std::size_t SPEED = 5;
+
 static const std::string RUN_GAME = "Game is ready! Let the fun begin!";//strcmp
 static const std::string CONNECTED = "101:You are connected!";//strcmp
 static const std::string CONNECTED_AS = "You are connected as player ";//strncmp

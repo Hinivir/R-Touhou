@@ -31,7 +31,7 @@ class Client {
 
         player_t player;
         player_t other_player;
-//        std::map <std::size_t, player_t> players;
+        std::vector <player_t> players;
         bool inGame = false;
 
     public:
@@ -50,6 +50,7 @@ class Client {
 
         void ParseMessage(const std::string message);
 
+        bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
         void upFunction(bool isReceived);
         void downFunction(bool isReceived);
         void leftFunction(bool isReceived);
