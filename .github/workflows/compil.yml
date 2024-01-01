@@ -18,8 +18,10 @@ jobs:
             include:
                 - os: ubuntu-latest
                   container: hinivir/r-touhou
+                  build: ./build.sh
                   executables: app/Client/L-Type-Client, app/Server/L-Type-Server
                 - os: windows-latest
+                  build: ./buil.bat
                   executables: app/Client/Release/L-Type-Client.exe, app/Server/Release/L-Type-Server.exe
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
@@ -31,7 +33,8 @@ jobs:
             fetch-depth: 0
 
         - name: Build
-          run: ${{ matrix.os }}
+          on: ${{ matrix.os }}
+          run: ${{ matrix.build }}
           timeout-minutes: 10
 
         - name: Check file
