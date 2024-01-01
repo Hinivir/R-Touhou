@@ -21,7 +21,7 @@ jobs:
                   build: ./build.sh
                   executables: app/Client/L-Type-Client, app/Server/L-Type-Server
                 - os: windows-latest
-                  build: ./buil.bat
+                  build:  cmd /c build.bat
                   executables: app/Client/Release/L-Type-Client.exe, app/Server/Release/L-Type-Server.exe
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
