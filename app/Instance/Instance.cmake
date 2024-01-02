@@ -1,44 +1,53 @@
 cmake_minimum_required(VERSION 3.5.X)
 
-
 set(CMAKE_CXX_STANDARD 20)
 
 set(L_TYPE_BINARY_NAME "L-Type")
 
 project(${L_TYPE_BINARY_NAME} LANGUAGES CXX)
 
-set(INCLUDE_L_TYPE)
+set(INSTANCE_FOLDER app/Instance)
 
-function(L_TYPE_ADD_DIRECTORY_NO_SRC ADDED_DIRECTORY)
-    target_include_directories(${L_TYPE_BINARY_NAME} PUBLIC ${ADDED_DIRECTORY}/include)
-endfunction()
+set(INSTANCE_INCLUDE
+                        app/Instance/include
+                        engine/SharedLibraryInfo/include
+                        engine/SharedLibraryLoader/include
+                        engine/Game/include
+                        engine/GameManager/include
+                        engine/Graphic/include
+                        engine/GraphicClientProtocol/include
+                        engine/GraphicManager/include
+                        engine/Input/include
+                        engine/LType/include)
 
-function(L_TYPE_ADD_DIRECTORY_BASE ADDED_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${ADDED_DIRECTORY})
-    file(READ ${ADDED_DIRECTORY}/src.txt SOURCE_FILES_CONTENT_L_TYPE)
-    string(REPLACE "\n" ";" SOURCE_FILES_L_TYPE ${SOURCE_FILES_CONTENT_L_TYPE})
-    add_executable(${L_TYPE_BINARY_NAME} ${SOURCE_FILES_L_TYPE})
-    l_type_add_directory_no_src(${ADDED_DIRECTORY})
-endfunction()
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${INSTANCE_FOLDER})
+set(CMAKE_RELEASE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${INSTANCE_FOLDER})
 
-function(L_TYPE_ADD_DIRECTORY ADDED_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${ADDED_DIRECTORY})
-    file(READ ${ADDED_DIRECTORY}/src.txt SOURCE_FILES_CONTENT_L_TYPE)
-    string(REPLACE "\n" ";" SOURCE_FILES_L_TYPE ${SOURCE_FILES_CONTENT_L_TYPE})
-    target_sources(${L_TYPE_BINARY_NAME} PUBLIC ${SOURCE_FILES_L_TYPE})
-    l_type_add_directory_no_src(${ADDED_DIRECTORY})
-endfunction()
+include(app/Instance/InstanceSrc.cmake)
+include(engine/Game/GameSrc.cmake)
+include(engine/GameManager/GameManagerSrc.cmake)
+include(engine/Graphic/GraphicSrc.cmake)
+include(engine/GraphicClientProtocol/GraphicClientProtocolSrc.cmake)
+include(engine/GraphicManager/GraphicManagerSrc.cmake)
+include(engine/Input/InputSrc.cmake)
+include(engine/LType/LTypeSrc.cmake)
+include(engine/SharedLibraryLoader/SharedLiBraryLoaderSrc.cmake)
 
-# BASE
-l_type_add_directory_base(app/Instance)
-# Directories WITH sources
-l_type_add_directory(engine/Game)
-l_type_add_directory(engine/GameManager)
-l_type_add_directory(engine/Graphic)
-l_type_add_directory(engine/GraphicClientProtocol)
-l_type_add_directory(engine/GraphicManager)
-l_type_add_directory(engine/Input)
-l_type_add_directory(engine/LType)
-l_type_add_directory(engine/SharedLibraryLoader)
-# Directories WITHOUT sources
-l_type_add_directory_no_src(engine/SharedLibraryInfo)
+set(SRC
+    ${SRC_INSTANCE}
+    ${SRC_GAME}
+    ${SRC_GAME_MANAGER}
+    ${SRC_GRAPHIC}
+    ${SRC_GRAPHIC_CLIENT_PROTOCOL}
+    ${SRC_GRAPHIC_MANAGER}
+    ${SRC_INPUT}
+    ${SRC_L_TYPE}
+    ${SRC_SHARED_LIBRARY_LOADER})
+
+add_executable(${L_TYPE_BINARY_NAME} ${SRC})
+
+target_include_directories(${L_TYPE_BINARY_NAME} PUBLIC ${INSTANCE_INCLUDE})
+
+if(DEFINED INSTALL)
+    install(TARGETS ${L_TYPE_BINARY_NAME} RUNTIME DESTINATION BIN)
+endif(DEFINED INSTALL)

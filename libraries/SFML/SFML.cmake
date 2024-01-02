@@ -1,43 +1,41 @@
 cmake_minimum_required(VERSION 3.5.X)
 
-
 set(CMAKE_CXX_STANDARD 20)
 
 set(SFML_BINARY_NAME "L-Type-Library-SFML")
 
 project(${SFML_BINARY_NAME} LANGUAGES CXX)
 
-set(INCLUDE_SFML)
+set(SFML_FOLDER libraries/SFML)
 
-function(SFML_ADD_DIRECTORY_NO_SRC ADDED_DIRECTORY)
-    target_include_directories(${SFML_BINARY_NAME} PUBLIC ${ADDED_DIRECTORY}/include)
-endfunction()
+set(SFML_INCLUDE
+                ${SFML_FOLDER}/include
+                engine/Graphic/include
+                engine/GraphicClientProtocol/include
+                engine/Input/include
+                engine/LType/include
+                engine/SharedLibraryInfo/include)
 
-function(SFML_ADD_DIRECTORY_BASE ADDED_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${ADDED_DIRECTORY})
-    file(READ ${ADDED_DIRECTORY}/src.txt SOURCE_FILES_CONTENT_SFML)
-    string(REPLACE "\n" ";" SOURCE_FILES_SFML ${SOURCE_FILES_CONTENT_SFML})
-    add_library(${SFML_BINARY_NAME} SHARED ${SOURCE_FILES_SFML})
-    sfml_add_directory_no_src(${ADDED_DIRECTORY})
-endfunction()
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${SFML_FOLDER})
+set(CMAKE_RELEASE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${SFML_FOLDER})
 
-function(SFML_ADD_DIRECTORY ADDED_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${ADDED_DIRECTORY})
-    file(READ ${ADDED_DIRECTORY}/src.txt SOURCE_FILES_CONTENT_SFML)
-    string(REPLACE "\n" ";" SOURCE_FILES_SFML ${SOURCE_FILES_CONTENT_SFML})
-    target_sources(${SFML_BINARY_NAME} PUBLIC ${SOURCE_FILES_SFML})
-    sfml_add_directory_no_src(${ADDED_DIRECTORY})
-endfunction()
+include(libraries/SFML/SFMLSrc.cmake)
+include(engine/Graphic/GraphicSrc.cmake)
+include(engine/GraphicClientProtocol/GraphicClientProtocolSrc.cmake)
+include(engine/Input/InputSrc.cmake)
+include(engine/LType/LTypeSrc.cmake)
 
-# BASE
-sfml_add_directory_base(libraries/SFML)
-# Directories WITH sources
-sfml_add_directory(engine/Graphic)
-sfml_add_directory(engine/GraphicClientProtocol)
-sfml_add_directory(engine/Input)
-sfml_add_directory(engine/LType)
-# Directories WITHOUT sources
-sfml_add_directory_no_src(engine/SharedLibraryInfo)
+set(SRC
+        ${GRAPHIC_SRC}
+        ${GRAPHIC_CLIENT_PROTOCOL_SRC}
+        ${INPUT_SRC}
+        ${LTYPE_SRC})
+
+add_library(${SFML_BINARY_NAME} SHARED ${SFML_SRC})
+
+target_sources(${SFML_BINARY_NAME} PUBLIC ${SRC})
+
+target_include_directories(${SFML_BINARY_NAME} PUBLIC ${SFML_INCLUDE})
 
 set_target_properties(${SFML_BINARY_NAME} PROPERTIES PREFIX "")
 
