@@ -7,6 +7,7 @@
 
 #pragma once
 #include <vector>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -43,6 +44,7 @@ protected:
     /// @param layer (GraphicClientProtocol::Layer::Sprites) Layer used
     void _drawWindowIdOnLayerSprites(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Sprites &layer);
 protected:
+    sf::RectangleShape _areaShape;
     sf::RenderWindow _renderWindow[GRAPHIC_WINDOWID_MAX];
     std::vector<std::string> _textureKeys;
     std::vector<sf::Texture> _textureValue;

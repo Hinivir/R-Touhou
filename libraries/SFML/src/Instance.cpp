@@ -14,7 +14,11 @@
 // Constructor and Destructor
 
 LibrarySFML::Instance::Instance(void)
-{ }
+{
+    _areaShape.setFillColor(sf::Color::Transparent);
+    _areaShape.setOutlineColor(sf::Color::Yellow);
+    _areaShape.setOutlineThickness(2.0);
+}
 
 LibrarySFML::Instance::~Instance()
 {
@@ -85,8 +89,10 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
     auto iterator = layer.content.begin();
     bool filepathLoaded;
     sf::Vector2f position;
+    sf::Vector2f origin;
     std::size_t filepathLoadedAt;
     std::string filepath;
+    bool displayAreas = sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
 
     while (iterator != layer.content.end()) {
         LType::EntityInstance entity = (*iterator).lock();
@@ -122,15 +128,23 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
             _generalSprite.setScale(sf::Vector2f((sprite.flipH ? -1.0 : 1.0), (sprite.flipV ? -1.0 : 1.0)));
             //
+            origin = sf::Vector2f(_textureValue[filepathLoadedAt].getSize());
+            origin.x /= 2; origin.y /= 2;
+            _generalSprite.setOrigin(origin);
+            //
             position.x = entity->getPosition().x;
             position.y = entity->getPosition().y;
-            if (sprite.center) {
-                position.x -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).x * 0.5 * _generalSprite.getScale().x;
-                position.y -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).y * 0.5 * _generalSprite.getScale().y;
-            }
+            if (!sprite.center)
+                position += origin;
             _generalSprite.setPosition(position);
             //
             _renderWindow[windowId].draw(_generalSprite);
+            //
+            if (displayAreas) {
+                _areaShape.setPosition(position - origin);
+                _areaShape.setSize(sf::Vector2f(_generalSprite.getGlobalBounds().height, _generalSprite.getGlobalBounds().width));
+                _renderWindow[windowId].draw(_areaShape);
+            }
         }
         drawWindowIdOnLayerSpritesEndOfLoop:
         iterator++;

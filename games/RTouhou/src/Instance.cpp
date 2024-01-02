@@ -38,8 +38,8 @@ void RTouhou::Instance::init(void)
     if (fish) {
         fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
         fish->getSprite().flipV = false;
-        fish->getPosition().x = 100.0;
-        fish->getPosition().y = 100.0;
+//        fish->getPosition().x = 100.0;
+//        fish->getPosition().y = 100.0;
         addFunctionProcessPhysics(fish, fishProcessPhysics);
         addFunctionProcessGraphic(fish, fishProcessGraphic);
     }
