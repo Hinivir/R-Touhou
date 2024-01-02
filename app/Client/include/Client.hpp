@@ -43,12 +43,12 @@ class Client {
             const std::string& serverPort
         );
         ~Client();
-        void handleMessageInGame(const std::string& message);
         void sendMessage(const std::string& message);
         void getNewMessage();
-        void runGame();
-
+        void handleMessageInGame(const std::string& message);
         void ParseMessage(const std::string message);
+
+        void runGame();
 
         bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
         void upFunction(bool isReceived);
@@ -57,7 +57,5 @@ class Client {
         void rightFunction(bool isReceived);
         void actionFunction(bool isReceived);
         void quitFunction(bool isReceived);
-//        void addNewPlayer();
-//        void changePlayer(std::size_t index);
 };
 #endif
