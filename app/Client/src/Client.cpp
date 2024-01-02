@@ -24,7 +24,7 @@ static const std::vector<sf::Color> colors = {
     sf::Color::Magenta,
     sf::Color::Cyan
 };
-
+//remplacer le bool par le numero du player
 static const std::map<sf::Keyboard::Key,std::pair<std::string,std::function<void(Client &, bool)>>> inputHandler = {
     {sf::Keyboard::Z, {"UP", &Client::upFunction}},
     {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
@@ -67,6 +67,7 @@ void Client::handleMessageInGame(const std::string &message)
 {
     for (auto const& [key, value] : inputHandler) {
         if (message == value.first) {
+            //remplacer le bool par le numero du player
             value.second(*this, true);
         }
     }
@@ -136,6 +137,7 @@ void Client::runGame()
             if (event.type == sf::Event::KeyPressed) {
                 for (auto const& [key, value] : inputHandler) {
                     if (event.key.code == key) {
+                        //remplacer le bool par le numero du player
                         value.second(*this, false);
                     }
                 }
