@@ -20,7 +20,6 @@ using PositionAxis = float;
 using PositionStruct = LType::Attribute::GenericAxis3Struct_s<LType::Attribute::PositionAxis>;
 
 /// @brief Class used for xyz positions
-class Position : public LType::Attribute::GenericAxis3<LType::Attribute::PositionAxis>
-{};
+using Position = LType::Attribute::GenericAxis3<LType::Attribute::PositionAxis>;
 
 }}
