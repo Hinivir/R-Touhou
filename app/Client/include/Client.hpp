@@ -9,32 +9,53 @@
 #define CLIENT_HPP
 
     #include <iostream>
-    #include <queue>
-    #include <vector>
     #include <cstdlib>
+    #include <array>
 
     #include <asio.hpp>
-    #include <asio/ip/address.hpp>
-    #include <SFML/Graphics.hpp>
 
-    class Client {
+typedef struct {
+    std::size_t player_number;
+    std::size_t pos_x;
+    std::size_t pos_y;
+    bool isConnected = false;
+} player_t;
+
+class Client {
     private:
-        bool disconnectFlag_ = false;
+        asio::io_context& ioContext_;
         asio::ip::udp::socket socket_;
-        asio::ip::udp::endpoint server_endpoint_;
-        std::array<char, 1024> recv_buf_;
-        std::string input_buffer_;
-        std::mutex input_mutex_;
-        std::queue<std::string> history_received_messages;
+        asio::ip::udp::endpoint serverEndpoint_;
+        asio::ip::udp::endpoint senderEndpoint_;
+        std::array<char, 1024> receiveBuffer_;
+
+        player_t player;
+        player_t other_player;
+        std::vector <player_t> players;
+        bool inGame = false;
 
     public:
-        Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);
+        using KeyFunction = std::function<void(bool)>;
+
+        Client(
+            asio::io_context& ioContext,
+            const std::string& serverAddress,
+            const std::string& serverPort
+        );
         ~Client();
         void sendMessage(const std::string& message);
         void getNewMessage();
-        void runClient();
+        void handleMessageInGame(const std::string& message);
+        void ParseMessage(const std::string message);
 
-        void start_game();
+        void runGame();
+
+        bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
+        void upFunction(bool isReceived);
+        void downFunction(bool isReceived);
+        void leftFunction(bool isReceived);
+        void rightFunction(bool isReceived);
+        void actionFunction(bool isReceived);
+        void quitFunction(bool isReceived);
 };
-
 #endif

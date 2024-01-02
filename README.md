@@ -32,12 +32,42 @@ The purpose of the project is to implement a multithreaded server and a graphica
   
 ## <a id="titre2"></a>2. How to use R-Type  
   
-Run the following commands:  
-  
-```bash  
-# Encore à confirmer  
-```  
-  
+### Build and setup
+
+First, you need to build the project to do so, create, or go to, a file name **build** then executes the following commands:
+
+```bash
+cd build/
+cmake ..
+```
+
+The binaries will be generated and the necessary dependancies will be installed.
+
+### Launch the server
+
+The binary of the server can be found in **/app/Server/**.<br />
+You can launch the server by running this command:
+
+```bash
+./L-Type-Server [ip] [port]
+```
+
+where **ip** is the ip you want the other users to connect, and **port** is the port where the server will be running.
+
+### Connect a client
+
+The binary of the client can be found in **/app/Client/**.<br />
+You can launch a client by running this command:
+
+```bash
+./L-Type-Client [ip] [port]
+```
+
+where **ip** is the ip where the server is running, and **port** is the port where the server runs.<br />
+You can connect as many clients as you want.
+
+### Testing the program
+
 To check that the program is running correctly, you can use this command to **run tests**:  
   
 ```bash  
