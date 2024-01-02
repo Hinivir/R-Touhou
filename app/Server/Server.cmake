@@ -18,3 +18,8 @@ add_executable(${SERVER_BINARY_NAME} ${SRC})
 
 target_include_directories(${SERVER_BINARY_NAME} PUBLIC ${SERVER_INCLUDE})
 target_link_libraries(${SERVER_BINARY_NAME} PRIVATE asio)
+
+
+if (DEFINED INSTALL)
+  install(TARGETS ${SERVER_BINARY_NAME} RUNTIME DESTINATION BIN)
+endif (DEFINED INSTALL)
