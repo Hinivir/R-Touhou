@@ -14,12 +14,16 @@ static LTYPE_FUNCTION_PROCESS_PHYSICS(fishProcessPhysics, fish, delta)
 {
 //    std::cout << (fish ? "fish" : "fishn't") << std::endl;
 //    std::cout << _game.getProcessPhysicsPerSec() << " " << delta << std::endl;
+    if (!fish)
+        return;
+    float speed = 100.0;
+    fish->getPosition().x += speed * delta;
 }
 
 static LTYPE_FUNCTION_PROCESS_GRAPHIC(fishProcessGraphic, fish, _delta)
 {
-    if (fish)
-        fish->getSprite().flipH = !fish->getSprite().flipH;
+//    if (fish)
+//        fish->getSprite().flipH = !fish->getSprite().flipH;
 }
 
 void RTouhou::Instance::init(void)
