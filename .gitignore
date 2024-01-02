@@ -23,6 +23,8 @@ cpm-package-lock.cmake
 CPM_modules
 cmake
 _deps
+CPackConfig.cmake
+CPackSourceConfig.cmake
 
 # R-TYPE
 L-Type
