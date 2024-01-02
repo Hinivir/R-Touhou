@@ -8,6 +8,7 @@
 #include <iostream>
 #include <SFML/Window/Event.hpp>
 #include "LibrarySFML/Conversion.hpp"
+#include "LibrarySFML/Inputs.hpp"
 #include "LibrarySFML/Instance.hpp"
 
 // Constructor and Destructor
@@ -40,6 +41,12 @@ void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(GraphicClientProtoco
             break;
         }
     }
+    inputMapWindow.prepareInputs();
+    for (std::size_t i = 0; i < KEYBOARD_TO_INPUT_LIST_LENGTH; i++) {
+        if (sf::Keyboard::isKeyPressed(KEYBOARD_TO_INPUT_LIST[i].keyboard))
+            inputMapWindow << KEYBOARD_TO_INPUT_LIST[i].input;
+    }
+    inputMapWindow.confirmInputs();
 }
 
 // << WINDOW >>

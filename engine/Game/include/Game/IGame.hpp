@@ -13,6 +13,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include "Input/InputMapWindow.hpp"
 #include "LType/Attribute/FilePath.hpp"
 #include "LType/Attribute/Position.hpp"
 #include "LType/Entity.hpp"
@@ -57,6 +58,24 @@ public:
 
     /// @brief Initialization of the game
     virtual void init(void) = 0;
+
+    // << INPUTS >>
+
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    virtual void refreshInputs(void) = 0;
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    virtual void refreshInputs(Input::InputMapWindow const &inputMapWindow) = 0;
+
+    /// @brief Checks if an input is being currently pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    virtual bool isInputPressed(LType::InputList const input) = 0;
+    /// @brief Checks if an input has just been pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    virtual bool hasInputJustBeenPressed(LType::InputList const input) = 0;
 
     // << STACKS >>
 
