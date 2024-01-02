@@ -40,7 +40,7 @@ public:
     bool event[INPUT_INPUT_MAP_EVENT_SIZE];
     std::size_t eventSize = INPUT_INPUT_MAP_EVENT_SIZE;
     Input::InputMapInputValue input[INPUT_INPUT_MAP_INPUT_SIZE];
-    std::size_t inputSize = INPUT_INPUT_MAP_EVENT_SIZE;
+    std::size_t inputSize = INPUT_INPUT_MAP_INPUT_SIZE;
 private:
     /// @brief List of inputs that have been updated this frame
     bool _inputUpdate[INPUT_INPUT_MAP_INPUT_SIZE];
