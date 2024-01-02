@@ -9,10 +9,14 @@
 
 static std::size_t SPEED = 5;
 
-static const std::string RUN_GAME = "104: You are ready!";
 static const std::string CONNECTED = "101: You are connected!";
+static const std::string DISCONNECTED = "103: You are disconnected!";
+static const std::string RUN_GAME = "104: You are ready!";
+static const std::string SERVER_FULL = "105: Server is full!";
+
 static const std::string CONNECTED_AS = "You are connected as player ";
 static const std::string CONNECTED_PLAYER = " players connected";
+
 
 void Client::ParseMessage(const std::string message)
 {
