@@ -34,10 +34,28 @@ Game::ProcessPhysicsStack const &Game::AGame::getProcessPhysicsStack(void) const
     return _processPhysicsStack;
 }
 
+// Entity
+
 LType::EntityInstance Game::AGame::addEntity(LType::EntityInstance entity)
 {
     _entityStack.push_back(entity);
+    _entityStackNew.push_back(entity);
     return entity;
+}
+
+Game::EntityStack const &Game::AGame::getEntityStack(void) const
+{
+    return _entityStack;
+}
+
+Game::EntityPtrStack const &Game::AGame::getEntityStackNew(void) const
+{
+    return _entityStackNew;
+}
+
+void Game::AGame::clearEntityStackNew(void)
+{
+    _entityStackNew.clear();
 }
 
 // System

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27.7)
+cmake_minimum_required(VERSION 3.25.X)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -17,3 +17,4 @@ include(${SERVER_FOLDER}/ServerSrc.cmake)
 add_executable(${SERVER_BINARY_NAME} ${SRC})
 
 target_include_directories(${SERVER_BINARY_NAME} PUBLIC ${SERVER_INCLUDE})
+target_link_libraries(${SERVER_BINARY_NAME} PRIVATE asio)
