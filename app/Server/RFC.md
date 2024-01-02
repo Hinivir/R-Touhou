@@ -1,13 +1,19 @@
 # RFC server R-Touhou: Simple Communication Protocol  
   
----  
-  
-## Abstract  
+## Introduction  
+
 This document defines a simple communication protocol for client-server interaction using predefined status messages.  
   
----   
+---  
   
-## Status Messages  
+## Table of contents  
+  
+[1. Status Messages](#titre1)<br />
+[2. Usage](#titre2)<br />  
+  
+---  
+  
+## <a id="titre1"></a>1. Status Messages  
 The following status messages are defined for communication between the client and server:  
   
 **CONNECTED**: Indicates a successful connection.  
@@ -27,7 +33,7 @@ The following status messages are defined for communication between the client a
   
 ---  
   
-## Usage  
+## <a id="titre2"></a>2. Usage  
 Connection Establishment  
 The client initiates a connection request to the server.  
 Upon successful connection, the server responds with the **CONNECTED** message.  
