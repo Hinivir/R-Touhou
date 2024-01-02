@@ -14,6 +14,17 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+
+static const std::vector<sf::Color> colors = {
+    sf::Color::Red,
+    sf::Color::Green,
+    sf::Color::Blue,
+    sf::Color::Yellow,
+    sf::Color::Magenta,
+    sf::Color::Cyan
+};
+
 static const std::map<sf::Keyboard::Key,std::pair<std::string,std::function<void(Client &, bool)>>> inputHandler = {
     {sf::Keyboard::Z, {"UP", &Client::upFunction}},
     {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
@@ -70,7 +81,7 @@ void Client::getNewMessage()
             if (!error) {
                 std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                 std::cout << message << std::endl;
-                this->ParseMessage(message);
+                this->parseMessage(message);
                 this->getNewMessage();
             } else {
                 std::cerr << "Error receiving data: " << error.message() << std::endl;
@@ -83,12 +94,18 @@ void Client::getNewMessage()
 void Client::runGame()
 {
     //setup players
+    std::cout << "player number: " << this->player.player_number << std::endl;
+    for (auto const& player : this->players) {
+        std::cout << "players number: " << player.player_number << std::endl;
+    }
+
     if (this->player.player_number == 1)
         this->other_player.player_number = 2;
     else
         this->other_player.player_number = 1;
     this->player.pos_x = 50;
     this->player.pos_y = this->player.player_number * 100 + 50;
+    //loop on other players
     this->other_player.pos_x = 50;
     this->other_player.pos_y = this->other_player.player_number * 100 + 50;
     //
@@ -101,19 +118,18 @@ void Client::runGame()
     sf::Vector2i other_pos(this->other_player.pos_x, this->other_player.pos_y);
 
     player_shape.setPosition(player_pos.x, player_pos.y);
-    if (this->player.player_number == 1)
-        player_shape.setFillColor(sf::Color::Red);
-    else
-        player_shape.setFillColor(sf::Color::Green);
+    std::size_t color_index = this->player.player_number - 1;
+    player_shape.setFillColor(colors[color_index]);
 
+    //loop on other players
     other_shape.setPosition(other_pos.x, other_pos.y);
-    if (this->other_player.player_number == 1)
-        other_shape.setFillColor(sf::Color::Red);
-    else
-        other_shape.setFillColor(sf::Color::Green);
+    color_index = this->other_player.player_number - 1;
+    other_shape.setFillColor(colors[color_index]);
+    //
 
     while (window.isOpen()) {
         sf::Vector2i new_player_pos(this->player.pos_x, this->player.pos_y);
+        //loop on other players
         sf::Vector2i new_other_pos(this->other_player.pos_x, this->other_player.pos_y);
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -128,9 +144,11 @@ void Client::runGame()
                 window.close();
         }
         player_shape.setPosition(new_player_pos.x, new_player_pos.y);
+        //loop on other players
         other_shape.setPosition(new_other_pos.x, new_other_pos.y);
         window.clear();
         window.draw(player_shape);
+        //loop on other players
         window.draw(other_shape);
         window.display();
     }

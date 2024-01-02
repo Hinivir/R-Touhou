@@ -31,7 +31,7 @@ class Client {
 
         player_t player;
         player_t other_player;
-        std::vector <player_t> players;
+        std::vector <player_t> players = {};
         bool inGame = false;
 
     public:
@@ -46,7 +46,9 @@ class Client {
         void sendMessage(const std::string& message);
         void getNewMessage();
         void handleMessageInGame(const std::string& message);
-        void ParseMessage(const std::string message);
+        void parseMessage(const std::string message);
+        void addUsersWhenConnected(const std::string& message);
+        void addNewUser(const std::string& message);
 
         void runGame();
 
