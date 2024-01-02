@@ -39,7 +39,7 @@ public:
     void assignLayer(GraphicClientProtocol::Layer::Color layer);
     void assignLayer(GraphicClientProtocol::Layer::Sprites sprites);
 public:
-    GraphicClientProtocol::Layer::StackElementValue value = {0, GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color())};
+    GraphicClientProtocol::Layer::StackElementValue value = {0, GraphicClientProtocol::Layer::Color(LType::Color())};
     GraphicClientProtocol::Layer::LayerType type = GraphicClientProtocol::Layer::LayerType::UNKNOWN;
 
 };
