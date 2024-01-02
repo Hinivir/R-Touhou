@@ -40,7 +40,7 @@ protected:
     /// @brief Sprite
     LType::Sprite _sprite;
     /// @brief Position
-    LType::Attribute::Position _position;
+    LType::Attribute::Position _position = LType::Attribute::Position(0.0, 0.0, 0.0);
 };
 
 }
