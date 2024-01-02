@@ -8,6 +8,7 @@
 #include <iostream>
 #include <SFML/Window/Event.hpp>
 #include "LibrarySFML/Conversion.hpp"
+#include "LibrarySFML/Inputs.hpp"
 #include "LibrarySFML/Instance.hpp"
 
 // Constructor and Destructor
@@ -40,6 +41,12 @@ void LibrarySFML::Instance::refreshInputMapWindowIdOnWindow(GraphicClientProtoco
             break;
         }
     }
+    inputMapWindow.prepareInputs();
+    for (std::size_t i = 0; i < KEYBOARD_TO_INPUT_LIST_LENGTH; i++) {
+        if (sf::Keyboard::isKeyPressed(KEYBOARD_TO_INPUT_LIST[i].keyboard))
+            inputMapWindow << KEYBOARD_TO_INPUT_LIST[i].input;
+    }
+    inputMapWindow.confirmInputs();
 }
 
 // << WINDOW >>
@@ -72,17 +79,77 @@ void LibrarySFML::Instance::closeWindowId(GraphicClientProtocol::WindowId const 
 
 // Draw
 
-void LibrarySFML::Instance::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack const &stack)
+void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Sprites &layer)
+{
+    auto content = layer.content;
+    auto iterator = layer.content.begin();
+    bool filepathLoaded;
+    sf::Vector2f position;
+    std::size_t filepathLoadedAt;
+    std::string filepath;
+
+    while (iterator != layer.content.end()) {
+        LType::EntityInstance entity = (*iterator).lock();
+        if (!entity) {
+            iterator = layer.content.erase(iterator);
+            continue;
+        }
+        LType::Sprite &sprite = entity->getSprite();
+        if (sprite.hidden)
+            goto drawWindowIdOnLayerSpritesEndOfLoop;
+        filepath = sprite.filepath;
+        if (filepath.empty())
+            goto drawWindowIdOnLayerSpritesEndOfLoop;
+        filepathLoaded = false;
+        for (std::size_t i = 0; i < _textureKeys.size(); i++) {
+            if (_textureKeys[i] != filepath)
+                continue;
+            filepathLoaded = true;
+            filepathLoadedAt = i;
+            break;
+        }
+        if (!filepathLoaded) {
+            std::cout << "Loading " << filepath << std::endl;
+            _textureKeys.push_back(filepath);
+            _textureValue.push_back(sf::Texture());
+            if (_textureValue.back().loadFromFile(filepath)) {
+                filepathLoaded = true;
+                filepathLoadedAt = _textureValue.size() - 1;
+            }
+        }
+        if (filepathLoaded) {
+            _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
+            _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
+            _generalSprite.setScale(sf::Vector2f((sprite.flipH ? -1.0 : 1.0), (sprite.flipV ? -1.0 : 1.0)));
+            //
+            position.x = entity->getPosition().x;
+            position.y = entity->getPosition().y;
+            if (sprite.center) {
+                position.x -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).x * 0.5 * _generalSprite.getScale().x;
+                position.y -= sf::Vector2f(_textureValue[filepathLoadedAt].getSize()).y * 0.5 * _generalSprite.getScale().y;
+            }
+            _generalSprite.setPosition(position);
+            //
+            _renderWindow[windowId].draw(_generalSprite);
+        }
+        drawWindowIdOnLayerSpritesEndOfLoop:
+        iterator++;
+    }
+}
+
+void LibrarySFML::Instance::drawWindowIdOnStack(GraphicClientProtocol::WindowId const windowId, GraphicClientProtocol::Layer::Stack &stack)
 {
     if (!_renderWindow[windowId].isOpen())
         return;
     _renderWindow[windowId].clear(sf::Color::Black);
-    for (auto const &layer: stack) {
+    for (auto &layer: stack) {
         switch (layer.type)
         {
         case GraphicClientProtocol::Layer::LayerType::COLOR:
             _renderWindow[windowId].clear(LibrarySFML::colorConversion(layer.value.color.color));
             break;
+        case GraphicClientProtocol::Layer::LayerType::SPRITES:
+            _drawWindowIdOnLayerSprites(windowId, layer.value.sprites);
         default:
             break;
         }
@@ -101,8 +168,15 @@ bool LibrarySFML::Instance::isWindowIdOpen(GraphicClientProtocol::WindowId const
 
 // Clear/Reset
 
+void LibrarySFML::Instance::reload(void)
+{
+    _textureKeys.clear();
+    _textureValue.clear();
+}
+
 void LibrarySFML::Instance::reloadHard(void)
 {
     closeWindowAll();
+    reload();
     openWindow();
 }

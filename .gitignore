@@ -2,7 +2,6 @@
 .vscode/
 build/
 private/
-copie*
 .vscode/
 
 # OBJECTS
@@ -20,10 +19,16 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
+cpm-package-lock.cmake
+CPM_modules
+cmake
 _deps
+CPackConfig.cmake
+CPackSourceConfig.cmake
 
 # R-TYPE
 L-Type
 L-Type-*
+!L-Type*/
 a.out
 game

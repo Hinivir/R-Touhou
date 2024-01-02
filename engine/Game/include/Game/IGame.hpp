@@ -13,6 +13,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include "Input/InputMapWindow.hpp"
 #include "LType/Attribute/FilePath.hpp"
 #include "LType/Attribute/Position.hpp"
 #include "LType/Entity.hpp"
@@ -26,6 +27,8 @@ namespace Game {
 
 /// @brief List of multiple LType::EntityInstance elements
 using EntityStack = std::vector<LType::EntityInstance>;
+/// @brief List of multiple LType::EntityInstancePtr elements
+using EntityPtrStack = std::vector<LType::EntityInstancePtr>;
 
 /// @brief Key of a AttributeStack
 using AttributeStackKey = LType::EntityInstancePtr;
@@ -56,6 +59,24 @@ public:
     /// @brief Initialization of the game
     virtual void init(void) = 0;
 
+    // << INPUTS >>
+
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    virtual void refreshInputs(void) = 0;
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    virtual void refreshInputs(Input::InputMapWindow const &inputMapWindow) = 0;
+
+    /// @brief Checks if an input is being currently pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    virtual bool isInputPressed(LType::InputList const input) = 0;
+    /// @brief Checks if an input has just been pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    virtual bool hasInputJustBeenPressed(LType::InputList const input) = 0;
+
     // << STACKS >>
 
     // Process
@@ -79,6 +100,12 @@ public:
     /// @param entity Reference to an `EntityInstance`
     /// @return Copy of the refence to the `EntityInstance`
     virtual LType::EntityInstance addEntity(LType::EntityInstance entity) = 0;
+    /// @return A constant reference of `_entityStack`
+    virtual Game::EntityStack const &getEntityStack(void) const = 0;
+    /// @return A constant reference of `_entityStackNew`
+    virtual Game::EntityPtrStack const &getEntityStackNew(void) const = 0;
+    /// @brief Empties `_entityStackNew`
+    virtual void clearEntityStackNew(void) = 0;
 
     // << ENGINE >>
 

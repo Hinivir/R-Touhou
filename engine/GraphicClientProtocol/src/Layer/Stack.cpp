@@ -7,14 +7,13 @@
 
 #include "GraphicClientProtocol/Layer/Stack.hpp"
 
+#define NEW_GENERAL_ELEMENT(TYPE, NAME, UNION_NAME, ENUM_NAME) \
+    GraphicClientProtocol::Layer::StackElement::StackElement(TYPE NAME) { assignLayer(NAME); } \
+    void GraphicClientProtocol::Layer::StackElement::assignLayer(TYPE NAME) { value.UNION_NAME = NAME; type = ENUM_NAME; }
+
 GraphicClientProtocol::Layer::StackElement::StackElement(void)
 {
     assignLayer();
-}
-
-GraphicClientProtocol::Layer::StackElement::StackElement(GraphicClientProtocol::Layer::Color layer)
-{
-    assignLayer(layer);
 }
 
 void GraphicClientProtocol::Layer::StackElement::assignLayer(void)
@@ -23,8 +22,6 @@ void GraphicClientProtocol::Layer::StackElement::assignLayer(void)
     type = GraphicClientProtocol::Layer::LayerType::UNKNOWN;
 }
 
-void GraphicClientProtocol::Layer::StackElement::assignLayer(GraphicClientProtocol::Layer::Color layer)
-{
-    value.color = layer;
-    type = GraphicClientProtocol::Layer::LayerType::COLOR;
-}
+NEW_GENERAL_ELEMENT(GraphicClientProtocol::Layer::Color, color, color, GraphicClientProtocol::Layer::LayerType::COLOR)
+
+NEW_GENERAL_ELEMENT(GraphicClientProtocol::Layer::Sprites, sprites, sprites, GraphicClientProtocol::Layer::LayerType::SPRITES)

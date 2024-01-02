@@ -10,6 +10,7 @@
 
 #pragma once
 #include "Game/IGame.hpp"
+#include "LType/InputList.hpp"
 
 namespace Game {
 
@@ -22,6 +23,24 @@ public:
 
     /// @brief Initialization of the game
     void init(void) override;
+
+    // << INPUTS >>
+
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    void refreshInputs(void) override;
+    /// @brief Refreshs every input based on the content of `inputMapWindow`
+    /// @param inputMapWindow (Input::InputMapWindow const &) (optional) Reference to a source input map
+    void refreshInputs(Input::InputMapWindow const &inputMapWindow) override;
+
+    /// @brief Checks if an input is being currently pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    bool isInputPressed(LType::InputList const input) override;
+    /// @brief Checks if an input has just been pressed
+    /// @param input (LType::InputList const)
+    /// @return `True` or `False`
+    bool hasInputJustBeenPressed(LType::InputList const input) override;
 
     // << STACKS >>
 
@@ -46,6 +65,12 @@ public:
     /// @param entity Reference to an `EntityInstance`
     /// @return Copy of the refence to the `EntityInstance`
     LType::EntityInstance addEntity(LType::EntityInstance entity) override;
+    /// @return A constant reference of `_entityStack`
+    Game::EntityStack const &getEntityStack(void) const override;
+    /// @return A constant reference of `_entityStackNew`
+    Game::EntityPtrStack const &getEntityStackNew(void) const;
+    /// @brief Empties `_entityStackNew`
+    void clearEntityStackNew(void);
 
     // << ENGINE >>
 
@@ -55,6 +80,16 @@ public:
     float getProcessPhysicsPerSec(void) const override;
 
 protected:
+    // << INPUTS >>
+
+    /// @brief List containing information about if inputs are pressed
+    bool _inputsPressed[static_cast<std::size_t>(LType::InputList::TOTAL)];
+    /// @brief List containing information about if inputs have just been pressed
+    bool _inputsJustPressed[static_cast<std::size_t>(LType::InputList::TOTAL)];
+
+    /// @brief Length of `_inputsPressed` and `_inputsJustPressed`
+    std::size_t _inputsLength = static_cast<std::size_t>(LType::InputList::TOTAL);
+
     // << STACKS >>
 
     // Process
@@ -68,13 +103,15 @@ protected:
 
     /// @brief Contains entities added to the game
     Game::EntityStack _entityStack;
+    /// @brief Contains entities added to the game and still not treated by the engine
+    Game::EntityPtrStack _entityStackNew;
 
     // << ENGINE >>
 
     // Stacks
 
     /// @brief Amount of times the processPhysics should be called per seconds
-    float _processPhysicsPerSec = 10.0;
+    float _processPhysicsPerSec = 30.0;
 };
 
 }
