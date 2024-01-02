@@ -36,6 +36,7 @@ void RTouhou::Instance::init(void)
         fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
         fish->getPosition().x = 100.0;
         fish->getPosition().y = 100.0;
+        fish->getSprite().center = false;
         addFunctionProcessPhysics(fish, fishProcessPhysics);
         addFunctionProcessGraphic(fish, fishProcessGraphic);
     }

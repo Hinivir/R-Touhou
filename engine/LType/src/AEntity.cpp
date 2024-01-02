@@ -43,3 +43,20 @@ LType::Attribute::Position &LType::AEntity::getPosition(void)
 {
     return _position;
 }
+
+// Size
+
+void LType::AEntity::setArea(LType::Attribute::Size const &area)
+{
+    _area = area;
+}
+
+LType::Attribute::Size const &LType::AEntity::getArea(void) const
+{
+    return _area;
+}
+
+LType::Attribute::Size &LType::AEntity::getArea(void)
+{
+    return _area;
+}

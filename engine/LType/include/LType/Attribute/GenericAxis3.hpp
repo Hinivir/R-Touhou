@@ -28,8 +28,6 @@ template <typename T>
 class GenericAxis3
 {
 public:
-    GenericAxis3(void) {};
-    GenericAxis3(T const x, T const y) : x(x), y(y) {};
     GenericAxis3(T const x, T const y, T const z) : x(x), y(y), z(z) {};
     GenericAxis3(LType::Attribute::GenericAxis3Struct_s<T> const xyz) : x(xyz.x), y(xyz.y), z(xyz.z) {};
 public:

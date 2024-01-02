@@ -123,6 +123,8 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
                 filepathLoadedAt = _textureValue.size() - 1;
             }
         }
+        position.x = entity->getPosition().x;
+        position.y = entity->getPosition().y;
         if (filepathLoaded) {
             _generalSprite.setTexture(_textureValue[filepathLoadedAt]);
             _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
@@ -131,20 +133,22 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             origin = sf::Vector2f(_textureValue[filepathLoadedAt].getSize());
             origin.x /= 2; origin.y /= 2;
             _generalSprite.setOrigin(origin);
-            //
-            position.x = entity->getPosition().x;
-            position.y = entity->getPosition().y;
-            if (!sprite.center)
-                position += origin;
-            _generalSprite.setPosition(position);
+            _generalSprite.setPosition((sprite.center) ? position : (position + origin));
             //
             _renderWindow[windowId].draw(_generalSprite);
             //
             if (displayAreas) {
-                _areaShape.setPosition(position - origin);
+                _areaShape.setOutlineColor(sf::Color::Yellow);
+                _areaShape.setPosition((sprite.center) ? (position - origin) : position);
                 _areaShape.setSize(sf::Vector2f(_generalSprite.getGlobalBounds().height, _generalSprite.getGlobalBounds().width));
                 _renderWindow[windowId].draw(_areaShape);
             }
+        }
+        if (displayAreas && entity->getArea().x > 0.0 && entity->getArea().y > 0.0) {
+            _areaShape.setOutlineColor(sf::Color::Red);
+            _areaShape.setSize(sf::Vector2f(entity->getArea().x, entity->getArea().y));
+            _areaShape.setPosition((sprite.center) ? (position - sf::Vector2f(_areaShape.getSize().x / 2, _areaShape.getSize().y / 2)) : position);
+            _renderWindow[windowId].draw(_areaShape);
         }
         drawWindowIdOnLayerSpritesEndOfLoop:
         iterator++;
