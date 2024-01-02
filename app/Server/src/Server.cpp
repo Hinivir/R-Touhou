@@ -9,7 +9,6 @@
 #include <asio.hpp>
 #include "../include/Server.hpp"
 
-
 Server::Server(const std::string& ip, int const port)
     : server_socket(io_service, udp::endpoint(udp::v4(), port))
 {
@@ -39,74 +38,103 @@ void Server::startServer(void)
     acceptClients();
 }
 
-void Server::notifyGameReady()
-{
-    std::string gameReadyMessage = "Game is ready! Let the fun begin!";
+const std::map<std::string, std::function<void(Server &, const udp::endpoint&, const std::array<char, 2048>&, size_t)>> Server::serverCommandHandler = {
+    {"connect\n", &Server::handleConnect},
+    {"disconnect\n", &Server::handleDisconnect},
+    {"ready\n", &Server::handleReady}
+};
 
-    for (const auto& client : connectedClients) {
-        try {
-            server_socket.send_to(asio::buffer(gameReadyMessage), client);
-        } catch (std::exception const &e) {
-            std::cerr << "Error sending game ready message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
+void Server::handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::string message(buffer.data(), bytes_received);
+    if (message == "connect\n") {
+        if (playerCount < maxPlayers) {
+            std::string playerMessage = "You are connected as player " + std::to_string(playerCount + 1) + "!\n";
+            std::string nbPlayer = std::to_string(playerCount) + " players connected\n";
+            std::string newUserMessage = "New user connected: " + client_endpoint.address().to_string() + ":" + std::to_string(client_endpoint.port()) + "\n";
+            broadcastMessage(newUserMessage, newUserMessage.size(), client_endpoint);
+            try {
+                server_socket.send_to(asio::buffer(CONNECTED), client_endpoint);
+                server_socket.send_to(asio::buffer(playerMessage), client_endpoint);
+                server_socket.send_to(asio::buffer(nbPlayer), client_endpoint);
+            } catch (std::exception const &e) {
+                server_socket.send_to(asio::buffer(ERROR), client_endpoint);
+                std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+            }
+            std::cout << playerMessage << playerCount + 1 << ": " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+            connectedClients.push_back(client_endpoint);
+            playerCount++;
+            if (playerCount == maxPlayers)
+                notifyGameReady();
+        } else {
+            try {
+                server_socket.send_to(asio::buffer(SERVER_FULL), client_endpoint);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending full message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+            }
         }
+    }
+}
+
+void Server::handleDisconnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::cout << "Disconnecting client: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+    server_socket.send_to(asio::buffer(DISCONNECTED), client_endpoint);
+    auto it = std::find(connectedClients.begin(), connectedClients.end(), client_endpoint);
+    if (it != connectedClients.end()) {
+        connectedClients.erase(it);
+        readyClients.erase(std::remove(readyClients.begin(), readyClients.end(), client_endpoint), readyClients.end());
+        playerCount--;
+    }
+    std::string nbPlayer = std::to_string(playerCount) + " players connected\n";
+    broadcastMessage(nbPlayer, nbPlayer.size(), client_endpoint);
+}
+
+
+void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::cout << "Client is ready: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+    readyClients.push_back(client_endpoint);
+    if (readyClients.size() == connectedClients.size()) {
+        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        isChatLocked = true;
+        notifyGameReady();
     }
 }
 
 void Server::connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
 {
     std::string message(buffer.data(), bytes_received);
-    if (std::strcmp(message.c_str(), "connect\n") == 0) {
-        std::cout << "Client connected: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
-        connectedClients.push_back(client_endpoint);
-        std::string confirmationMessage = "101:You are connected!";
-        try {
-            server_socket.send_to(asio::buffer(confirmationMessage), client_endpoint);
-        } catch (std::exception const &e) {
-            server_socket.send_to(asio::buffer("102:Error Connection!"), client_endpoint);
-            std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
-        }
-    }
-    else if (std::strcmp(message.c_str(), "disconnect\n") == 0) {
-        std::cout << "Disconnecting client: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
-        server_socket.send_to(asio::buffer("103:Disconnected!"), client_endpoint);
-        auto it = std::find(connectedClients.begin(), connectedClients.end(), client_endpoint);
-        if (it != connectedClients.end()) {
-            connectedClients.erase(it);
-            readyClients.erase(std::remove(readyClients.begin(), readyClients.end(), client_endpoint), readyClients.end());
-        }
-    }
-    else if (std::strcmp(message.c_str(), "ready\n") == 0) {
-        std::cout << "Client is ready: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
-        readyClients.push_back(client_endpoint);
-        if (readyClients.size() == connectedClients.size()) {
-            std::cout << "All clients are ready. Starting the game!" << std::endl;
-            isChatLocked = true;
-            notifyGameReady();
-        }
-    }
+    auto it = serverCommandHandler.find(message);
+    if (it != serverCommandHandler.end())
+        it->second(*this, client_endpoint, buffer, bytes_received);
     else
-        broadcastMessage(buffer, bytes_received, client_endpoint);
-    if (std::find(connectedClients.begin(), connectedClients.end(), client_endpoint) == connectedClients.end())
-        connectedClients.push_back(client_endpoint);
+        broadcastMessage(buffer.data(), bytes_received, client_endpoint);
 }
 
-void Server::broadcastMessage(const std::array<char, 2048>& buffer, size_t bytes_received, const asio::ip::udp::endpoint& sender)
+void Server::notifyGameReady()
 {
-    std::string message(buffer.data(), bytes_received);
+    for (const auto& client : connectedClients) {
+        try {
+            server_socket.send_to(asio::buffer(READY), client);
+        } catch (std::exception const &e) {
+            std::cerr << "Error sending game ready message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
+        }
+    }
+}
 
+void Server::broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender)
+{
     for (const auto& client : connectedClients) {
         if (client != sender) {
-            if (message != "connect") {
-                try {
-                    server_socket.send_to(asio::buffer(message), client);
-                } catch (std::exception const &e) {
-                    std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
-                }
+            try {
+                server_socket.send_to(asio::buffer(message.c_str(), messageSize), client);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
             }
         }
     }
 }
-
 
 void Server::acceptClients()
 {
