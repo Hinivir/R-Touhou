@@ -13,7 +13,8 @@ set(RTOUHOU_INCLUDE
                     engine/Game/include
                     engine/GraphicClientProtocol/include
                     engine/LType/include
-                    engine/SharedLibraryInfo/include)
+                    engine/SharedLibraryInfo/include
+                    engine/Input/include)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${RTOUHOU_FOLDER})
 set(CMAKE_RELEASE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${RTOUHOU_FOLDER})
@@ -22,12 +23,14 @@ include(games/RTouhou/RTouhouSrc.cmake)
 include(engine/Game/GameSrc.cmake)
 include(engine/GraphicClientProtocol/GraphicClientProtocolSrc.cmake)
 include(engine/LType/LTypeSrc.cmake)
+include(engine/Input/InputSrc.cmake)
 
 set(SRC
     ${SRC_RTOUHOU}
     ${SRC_GAME}
     ${SRC_GRAPHIC_CLIENT_PROTOCOL}
-    ${SRC_L_TYPE})
+    ${SRC_L_TYPE}
+    ${SRC_INPUT})
 
 add_library(${RTOUHOU_BINARY_NAME} SHARED ${SRC})
 
