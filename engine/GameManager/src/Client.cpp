@@ -18,7 +18,7 @@ bool GameManager::Client::instantiate(GraphicClientProtocol::Layer::StackMapRef 
     auto defaultWindowInputMap = stackMap->find(GRAPHIC_WINDOWID_DEFAULT);
     if (defaultWindowInputMap == stackMap->end())
         return false;
-    defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(GraphicClientProtocol::Color(0.0, 0.0, 0.0))));
+    defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Color(LType::Color(0.0, 0.0, 0.0))));
     _stackElementPtr[GameManager::Layer::STATIC_BACKGROUND] = &(defaultWindowInputMap->second.back());
     defaultWindowInputMap->second.push_back(GraphicClientProtocol::Layer::StackElement(GraphicClientProtocol::Layer::Sprites()));
     _stackElementPtr[GameManager::Layer::SPRITES] = &(defaultWindowInputMap->second.back());

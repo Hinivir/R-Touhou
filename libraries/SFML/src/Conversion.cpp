@@ -7,7 +7,7 @@
 
 #include <LibrarySFML/Conversion.hpp>
 
-sf::Color LibrarySFML::colorConversion(GraphicClientProtocol::Color const color)
+sf::Color LibrarySFML::colorConversion(LType::Color const color)
 {
     return sf::Color(
         static_cast<sf::Uint8>(color.r * 0x0FF),

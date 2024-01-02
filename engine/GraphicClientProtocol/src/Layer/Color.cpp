@@ -7,7 +7,7 @@
 
 #include "GraphicClientProtocol/Layer/Color.hpp"
 
-GraphicClientProtocol::Layer::Color::Color(GraphicClientProtocol::Color const &color) :
+GraphicClientProtocol::Layer::Color::Color(LType::Color const &color) :
     color(color)
 { }
 
