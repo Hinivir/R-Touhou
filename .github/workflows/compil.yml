@@ -1,4 +1,4 @@
-name:  Tests build and check style
+name: 👷 Tests build and check style
 
 on:
   pull_request:
