@@ -35,6 +35,12 @@ void GameManager::Base::process(void)
 
     _deltaPhysicsCap = (instance ? (1.0 / instance->getProcessPhysicsPerSec()) : _deltaPhysicsCap);
     _deltaPhysicsStored += delta;
+    if (_inputMap) {
+        for (auto const &[windowId, window] : _inputMap->window) {
+            if (windowId == GRAPHIC_WINDOWID_DEFAULT)
+                instance->refreshInputs(window);
+        }
+    }
     while (_deltaPhysicsStored >= _deltaPhysicsCap) {
         processPhysics(_deltaPhysicsCap);
         _deltaPhysicsStored -= _deltaPhysicsCap;

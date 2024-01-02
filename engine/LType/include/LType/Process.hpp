@@ -13,7 +13,7 @@
 #include "LType/EntityInstance.hpp"
 
 #define LTYPE_FUNCTION(FUNCTION_NAME, TARGET_NAME) \
-    void FUNCTION_NAME(LType::GameRefenrence _game, LType::GameRefenrence game, LType::FunctionTargetPtr const TARGET_NAME)
+    void FUNCTION_NAME(LType::GameRefenrence _game, LType::FunctionTargetPtr const TARGET_NAME)
 #define LTYPE_FUNCTION_PROCESS_GRAPHIC(FUNCTION_NAME, TARGET_NAME, DELTA_NAME) \
     void FUNCTION_NAME(LType::GameRefenrence _game, LType::FunctionTargetPtr const TARGET_NAME, LType::Delta const DELTA_NAME)
 #define LTYPE_FUNCTION_PROCESS_PHYSICS(FUNCTION_NAME, TARGET_NAME, DELTA_NAME) \

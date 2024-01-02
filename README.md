@@ -66,14 +66,6 @@ You can launch a client by running this command:
 where **ip** is the ip where the server is running, and **port** is the port where the server runs.<br />
 You can connect as many clients as you want.
 
-### Testing the program
-
-To check that the program is running correctly, you can use this command to **run tests**:  
-  
-```bash  
-# Encore à confirmer  
-```  
-  
 ---  
   
 ## <a id="titre3"></a>3. Contributors  

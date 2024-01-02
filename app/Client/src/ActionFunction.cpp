@@ -9,6 +9,8 @@
 
 static std::size_t SPEED = 5;
 
+//ici, on regarde si le numéro est le notre ou pas
+
 bool Client::checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY) {
     if (std::abs(newPosX - otherPosX) < 50 && std::abs(newPosY - otherPosY) < 50)
         return true;
