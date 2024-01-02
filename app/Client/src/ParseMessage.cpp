@@ -17,19 +17,14 @@ static const std::string CONNECTED_PLAYER = " players connected";
 void Client::ParseMessage(const std::string message)
 {
     if (strncmp(message.c_str(), RUN_GAME.c_str(), RUN_GAME.length()) == 0 && !this->inGame) {
-        std::cout << "Game is running" << std::endl;
         this->inGame = true;
         std::thread gameThread([&]() { this->runGame(); });
         gameThread.detach();
     }
-    if (strncmp(message.c_str(), RUN_GAME.c_str(), RUN_GAME.length()) == 0) {
+    if (strncmp(message.c_str(), RUN_GAME.c_str(), RUN_GAME.length()) == 0)
         this->player.isConnected = true;
-        std::cout << "You are connected!!!!!" << std::endl;
-    }
-    if (message.substr(0, CONNECTED_AS.size()) == CONNECTED_AS) {
+    if (message.substr(0, CONNECTED_AS.size()) == CONNECTED_AS)
         this->player.player_number = std::stoi(message.substr(CONNECTED_AS.size(), 1));
-        std::cout << "You are player " << this->player.player_number << std::endl;
-    }
     if (strncmp(message.c_str(), CONNECTED_PLAYER.c_str(), 1) == 0)
         this->other_player.player_number = std::stoi(message.substr(0, 1));
     if (this->inGame)
