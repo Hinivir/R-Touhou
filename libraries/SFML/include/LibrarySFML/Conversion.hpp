@@ -7,10 +7,10 @@
 
 #pragma once
 #include <SFML/Graphics/Color.hpp>
-#include "GraphicClientProtocol/Color.hpp"
+#include "LType/Color.hpp"
 
 namespace LibrarySFML {
 
-sf::Color colorConversion(GraphicClientProtocol::Color const color);
+sf::Color colorConversion(LType::Color const color);
 
 }

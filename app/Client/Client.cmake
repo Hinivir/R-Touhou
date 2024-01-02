@@ -20,3 +20,7 @@ add_executable(${CLIENT_BINARY_NAME} ${SRC})
 target_link_libraries(${CLIENT_BINARY_NAME} sfml-graphics sfml-window sfml-system)
 target_link_libraries(${CLIENT_BINARY_NAME} asio)
 target_include_directories(${CLIENT_BINARY_NAME} PUBLIC ${CLIENT_INCLUDE})
+
+if (DEFINED INSTALL)
+  install(TARGETS ${CLIENT_BINARY_NAME} RUNTIME DESTINATION BIN)
+endif (DEFINED INSTALL)

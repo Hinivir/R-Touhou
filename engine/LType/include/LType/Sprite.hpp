@@ -10,6 +10,7 @@
 
 #pragma once
 #include <iostream>
+#include "LType/Color.hpp"
 
 namespace LType {
 
@@ -36,7 +37,18 @@ public:
     /// @return False if all the attributes are the same. Otherwise, True
     bool operator!=(LType::Sprite const &other) const;
 public:
+    /// @brief If the sprite has to be centered, relative to its size
+    bool center = true;
+    /// @brief If the sprite has to be flipped horizontaly
+    bool flipH = false;
+    /// @brief If the sprite has to be flipped vertically
+    bool flipV = false;
+    /// @brief Filepath of the sprite
     std::string filepath;
+    /// @brief If the sprite has to be hidden
+    bool hidden = false;
+    /// @brief Color to apply on the sprite, including the alpha channel
+    LType::Color modulate;
 };
 
 }

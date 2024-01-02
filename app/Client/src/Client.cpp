@@ -14,193 +14,124 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
-static const float speed = 0.005;
-
-static const std::map<sf::Keyboard::Key, std::string> inputHandler = {
-    {sf::Keyboard::Z, "UP"},
-    {sf::Keyboard::S, "DOWN"},
-    {sf::Keyboard::Q, "LEFT"},
-    {sf::Keyboard::D, "RIGHT"},
-    {sf::Keyboard::Space, "ACTION"},
-    {sf::Keyboard::Escape, "QUIT"}
+static const std::map<sf::Keyboard::Key,std::pair<std::string,std::function<void(Client &, bool)>>> inputHandler = {
+    {sf::Keyboard::Z, {"UP", &Client::upFunction}},
+    {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
+    {sf::Keyboard::Q, {"LEFT", &Client::leftFunction}},
+    {sf::Keyboard::D, {"RIGHT", &Client::rightFunction}},
+    {sf::Keyboard::Space, {"ACTION", &Client::actionFunction}},
+    {sf::Keyboard::Escape, {"QUIT", &Client::quitFunction}}
 };
 
-Client::Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port)
-    : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0)),
-        server_endpoint_(asio::ip::make_address(server_ip), server_port) {
-        }
+Client::Client(
+    asio::io_context &ioContext,
+    const std::string &serverAddress,
+    const std::string &serverPort)
+    : ioContext_(ioContext),
+      socket_(
+          ioContext,
+          asio::ip::udp::endpoint(asio::ip::udp::v4(),
+                                  0))
+{
+    asio::ip::udp::resolver resolver(ioContext);
+    serverEndpoint_ = *resolver.resolve(asio::ip::udp::v4(), serverAddress, serverPort).begin();
+}
 
 Client::~Client() {}
 
-void Client::sendMessage(const std::string& message) {
-    asio::io_context io_context;
-    asio::steady_timer timer(io_context, asio::chrono::milliseconds(1));
-
-    socket_.send_to(asio::buffer(message), server_endpoint_);
-    timer.async_wait([&](const asio::error_code&) { sendMessage(message); });
-}
-
-void Client::getNewMessage() {
-    std::size_t len = socket_.receive_from(asio::buffer(recv_buf_), server_endpoint_);
-    std::string message(recv_buf_.data(), len);
-
-    std::cout << "Received: " << message << std::endl;
-
-    if (message == "QUIT") {
-        disconnectFlag_ = true;
-    }
-    for (auto& [key, value] : inputHandler) {
-        if (message == value) {
-            history_received_messages.push(message);
-        }
-    }
-    if (std::strcmp(message.c_str(), "Game is ready! Let the fun begin!") == 0)
-        start_game();
-}
-
-
-void Client::runClient() {
-    std::thread readThread([&]() {
-        while (!disconnectFlag_) {
-            getNewMessage();
-        }
-    });
-
-    asio::io_context io_context;
-    asio::steady_timer timer(io_context, asio::chrono::milliseconds(100));
-
-    timer.async_wait([&](const asio::error_code&) {
-        std::unique_lock<std::mutex> lock(input_mutex_);
-        if (!input_buffer_.empty()) {
-            sendMessage(input_buffer_);
-            input_buffer_.clear();
-        }
-        timer.expires_at(timer.expiry() + asio::chrono::milliseconds(100));
-        timer.async_wait([&](const asio::error_code&) { runClient(); });
-    });
-
-    std::thread ioThread([&]() {
-        while (!disconnectFlag_) {
-            char c;
-            std::cin.get(c);
-
-            {
-                std::unique_lock<std::mutex> lock(input_mutex_);
-                input_buffer_.push_back(c);
+void Client::sendMessage(const std::string &message)
+{
+    socket_.async_send_to(
+        asio::buffer(message),
+        serverEndpoint_,
+        [this](const asio::error_code &error, std::size_t) {
+            if (error) {
+                std::cerr << "Error sending data: " << error.message() << std::endl;
             }
         }
-    });
-
-    io_context.run();
-    ioThread.join();
-    readThread.join();
+    );
 }
 
-void drawBlinkingZone(sf::RenderWindow& window, sf::RectangleShape& blinkingZone, bool& isVisible) {
-    if (isVisible) {
-        window.draw(blinkingZone);
-    }
-}
-
-void handleCollisions(sf::RectangleShape& movingSquare, const sf::RectangleShape& stationarySquare, float speed) {
-    sf::FloatRect movingRect = movingSquare.getGlobalBounds();
-    sf::FloatRect stationaryRect = stationarySquare.getGlobalBounds();
-
-    if (movingRect.intersects(stationaryRect)) {
-        if (speed > 0) {
-            movingSquare.setPosition(stationaryRect.left - movingRect.width, movingRect.top);
-        } else {
-            movingSquare.setPosition(stationaryRect.left + stationaryRect.width, movingRect.top);
+void Client::handleMessageInGame(const std::string &message)
+{
+    for (auto const& [key, value] : inputHandler) {
+        if (message == value.first) {
+            value.second(*this, true);
         }
     }
 }
 
-void Client::start_game()
+void Client::getNewMessage()
 {
-    asio::io_context io_context;
-    asio::steady_timer timer(io_context, asio::chrono::milliseconds(100));
+    socket_.async_receive_from(
+        asio::buffer(receiveBuffer_),
+        senderEndpoint_,
+        [this](const asio::error_code &error, std::size_t bytesTransferred) {
+            if (!error) {
+                std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+                std::cout << message << std::endl;
+                this->ParseMessage(message);
+                this->getNewMessage();
+            } else {
+                std::cerr << "Error receiving data: " << error.message() << std::endl;
+            }
+        }
+    );
+}
 
+//this is a temporary function, we will have to change it with the game code
+void Client::runGame()
+{
+    //setup players
+    if (this->player.player_number == 1)
+        this->other_player.player_number = 2;
+    else
+        this->other_player.player_number = 1;
+    this->player.pos_x = 50;
+    this->player.pos_y = this->player.player_number * 100 + 50;
+    this->other_player.pos_x = 50;
+    this->other_player.pos_y = this->other_player.player_number * 100 + 50;
+    //
     sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
-    sf::RectangleShape square1(sf::Vector2f(50, 50));
-    sf::RectangleShape square2(sf::Vector2f(50, 50));
-    sf::RectangleShape blinkingZone(sf::Vector2f(200, 200));
 
-    bool isVisible = true;
-    blinkingZone.setFillColor(sf::Color(128, 0, 128));
-    blinkingZone.setPosition(500, 300);
+    sf::RectangleShape player_shape(sf::Vector2f(50.f, 50.f));
+    sf::Vector2i player_pos(this->player.pos_x, this->player.pos_y);
 
-    square1.setFillColor(sf::Color::Red);
-    square2.setFillColor(sf::Color::Green);
-    square1.setPosition(100, 100);
-    square2.setPosition(100, 300);
+    sf::RectangleShape other_shape(sf::Vector2f(50.f, 50.f));
+    sf::Vector2i other_pos(this->other_player.pos_x, this->other_player.pos_y);
 
-    sf::Clock clock;
-    sf::Time elapsed;
+    player_shape.setPosition(player_pos.x, player_pos.y);
+    if (this->player.player_number == 1)
+        player_shape.setFillColor(sf::Color::Red);
+    else
+        player_shape.setFillColor(sf::Color::Green);
+
+    other_shape.setPosition(other_pos.x, other_pos.y);
+    if (this->other_player.player_number == 1)
+        other_shape.setFillColor(sf::Color::Red);
+    else
+        other_shape.setFillColor(sf::Color::Green);
 
     while (window.isOpen()) {
+        sf::Vector2i new_player_pos(this->player.pos_x, this->player.pos_y);
+        sf::Vector2i new_other_pos(this->other_player.pos_x, this->other_player.pos_y);
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
+            if (event.type == sf::Event::KeyPressed) {
+                for (auto const& [key, value] : inputHandler) {
+                    if (event.key.code == key) {
+                        value.second(*this, false);
+                    }
+                }
             }
+            if (event.type == sf::Event::Closed)
+                window.close();
         }
-
-        elapsed = clock.getElapsedTime();
-        if (elapsed.asMilliseconds() > 500) {
-            isVisible = !isVisible;
-            clock.restart();
-        }
-
-        handleCollisions(square1, square2, speed);
-        //manage the inputs of the user
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-            sendMessage("UP");
-            square1.move(0, -speed);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            sendMessage("DOWN");
-            square1.move(0, speed);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-            sendMessage("LEFT");
-            square1.move(-speed, 0);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            sendMessage("RIGHT");
-            square1.move(speed, 0);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            sendMessage("ACTION");
-            std::cout << "ACTION" << std::endl;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            sendMessage("QUIT");
-            exit(0);
-        }
-
-        //manage the inputs of the other player
-        handleCollisions(square2, square1, speed);
-        while (!history_received_messages.empty()) {
-            std::string message = history_received_messages.front();
-            history_received_messages.pop();
-            if (std::strcmp(message.c_str(), "UP") == 0)
-                square2.move(0, -speed);
-            else if (std::strcmp(message.c_str(), "DOWN") == 0)
-                square2.move(0, speed);
-            else if (std::strcmp(message.c_str(), "LEFT") == 0)
-                square2.move(-speed, 0);
-            else if (std::strcmp(message.c_str(), "RIGHT") == 0)
-                square2.move(speed, 0);
-            else if (std::strcmp(message.c_str(), "ACTION") == 0)
-                std::cout << "ACTION" << std::endl;
-        }
-        drawBlinkingZone(window, blinkingZone, isVisible);
-
+        player_shape.setPosition(new_player_pos.x, new_player_pos.y);
+        other_shape.setPosition(new_other_pos.x, new_other_pos.y);
         window.clear();
-        window.draw(square1);
-        window.draw(square2);
+        window.draw(player_shape);
+        window.draw(other_shape);
         window.display();
-        timer.async_wait([&](const asio::error_code&) { start_game(); });
     }
-    this->~Client();
 }
