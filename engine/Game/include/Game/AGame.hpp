@@ -82,7 +82,7 @@ protected:
     // Stacks
 
     /// @brief Amount of times the processPhysics should be called per seconds
-    float _processPhysicsPerSec = 10.0;
+    float _processPhysicsPerSec = 30.0;
 };
 
 }
