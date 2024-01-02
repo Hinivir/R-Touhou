@@ -10,7 +10,7 @@
 
 #pragma once
 
-#define LTYPE_ATTRIBUTE_GENERICAXIS3_EQUAL_OPERATOR(FUNCTION, OPERATOR) void FUNCTION(LType::Attribute::GenericAxis3<T> const &other) { x OPERATOR other.x; }
+#define LTYPE_ATTRIBUTE_GENERICAXIS3_EQUAL_OPERATOR(FUNCTION, OPERATOR) void FUNCTION(LType::Attribute::GenericAxis3<T> const &other) { x OPERATOR other.x; y OPERATOR other.y; z OPERATOR other.z; }
 #define LTYPE_ATTRIBUTE_GENERICAXIS3_SIMPLE_OPERATOR(FUNCTION, OPERATOR) LType::Attribute::GenericAxis3<T> FUNCTION(LType::Attribute::GenericAxis3<T> const &other) const { return LType::Attribute::GenericAxis3<T>(x OPERATOR other.x, y OPERATOR other.y, z OPERATOR other.z); }
 
 namespace LType { namespace Attribute {

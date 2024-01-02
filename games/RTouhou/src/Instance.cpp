@@ -36,7 +36,8 @@ void RTouhou::Instance::init(void)
         fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
         fish->getPosition().x = 100.0;
         fish->getPosition().y = 100.0;
-        fish->getSprite().center = false;
+        fish->getArea().x = 100.0;
+        fish->getArea().y = 100.0;
         addFunctionProcessPhysics(fish, fishProcessPhysics);
         addFunctionProcessGraphic(fish, fishProcessGraphic);
     }
@@ -44,6 +45,8 @@ void RTouhou::Instance::init(void)
         enemy1->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
         enemy1->getPosition().x = 500.0;
         enemy1->getPosition().y = 200.0;
+        enemy1->getArea().x = 100.0;
+        enemy1->getArea().y = 100.0;
     }
     std::cout << "Game running at " << getProcessPhysicsPerSec() << " physics per second" << std::endl;
 }

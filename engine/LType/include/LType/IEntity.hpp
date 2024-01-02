@@ -29,14 +29,24 @@ public:
 
     // << ATTRIBUTES >>
 
-    // Sprite
+    // Area
 
-    /// @brief Sets the value of the contained LType::Sprite
-    virtual void setSprite(LType::Sprite const &sprite) = 0;
-    /// @brief Gets a const reference to the contained LType::Sprite
-    virtual LType::Sprite const &getSprite(void) const = 0;
-    /// @brief Gets a reference to the contained LType::Sprite
-    virtual LType::Sprite &getSprite(void) = 0;
+    /// @brief Sets the value of the contained LType::Attribute::Size
+    virtual void setArea(LType::Attribute::Size const &area) = 0;
+    /// @brief Gets a const reference to the contained LType::Attribute::Size
+    virtual LType::Attribute::Size const &getArea(void) const = 0;
+    /// @brief Gets a reference to the contained LType::Attribute::Size
+    virtual LType::Attribute::Size &getArea(void) = 0;
+
+    /// @brief Sets the value of the contained bool
+    /// @warning It is NOT recommended to use AreaSetToTexture for server related entities, as the textures can't be interpreted by a server
+    virtual void setAreaSetToTexture(bool const areaSetToTexture) = 0;
+    /// @brief Gets a const reference to the contained bool
+    /// @warning It is NOT recommended to use AreaSetToTexture for server related entities, as the textures can't be interpreted by a server
+    virtual bool const getAreaSetToTexture(void) const = 0;
+    /// @brief Gets a reference to the contained bool
+    /// @warning It is NOT recommended to use AreaSetToTexture for server related entities, as the textures can't be interpreted by a server
+    virtual bool &getAreaSetToTexture(void) = 0;
 
     // Position
 
@@ -47,14 +57,14 @@ public:
     /// @brief Gets a reference to the contained LType::Attribute::Position
     virtual LType::Attribute::Position &getPosition(void) = 0;
 
-    // Area
+    // Sprite
 
-    /// @brief Sets the value of the contained LType::Attribute::Size
-    virtual void setArea(LType::Attribute::Size const &area) = 0;
-    /// @brief Gets a const reference to the contained LType::Attribute::Size
-    virtual LType::Attribute::Size const &getArea(void) const = 0;
-    /// @brief Gets a reference to the contained LType::Attribute::Size
-    virtual LType::Attribute::Size &getArea(void) = 0;
+    /// @brief Sets the value of the contained LType::Sprite
+    virtual void setSprite(LType::Sprite const &sprite) = 0;
+    /// @brief Gets a const reference to the contained LType::Sprite
+    virtual LType::Sprite const &getSprite(void) const = 0;
+    /// @brief Gets a reference to the contained LType::Sprite
+    virtual LType::Sprite &getSprite(void) = 0;
 };
 
 }

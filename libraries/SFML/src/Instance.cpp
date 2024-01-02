@@ -130,6 +130,11 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             _generalSprite.setColor(LibrarySFML::colorConversion(sprite.modulate));
             _generalSprite.setScale(sf::Vector2f((sprite.flipH ? -1.0 : 1.0), (sprite.flipV ? -1.0 : 1.0)));
             //
+            if (entity->getAreaSetToTexture()) {
+                entity->setArea(LType::Attribute::Size(_textureValue[filepathLoadedAt].getSize().x, _textureValue[filepathLoadedAt].getSize().y, 0.0));
+                entity->setAreaSetToTexture(false);
+            }
+            //
             origin = sf::Vector2f(_textureValue[filepathLoadedAt].getSize());
             origin.x /= 2; origin.y /= 2;
             _generalSprite.setOrigin(origin);
@@ -140,7 +145,7 @@ void LibrarySFML::Instance::_drawWindowIdOnLayerSprites(GraphicClientProtocol::W
             if (displayAreas) {
                 _areaShape.setOutlineColor(sf::Color::Yellow);
                 _areaShape.setPosition((sprite.center) ? (position - origin) : position);
-                _areaShape.setSize(sf::Vector2f(_generalSprite.getGlobalBounds().height, _generalSprite.getGlobalBounds().width));
+                _areaShape.setSize(sf::Vector2f(_generalSprite.getGlobalBounds().width, _generalSprite.getGlobalBounds().height));
                 _renderWindow[windowId].draw(_areaShape);
             }
         }
