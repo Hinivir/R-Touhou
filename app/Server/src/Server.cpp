@@ -141,7 +141,7 @@ void Server::notifyGameReady()
 void Server::broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender)
 {
     int senderNumber = playerNumberMap[sender];
-    std::string newMessage = "Player " + std::to_string(senderNumber) + ": " + message;
+    std::string newMessage = std::to_string(senderNumber) + ": " + message;
 
     for (const auto& client : connectedClients) {
         if (client != sender) {
@@ -167,6 +167,7 @@ void Server::acceptClients()
                 connectClient(client_endpoint, buffer, bytes_received);
             else
                 std::cerr << "Error: Received 0 bytes from client." << std::endl;
+            buffer.fill(0);
         }
     } catch (std::exception const &e) {
         std::cerr << "Error in acceptClients: " << e.what() << std::endl;

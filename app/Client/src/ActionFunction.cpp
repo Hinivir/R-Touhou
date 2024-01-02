@@ -9,63 +9,76 @@
 
 static std::size_t SPEED = 5;
 
-//ici, on regarde si le numéro est le notre ou pas
+void Client::upFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
 
-bool Client::checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY) {
-    if (std::abs(newPosX - otherPosX) < 50 && std::abs(newPosY - otherPosY) < 50)
-        return true;
-    return false;
-}
-
-void Client::upFunction(bool isReceived) {
-    int newPosY = isReceived ? this->other_player.pos_y - SPEED : this->player.pos_y - SPEED;
-    if (!checkCollision(this->player.pos_x, newPosY, this->other_player.pos_x, this->other_player.pos_y)) {
-        if (isReceived) {
-            this->other_player.pos_y -= SPEED;
-        } else {
-            this->player.pos_y -= SPEED;
-            this->sendMessage("UP");
+    if (isReceived) {
+        for (auto &p: this->players) {
+            if (p.player_number == player_number) {
+                std::cout << p.pos_y << std::endl;
+                p.pos_y -= SPEED;
+                std::cout << p.pos_y << std::endl;
+                break;
+            }
         }
+    } else {
+        this->player.pos_y -= SPEED;
+        this->sendMessage("UP");
     }
 }
 
-void Client::downFunction(bool isReceived) {
-    int newPosY = isReceived ? this->other_player.pos_y + SPEED : this->player.pos_y + SPEED;
-    if (!checkCollision(this->player.pos_x, newPosY, this->other_player.pos_x, this->other_player.pos_y)) {
-        if (isReceived) {
-            this->other_player.pos_y += SPEED;
-        } else {
-            this->player.pos_y += SPEED;
-            this->sendMessage("DOWN");
+void Client::downFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
+
+    if (isReceived) {
+        for (auto &p: this->players) {
+            if (p.player_number == player_number) {
+                p.pos_y += SPEED;
+                break;
+            }
         }
+    } else {
+        this->player.pos_y += SPEED;
+        this->sendMessage("DOWN");
     }
 }
 
-void Client::leftFunction(bool isReceived) {
-    int newPosX = isReceived ? this->other_player.pos_x - SPEED : this->player.pos_x - SPEED;
-    if (!checkCollision(newPosX, this->player.pos_y, this->other_player.pos_x, this->other_player.pos_y)) {
-        if (isReceived) {
-            this->other_player.pos_x -= SPEED;
-        } else {
-            this->player.pos_x -= SPEED;
-            this->sendMessage("LEFT");
+void Client::leftFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
+
+    if (isReceived) {
+        for (auto &p: this->players) {
+            if (p.player_number == player_number) {
+                p.pos_x -= SPEED;
+                break;
+            }
         }
+    } else {
+        this->player.pos_x -= SPEED;
+        this->sendMessage("LEFT");
     }
 }
 
-void Client::rightFunction(bool isReceived) {
-    int newPosX = isReceived ? this->other_player.pos_x + SPEED : this->player.pos_x + SPEED;
-    if (!checkCollision(newPosX, this->player.pos_y, this->other_player.pos_x, this->other_player.pos_y)) {
-        if (isReceived) {
-            this->other_player.pos_x += SPEED;
-        } else {
-            this->player.pos_x += SPEED;
-            this->sendMessage("RIGHT");
+void Client::rightFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
+
+    if (isReceived) {
+        for (auto &p: this->players) {
+            std::cout << p.player_number << std::endl;
+            if (p.player_number == player_number) {
+                p.pos_x += SPEED;
+                break;
+            }
         }
+    } else {
+        this->player.pos_x += SPEED;
+        this->sendMessage("RIGHT");
     }
 }
 
-void Client::actionFunction(bool isReceived) {
+void Client::actionFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
+
     if (isReceived) {
         std::cout << "fACTION" << std::endl;
     } else {
@@ -73,7 +86,9 @@ void Client::actionFunction(bool isReceived) {
     }
 }
 
-void Client::quitFunction(bool isReceived) {
+void Client::quitFunction(std::size_t player_number) {
+    bool isReceived = player_number != this->player.player_number;
+
     if (isReceived) {
         std::cout << "fQUIT" << std::endl;
     } else {
