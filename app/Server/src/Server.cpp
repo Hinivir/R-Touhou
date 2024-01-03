@@ -172,16 +172,32 @@ void Server::notifyGameReady()
     }
 }
 
+/**
+ * @brief Broadcasts a message from a player to all connected clients, excluding the sender.
+ * This function formats the message with the player number and then sends it to all connected clients
+ * except the sender using the UDP protocol.
+ *
+ * @param message The message to be broadcasted.
+ * @param messageSize The size of the message.
+ * @param sender The endpoint of the player who sent the message.
+*/
+
 void Server::broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender)
 {
+    // Retrieve the player number based on the sender's endpoint
     int senderNumber = playerNumberMap[sender];
+
+    // Format the message with the player number prefix
     std::string newMessage = "Player " + std::to_string(senderNumber) + ": " + message;
 
+    // Iterate through all connected clients, excluding the sender
     for (const auto& client : connectedClients) {
         if (client != sender) {
             try {
+                // Send the formatted message to each client
                 server_socket.send_to(asio::buffer(newMessage.c_str(), newMessage.size()), client);
             } catch (std::exception const &e) {
+                // Report any exceptions that occur during the sending process
                 std::cerr << "Error sending message to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
             }
         }
