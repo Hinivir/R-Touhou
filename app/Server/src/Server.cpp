@@ -41,7 +41,9 @@ void Server::startServer(void)
 const std::map<std::string, std::function<void(Server &, const udp::endpoint&, const std::array<char, 2048>&, size_t)>> Server::serverCommandHandler = {
     {"connect\n", &Server::handleConnect},
     {"disconnect\n", &Server::handleDisconnect},
-    {"ready\n", &Server::handleReady}
+    {"ready\n", &Server::handleReady},
+    {"quit\n", &Server::handleQuit},
+    {"help\n", &Server::handleHelp}
 };
 
 void Server::handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
@@ -115,6 +117,38 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
         isChatLocked = true;
         notifyGameReady();
     }
+}
+
+
+void Server::handleHelp(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::string message = "Available commands:\n";
+    for (auto const& [key, value] : serverCommandHandler)
+        message += key;
+    try {
+        server_socket.send_to(asio::buffer(message), client_endpoint);
+    } catch (std::exception const &e) {
+        std::cerr << "Error sending help message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+    }
+}
+
+void Server::handleQuit(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::cout << "Client quit: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+
+    try {
+        server_socket.send_to(asio::buffer(QUIT), client_endpoint);
+    } catch (std::exception const &e) {
+        std::cerr << "Error sending quit confirmation message to client " << client_endpoint.address() << ":" << client_endpoint.port() << ": " << e.what() << std::endl;
+    }
+    auto it = std::find(connectedClients.begin(), connectedClients.end(), client_endpoint);
+    if (it != connectedClients.end()) {
+        connectedClients.erase(it);
+        readyClients.erase(std::remove(readyClients.begin(), readyClients.end(), client_endpoint), readyClients.end());
+        playerCount--;
+    }
+    std::string nbPlayer = std::to_string(playerCount) + " players connected\n";
+    broadcastMessage(nbPlayer, nbPlayer.size(), client_endpoint);
 }
 
 void Server::connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)

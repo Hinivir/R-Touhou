@@ -18,6 +18,8 @@
     #define ERROR "102: Error sending confirmation message to client!\n"
     #define READY "104: You are ready!\n"
     #define SERVER_FULL "105: Server is full!\n"
+    #define QUIT "106: You quit the server!\n"
+
     using asio::ip::udp;
 
     class Server
@@ -41,6 +43,8 @@
             void handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void handleDisconnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void handleReady(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+            void handleQuit(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+            void handleHelp(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void closeServer(void);
             void startServer(void);
             void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
