@@ -3,8 +3,8 @@
 The repository for the R-Type project.  
   
 <div id="pictureRType" style="display: flex;">  
-  <img src="docs/readmePicture/pictureRType.jpg" alt="picture R-TYpe" width="600" height="300" style="margin-right: 50px;">  
-  <img src="docs/readmePicture/pictureEpitech.png" alt="picture Epitech" width="300" height="300" style="margin-right: 50px;">  
+  <img src="docs/readmePicture/pictureRType.jpg" alt="picture R-TYpe" width="300" height="150" style="margin-right: 50px;">  
+  <img src="docs/readmePicture/pictureEpitech.png" alt="picture Epitech" width="150" height="150" style="margin-right: 50px;">  
 </div>  
 
 ---  
