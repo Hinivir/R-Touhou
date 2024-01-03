@@ -2,35 +2,38 @@
   
 The repository for the R-Type project.  
   
+<div id="pictureRType" style="display: flex;">  
+  <img src="docs/readmePicture/pictureRType.jpg" alt="picture R-TYpe" width="600" height="300" style="margin-right: 50px;">  
+  <img src="docs/readmePicture/pictureEpitech.png" alt="picture Epitech" width="300" height="300" style="margin-right: 50px;">  
+</div>  
+
 ---  
   
 ## Table of contents  
   
-[1. The purpose of the project](#titre1)<br />  
-[A) The subjects of the project 📄](#titre11)<br />  
-[B) Rules for conventional commit messages 📄](#titre12)<br />  
-  
-[2. How to use R-Type](#titre2)<br />  
-  
-[3. People on the project](#titre3)<br />  
+[The purpose of the project](#purpose_project)<br />  
+[The subjects of the project 📄](#subject_project)<br />  
+[Rules for conventional commit messages 📄](#conventionnal_commit)<br />  
+[How to use R-Type](#use_R-Type)<br />  
+[Contributors](#contributors)<br />  
   
 ---  
   
-## <a id="titre1"></a>1. The purpose of the project  
+## <a id="purpose_project"></a> The purpose of the project  
   
 The purpose of the project is to implement a multithreaded server and a graphical client for a well-known legacy video game **called R-Type**, using a game engine of your own design.  
   
-### <a id="titre11"></a>A) The subjects of the project 📄  
+### <a id="subject_project"></a> The subjects of the project 📄  
   
 [R-Type - A game engine that roars!](https://intra.epitech.eu/module/2023/B-CPP-500/PAR-5-2/acti-622530/project/file/B-CPP-500_rtype.pdf)  
   
-### <a id="titre12"></a>B) Rules for conventional commit messages 📄  
+### <a id="conventionnal_commit"></a> Rules for conventional commit messages 📄  
   
 [The document rules for conventional commit messages](docs/COMMITS.md)  
   
 ---  
   
-## <a id="titre2"></a>2. How to use R-Type  
+## <a id="use_R-Type"></a> How to use R-Type  
   
 ### Build and setup
 
@@ -68,7 +71,7 @@ You can connect as many clients as you want.
 
 ---  
   
-## <a id="titre3"></a>3. Contributors  
+## <a id="contributors"></a> Contributors  
   
 | [<img src="https://github.com/Drindael.png?size=85" width=85><br><sub>Cyprien Nguyen-Van-Vien</sub>](https://github.com/Drindael) | [<img src="https://github.com/damienBC.png?size=85" width=85><br><sub>Damien Benais-Captal</sub>](https://github.com/damienBC) | [<img src="https://github.com/Pierrelouisleroy.png?size=85" width=85><br><sub>Pierre-Louis Leroy</sub>](https://github.com/Pierrelouisleroy) | [<img src="https://github.com/Hinivir.png?size=85" width=85><br><sub>Viktor Bruggeman</sub>](https://github.com/Hinivir) | [<img src="https://github.com/Lipatant.png?size=85" width=85><br><sub>Virgile Berrier</sub>](https://github.com/Lipatant)  
 | :--: | :--: | :--: | :--: | :--: |  
