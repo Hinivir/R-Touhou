@@ -76,7 +76,7 @@ namespace GameEngine
             }
         }
 
-        void drawSystem(GameEngine::Registry &r) {
+        void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
             auto &drawables = r.getComponent<Drawable>();
             auto &positions = r.getComponent<Position>();
 
@@ -87,8 +87,10 @@ namespace GameEngine
 
                 if (drawable && pos)
                 {
-                    // Draw the entity based on drawable and position information.
-                    // Replace this with your actual drawing logic.
+                    sf::RectangleShape rectangle(sf::Vector2f(50, 50)); // Adjust the size as needed
+                    rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
+                    rectangle.setFillColor(sf::Color::Red);
+                    window.draw(rectangle);
                     std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
                 }
             }

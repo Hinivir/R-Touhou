@@ -32,32 +32,20 @@ int main()
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{});
     }
 
+    GameEngine::System system;
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
-        // Example usage of the position_system
-        GameEngine::System system;
         system.positionSystem(registry);
-
-        // Example usage of the control_system
         system.controlSystem(registry);
 
-        // Example usage of the draw_system
-        system.drawSystem(registry);
-
-        // Clear the window
-        window.clear();
-
-        // Render your entities using SFML
-
-        // ...
-
-        // Display the rendered entities
+        system.drawSystem(registry, window);
         window.display();
+        window.clear();
     }
 
     return 0;
