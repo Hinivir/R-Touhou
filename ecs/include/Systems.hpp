@@ -79,21 +79,42 @@ namespace GameEngine
         void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
             auto &drawables = r.getComponent<Drawable>();
             auto &positions = r.getComponent<Position>();
+            auto &sprites = r.getComponent<Sprite>();
+            auto &colors = r.getComponent<Color>();
 
             for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
             {
                 auto &drawable = drawables[i];
                 auto &pos = positions[i];
+                auto &sprite = sprites[i];
+                auto &color = colors[i];
 
-                if (drawable && pos)
-                {
-                    sf::RectangleShape rectangle(sf::Vector2f(50, 50)); // Adjust the size as needed
-                    rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
-                    rectangle.setFillColor(sf::Color::Red);
-                    window.draw(rectangle);
-                    std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
+                if (drawable && pos) {
+                    if (sprite.value().sprite.getTexture() != nullptr) {
+                        sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
+                        window.draw(sprite.value().sprite);
+                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
+                    } else if (color) {
+                        sf::RectangleShape rectangle(sf::Vector2f(50, 50));
+                        rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
+                        rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
+                        window.draw(rectangle);
+                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
+                    } else {
+                        throw std::runtime_error("No drawable component found");
+                    }
                 }
             }
+        }
+
+        void spriteSystem(GameEngine::Registry &r, std::size_t entityId) {
+            auto entity = r.getEntityById(entityId);
+            auto &sprites = r.getComponent<Sprite>();
+            if (entity == -1 || !sprites[entityId])
+                return;
+            auto &sprite = sprites[entityId];
+            sprite.value().texture.loadFromFile(sprite.value().path);
+            sprite.value().sprite.setTexture(sprite.value().texture);
         }
 
     };

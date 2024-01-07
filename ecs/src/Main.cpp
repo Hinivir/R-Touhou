@@ -6,6 +6,8 @@
 #include "Components/Velocity.hpp"
 #include "Components/Drawable.hpp"
 #include "Components/Controllable.hpp"
+#include "Components/Sprite.hpp"
+#include "Components/Color.hpp"
 #include "Systems.hpp"
 
 int main()
@@ -19,17 +21,21 @@ int main()
     registry.registerComponent<GameEngine::Drawable>();
     registry.registerComponent<GameEngine::Position>();
     registry.registerComponent<GameEngine::Velocity>();
+    registry.registerComponent<GameEngine::Sprite>();
+    registry.registerComponent<GameEngine::Color>();
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
-    registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{});
-    registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{});
-    registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{});
-    registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{});
+    registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
+    registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
 
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
-        registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{});
+        registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{});
+        registry.addComponent<GameEngine::Color>(staticEntity, GameEngine::Color{0, 255, 0, 100});
     }
 
     GameEngine::System system;
@@ -43,6 +49,7 @@ int main()
         system.positionSystem(registry);
         system.controlSystem(registry);
 
+        system.spriteSystem(registry, movableEntity);
         system.drawSystem(registry, window);
         window.display();
         window.clear();

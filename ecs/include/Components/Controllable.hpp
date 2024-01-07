@@ -12,7 +12,7 @@ namespace GameEngine
 {
     struct Controllable
     {
-      bool is_controllable;
+      bool is_controllable = false;
     };
 } // namespace GameEngine
 

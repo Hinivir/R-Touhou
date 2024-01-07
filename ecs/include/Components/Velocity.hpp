@@ -8,8 +8,6 @@
 #ifndef VELOCITY_HPP_
 #define VELOCITY_HPP_
 
-#include <iostream>
-
 namespace GameEngine
 {
     struct Velocity

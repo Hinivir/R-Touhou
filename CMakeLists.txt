@@ -33,6 +33,7 @@ include(app/Instance/Instance.cmake)
 include(app/Server/Server.cmake)
 include(libraries/SFML/SFML.cmake)
 include(games/RTouhou/RTouhou.cmake)
+include(ecs/ecs.cmake)
 
 if (DEFINED INSTALL)
 

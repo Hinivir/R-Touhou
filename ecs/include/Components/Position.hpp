@@ -8,8 +8,6 @@
 #ifndef POSITION_HPP_
 #define POSITION_HPP_
 
-#include <iostream>
-
 namespace GameEngine
 {
     struct Position

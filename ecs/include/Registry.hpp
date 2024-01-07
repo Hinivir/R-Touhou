@@ -16,11 +16,6 @@
 #include "SparseArray.hpp"
 #include "Entity.hpp"
 
-#include "Components/Drawable.hpp"
-#include "Components/Position.hpp"
-#include "Components/Velocity.hpp"
-#include "Components/Controllable.hpp"
-
 namespace GameEngine
 {
     /// @brief Registry class used to store all the components of the ECS
@@ -34,20 +29,6 @@ namespace GameEngine
         /// @brief Register a new Component to the registry
         /// @tparam Component Type of the component to register
         /// @return A reference to the newly created sparseArray
-        /*template <class Component>
-        SparseArray<Component> &registerComponent()
-        {
-            _container.insert({std::type_index(typeid(Component)), SparseArray<Component>()});
-            SparseArray<Component> &ret =
-                std::any_cast<SparseArray<Component> &>(_container[std::type_index(typeid(Component))]);
-            ret.resize(_maxEntities);
-            std::function<void(Registry &, const Entity &)> deleter = [](Registry &registry, const Entity &entity) {
-                registry.getComponent<Component>().erase(entity);
-            };
-            _deleters.push_back(deleter);
-            return ret;
-        };*/
-
         template <class Component>
         SparseArray<Component> &registerComponent()
         {
@@ -55,50 +36,10 @@ namespace GameEngine
             _container[typeIndex] = SparseArray<Component>();
             return std::any_cast<SparseArray<Component>&>(_container[typeIndex]);
         };
-        /*template <class Component>
-        SparseArray<Component> &registerComponent()
-        {
-            auto it = _container.find(std::type_index(typeid(Component)));
-            if (it == _container.end()) {
-                // Component not registered yet, create a new SparseArray
-                auto [newIt, success] = _container.emplace(std::type_index(typeid(Component)), SparseArray<Component>());
-                if (!success) {
-                    throw std::runtime_error("Failed to register component in the registry");
-                }
-                return std::any_cast<SparseArray<Component> &>(newIt->second);
-            } else {
-                // Component already registered, return the existing SparseArray
-                return std::any_cast<SparseArray<Component> &>(it->second);
-            }
-        }*/
-
-        // Register the components to the registry
-        //SparseArray<Position> &positions = registerComponent<Position>();
-        //SparseArray<Velocity> &velocities = registerComponent<Velocity>();
-        //SparseArray<Drawable> &drawables = registerComponent<Drawable>();
-        //SparseArray<Controllable> &controllables = registerComponent<Controllable>();
 
         /// @brief Get a component from the registry
         /// @tparam Component Type of the component to get
         /// @return A reference to the SparseArray of the component
-        /*template <class Component>
-        SparseArray<Component> &getComponent()
-        {
-            SparseArray<Component> &ret =
-                std::any_cast<SparseArray<Component> &>(_container[std::type_index(typeid(Component))]);
-            return ret;
-        };*/
-        /*template <class Component>
-        SparseArray<Component> &getComponent()
-        {
-            auto &anyRef = _container[std::type_index(typeid(Component))];
-
-            try {
-                return std::any_cast<SparseArray<Component> &>(anyRef);
-            } catch (const std::bad_any_cast &) {
-                throw std::runtime_error("Component not found in registry");
-            }
-        };*/
         template <class Component>
         SparseArray<Component> &getComponent()
         {
@@ -172,12 +113,6 @@ namespace GameEngine
         /// @param entity Entity to add the component to
         /// @param component Component to add
         /// @return A reference to the newly added component
-        /* template <typename Component>
-        typename SparseArray<Component>::ReferenceType addComponent(const Entity &entity, Component &&component)
-        {
-            return getComponent<Component>().insertAt(entity, component);
-        }; */
-
         template <typename Component>
         typename SparseArray<Component>::ReferenceType addComponent(const Entity &entity, Component &&component)
         {
