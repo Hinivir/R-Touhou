@@ -11,6 +11,12 @@
 #include "Registry.hpp"
 #include "Components/Position.hpp"
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
+#include <SFML/Network.hpp>
+
 namespace GameEngine
 {
 
@@ -29,7 +35,7 @@ namespace GameEngine
                 auto const &vel = velocities[i];
                 if (pos && vel) {
                     std ::cerr << i << ": Position = { " << pos.value().pos_x << ", " << pos.value().pos_y
-                               << " } , Velocity = { " << vel.value().x << ", " << vel.value().y << " }"
+                               << " } , Velocity = { " << vel.value().vol_x << ", " << vel.value().vol_y << " }"
                                << std ::endl;
                 }
             }
@@ -53,17 +59,19 @@ namespace GameEngine
             auto const &controllables = r.getComponent<Controllable>();
             auto &velocities = r.getComponent<Velocity>();
 
-            for (size_t i = 0; i < controllables.size() && i < velocities.size(); ++i)
-            {
+            for (size_t i = 0; i < controllables.size() && i < velocities.size(); ++i) {
                 auto &controllable = controllables[i];
                 auto &vel = velocities[i];
 
-                if (controllable && vel)
-                {
-                    // Set velocity based on keyboard input or set it to 0 if there are no inputs.
-                    // Replace this logic with your actual input handling.
-                    vel.value().vol_x = 1.0f;
-                    vel.value().vol_y = 1.0f;
+                if (controllable && vel) {
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                        vel.value().vol_y -= 1;
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                        vel.value().vol_y += 1;
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                        vel.value().vol_x -= 1;
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                        vel.value().vol_x += 1;
                 }
             }
         }
@@ -85,8 +93,6 @@ namespace GameEngine
                 }
             }
         }
-
-
 
     };
 }

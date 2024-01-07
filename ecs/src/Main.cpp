@@ -1,45 +1,63 @@
+#include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Registry.hpp"
-#include "Entity.hpp"
-#include "Components/Controllable.hpp"
-#include "Components/Drawable.hpp"
+#include "SparseArray.hpp"
 #include "Components/Position.hpp"
 #include "Components/Velocity.hpp"
+#include "Components/Drawable.hpp"
+#include "Components/Controllable.hpp"
 #include "Systems.hpp"
-#include <iostream>
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
+    sf::RenderWindow window(sf::VideoMode(800, 600), "ECS");
     GameEngine::Registry registry(1024);
-    std::cout << "Registry created" << std::endl;
 
-    registry.registerComponent<GameEngine::Position>();
-    std::cout << "Position component registered" << std::endl;
-    registry.registerComponent<GameEngine::Velocity>();
-    std::cout << "Velocity component registered" << std::endl;
-    registry.registerComponent<GameEngine::Drawable>();
-    std::cout << "Drawable component registered" << std::endl;
+    window.setFramerateLimit(60);
+
     registry.registerComponent<GameEngine::Controllable>();
-    std::cout << "Controllable component registered" << std::endl;
+    registry.registerComponent<GameEngine::Drawable>();
+    registry.registerComponent<GameEngine::Position>();
+    registry.registerComponent<GameEngine::Velocity>();
 
-    // Create a movable entity with all components
-    std::cout << "Creating movable entity" << std::endl;
     GameEngine::Entity movableEntity = registry.spawnEntity();
-    std::cout << "Movable entity created" << std::endl;
-    registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
-    std::cout << "Controllable component added" << std::endl;
+    registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{});
     registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{});
-    std::cout << "Drawable component added" << std::endl;
     registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{});
-    std::cout << "Position component added" << std::endl;
     registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{});
-    std::cout << "Velocity component added" << std::endl;
 
-    // Create static entities with Drawable and Position components
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{});
+    }
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // Example usage of the position_system
+        GameEngine::System system;
+        system.positionSystem(registry);
+
+        // Example usage of the control_system
+        system.controlSystem(registry);
+
+        // Example usage of the draw_system
+        system.drawSystem(registry);
+
+        // Clear the window
+        window.clear();
+
+        // Render your entities using SFML
+
+        // ...
+
+        // Display the rendered entities
+        window.display();
     }
 
     return 0;
