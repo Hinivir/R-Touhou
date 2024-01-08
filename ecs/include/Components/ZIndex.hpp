@@ -13,7 +13,7 @@ namespace GameEngine
     using ZIndexValue = float;
     struct ZIndex
     {
-        GameEngine::ZIndexValue ZIndex;
+        GameEngine::ZIndexValue ZIndex = 0.0;
     };
 } // namespace GameEngine
 
