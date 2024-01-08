@@ -36,6 +36,7 @@ int main()
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{});
         registry.addComponent<GameEngine::Color>(staticEntity, GameEngine::Color{0, 255, 0, 100});
+        registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"",sf::Sprite(),sf::Texture()});
     }
 
     GameEngine::System system;
