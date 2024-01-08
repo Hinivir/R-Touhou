@@ -12,8 +12,8 @@ namespace GameEngine
 {
     struct Velocity
     {
-      float vol_x;
-      float vol_y;
+        float vol_x;
+        float vol_y;
     };
 } // namespace GameEngine
 
