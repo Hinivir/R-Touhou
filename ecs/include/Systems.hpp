@@ -41,37 +41,25 @@ namespace GameEngine
             }
         }
 
-        void positionSystem(GameEngine::Registry &r) {
-            auto &positions = r.getComponent<GameEngine::Position>();
-            auto const &velocities = r.getComponent<GameEngine::Velocity>();
-
-            for (size_t i = 0; i < positions.size() && i < velocities.size(); ++i) {
-                auto &pos = positions[i];
-                auto &vel = velocities[i];
-                if (pos && vel) {
-                    pos.value().pos_x += vel.value().vol_x;
-                    pos.value().pos_y += vel.value().vol_y;
-                }
-            }
-        }
-
         void controlSystem(GameEngine::Registry &r) {
             auto const &controllables = r.getComponent<Controllable>();
-            auto &velocities = r.getComponent<Velocity>();
+            auto &positions = r.getComponent<Position>();
+            auto velocities = r.getComponent<Velocity>();
 
-            for (size_t i = 0; i < controllables.size() && i < velocities.size(); ++i) {
+            for (size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
                 auto &controllable = controllables[i];
+                auto &pos = positions[i];
                 auto &vel = velocities[i];
 
-                if (controllable && vel) {
+                if ((controllable || controllable.value().isControllable) && vel) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                        vel.value().vol_y -= 1;
+                        pos.value().pos_y -= vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                        vel.value().vol_y += 1;
+                        pos.value().pos_y += vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                        vel.value().vol_x -= 1;
+                        pos.value().pos_x -= vel.value().vol_x;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                        vel.value().vol_x += 1;
+                        pos.value().pos_x += vel.value().vol_x;
                 }
             }
         }
@@ -108,29 +96,59 @@ namespace GameEngine
                         if (sprite.value().sprite.getTexture() != nullptr) {
                             sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
                             window.draw(sprite.value().sprite);
-                            std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
-                        } else if (color) {
-                            sf::RectangleShape rectangle(sf::Vector2f(50, 50));
-                            rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
-                            rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
-                            window.draw(rectangle);
-                            std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
-                        } else {
-                            throw std::runtime_error("No drawable component found");
                         }
                     }
                 }
             } while (currentZIndex != lowestZIndex);
         }
 
-        void spriteSystem(GameEngine::Registry &r, std::size_t entityId) {
-            auto entity = r.getEntityById(entityId);
+        void initEnemy(GameEngine::Registry &r) {
+            auto &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<Controllable>();
+            std::size_t y = 0;
+
+            for (size_t i = 0; i < positions.size(); ++i) {
+                y = 0;
+                auto &pos = positions[i];
+                auto const &controllable = controllables[i];
+
+                if (pos && !controllable || !controllable.value().isControllable) {
+                    pos.value().pos_x = rand() % 1000;
+                    y = rand() % 1000;
+                    if (y > 1920)
+                        y = rand() % 1000;
+                    pos.value().pos_y = rand() % 1000;
+                }
+            }
+        }
+
+        void enenemyMovementSystem(GameEngine::Registry &r) {
+            auto const &velocities = r.getComponent<Velocity>();
+            auto &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<Controllable>();
+
+            for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
+                auto const &vel = velocities[i];
+                auto &pos = positions[i];
+                auto const &controllable = controllables[i];
+
+                if (vel && pos && !controllable || !controllable.value().isControllable) {
+                    pos.value().pos_x += vel.value().vol_x;
+                    pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
+                }
+            }
+        }
+
+        void spriteSystem(GameEngine::Registry &r) {
             auto &sprites = r.getComponent<Sprite>();
-            if (entity == -1 || !sprites[entityId])
-                return;
-            auto &sprite = sprites[entityId];
-            sprite.value().texture.loadFromFile(sprite.value().path);
-            sprite.value().sprite.setTexture(sprite.value().texture);
+
+            for (size_t i = 0; i < sprites.size(); ++i) {
+                auto &sprite = sprites[i];
+                if (!sprite.value().path.empty()) {
+                    sprite.value().texture.loadFromFile(sprite.value().path);
+                    sprite.value().sprite.setTexture(sprite.value().texture);
+                }
+            }
         }
 
     };
