@@ -48,7 +48,6 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-//        system.positionSystem(registry);
         system.enenemyMovementSystem(registry);
         system.controlSystem(registry);
 

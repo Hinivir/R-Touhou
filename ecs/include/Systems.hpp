@@ -41,37 +41,25 @@ namespace GameEngine
             }
         }
 
-        void positionSystem(GameEngine::Registry &r) {
-            auto &positions = r.getComponent<GameEngine::Position>();
-            auto const &velocities = r.getComponent<GameEngine::Velocity>();
-
-            for (size_t i = 0; i < positions.size() && i < velocities.size(); ++i) {
-                auto &pos = positions[i];
-                auto &vel = velocities[i];
-                if (pos && vel) {
-                    pos.value().pos_x += vel.value().vol_x;
-                    pos.value().pos_y += vel.value().vol_y;
-                }
-            }
-        }
-
         void controlSystem(GameEngine::Registry &r) {
             auto const &controllables = r.getComponent<Controllable>();
-            auto &velocities = r.getComponent<Velocity>();
+            auto &positions = r.getComponent<Position>();
+            auto velocities = r.getComponent<Velocity>();
 
-            for (size_t i = 0; i < controllables.size() && i < velocities.size(); ++i) {
+            for (size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
                 auto &controllable = controllables[i];
+                auto &pos = positions[i];
                 auto &vel = velocities[i];
 
                 if ((controllable || controllable.value().isControllable) && vel) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                        vel.value().vol_y -= 1;
+                        pos.value().pos_y -= vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                        vel.value().vol_y += 1;
+                        pos.value().pos_y += vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                        vel.value().vol_x -= 1;
+                        pos.value().pos_x -= vel.value().vol_x;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                        vel.value().vol_x += 1;
+                        pos.value().pos_x += vel.value().vol_x;
                 }
             }
         }
