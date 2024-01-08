@@ -68,27 +68,38 @@ namespace GameEngine
             auto &drawables = r.getComponent<Drawable>();
             auto &positions = r.getComponent<Position>();
             auto &sprites = r.getComponent<Sprite>();
-            auto &colors = r.getComponent<Color>();
 
             for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
             {
                 auto &drawable = drawables[i];
                 auto &pos = positions[i];
                 auto &sprite = sprites[i];
-                auto &color = colors[i];
 
                 if (drawable && pos) {
                     if (sprite.value().sprite.getTexture() != nullptr) {
                         sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
                         window.draw(sprite.value().sprite);
-                    } else if (color) {
-                        sf::RectangleShape rectangle(sf::Vector2f(50, 50));
-                        rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
-                        rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
-                        window.draw(rectangle);
-                    } else {
-                        throw std::runtime_error("No drawable component found");
                     }
+                }
+            }
+        }
+
+        void initEnemy(GameEngine::Registry &r) {
+            auto &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<Controllable>();
+            std::size_t y = 0;
+
+            for (size_t i = 0; i < positions.size(); ++i) {
+                y = 0;
+                auto &pos = positions[i];
+                auto const &controllable = controllables[i];
+
+                if (pos && !controllable || !controllable.value().isControllable) {
+                    pos.value().pos_x = rand() % 1000;
+                    y = rand() % 1000;
+                    if (y > 1920)
+                        y = rand() % 1000;
+                    pos.value().pos_y = rand() % 1000;
                 }
             }
         }
@@ -108,17 +119,18 @@ namespace GameEngine
                     pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
                 }
             }
-
         }
 
-        void spriteSystem(GameEngine::Registry &r, std::size_t entityId) {
-            auto entity = r.getEntityById(entityId);
+        void spriteSystem(GameEngine::Registry &r) {
             auto &sprites = r.getComponent<Sprite>();
-            if (entity == -1 || !sprites[entityId])
-                return;
-            auto &sprite = sprites[entityId];
-            sprite.value().texture.loadFromFile(sprite.value().path);
-            sprite.value().sprite.setTexture(sprite.value().texture);
+
+            for (size_t i = 0; i < sprites.size(); ++i) {
+                auto &sprite = sprites[i];
+                if (!sprite.value().path.empty()) {
+                    sprite.value().texture.loadFromFile(sprite.value().path);
+                    sprite.value().sprite.setTexture(sprite.value().texture);
+                }
+            }
         }
 
     };
