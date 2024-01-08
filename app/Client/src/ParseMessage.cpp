@@ -43,7 +43,7 @@ void Client::parseMessage(const std::string message)
 }
 
 void Client::addUsersWhenConnected(const std::string& message)
-{ 
+{
     std::size_t nb_user = std::stoi(message.substr(0, 1));
 
     while (nb_user != 0) {

@@ -61,6 +61,7 @@ int main()
         }
         system.enenemyMovementSystem(registry);
         system.controlSystem(registry);
+        system.collisionSystem(registry);
 
         system.spriteSystem(registry);
         system.drawSystem(registry, window);

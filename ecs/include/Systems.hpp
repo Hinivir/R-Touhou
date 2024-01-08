@@ -24,6 +24,11 @@
 #define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
     bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
+bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width, std::size_t height)
+{
+    return (x1 < x2 + width && x1 + width > x2 && y1 < y2 + height && y1 + height > y2);
+}
+
 namespace GameEngine
 {
 
@@ -112,18 +117,13 @@ namespace GameEngine
         void initEnemy(GameEngine::Registry &r) {
             auto &positions = r.getComponent<Position>();
             auto const &controllables = r.getComponent<Controllable>();
-            std::size_t y = 0;
 
             for (size_t i = 0; i < positions.size(); ++i) {
-                y = 0;
                 auto &pos = positions[i];
                 auto const &controllable = controllables[i];
 
                 if (pos && !controllable || !controllable.value().isControllable) {
-                    pos.value().pos_x = rand() % 1000;
-                    y = rand() % 1000;
-                    if (y > 1920)
-                        y = rand() % 1000;
+                    pos.value().pos_x = rand() % 1080 + 1920;
                     pos.value().pos_y = rand() % 1000;
                 }
             }
@@ -140,7 +140,7 @@ namespace GameEngine
                 auto const &controllable = controllables[i];
 
                 if (vel && pos && !controllable || !controllable.value().isControllable) {
-                    pos.value().pos_x += vel.value().vol_x;
+                    pos.value().pos_x -= vel.value().vol_x;
                     pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
                 }
             }
@@ -157,6 +157,40 @@ namespace GameEngine
                 }
             }
         }
+
+        void collisionSystem(GameEngine::Registry &r) {
+            auto const &controllables = r.getComponent<Controllable>();
+            auto const &positions = r.getComponent<Position>();
+            std::vector<std::size_t> players;
+
+            for (std::size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
+                auto const &controllable = controllables[i];
+                auto const &pos = positions[i];
+
+                if (controllable && pos)
+                    players.push_back(i);
+            }
+
+            for (auto const &player : players) {
+                for (std::size_t j = 0; j < positions.size(); ++j) {
+                    if (player == j)
+                        continue;
+                    auto const &ennemy = positions[j];
+                    if (isColliding(
+                        positions[player].value().pos_x,
+                        positions[player].value().pos_y,
+                        ennemy.value().pos_x,
+                        ennemy.value().pos_y,
+                        100,
+                        100
+                    )) {
+                        std::cout << "COLLISION" << std::endl;
+                    }
+                }
+            }
+        }
+
+
 
     };
 }
