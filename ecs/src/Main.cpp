@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** R-Touhou_Bootstrap
+** File description:
+** Main.cpp
+*/
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Registry.hpp"
