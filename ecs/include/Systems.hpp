@@ -81,30 +81,46 @@ namespace GameEngine
             auto &positions = r.getComponent<Position>();
             auto &sprites = r.getComponent<Sprite>();
             auto &colors = r.getComponent<Color>();
+            auto &zIndexes = r.getComponent<ZIndex>();
+            GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
+            GameEngine::ZIndexValue currentZIndex;
 
-            for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
-            {
-                auto &drawable = drawables[i];
-                auto &pos = positions[i];
-                auto &sprite = sprites[i];
-                auto &color = colors[i];
+            do {
+                currentZIndex = lowestZIndex;
+                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
+                {
+                    auto &drawable = drawables[i];
+                    auto &pos = positions[i];
+                    auto &sprite = sprites[i];
+                    auto &color = colors[i];
+                    auto &zIndex = zIndexes[i];
 
-                if (drawable && pos) {
-                    if (sprite.value().sprite.getTexture() != nullptr) {
-                        sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
-                        window.draw(sprite.value().sprite);
-                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
-                    } else if (color) {
-                        sf::RectangleShape rectangle(sf::Vector2f(50, 50));
-                        rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
-                        rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
-                        window.draw(rectangle);
-                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
-                    } else {
-                        throw std::runtime_error("No drawable component found");
+                    GameEngine::ZIndexValue zIndexValue = zIndex.has_value() ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+
+                    if (zIndexValue < currentZIndex)
+                        continue;
+                    if (zIndexValue != currentZIndex) {
+                        if (lowestZIndex == currentZIndex || zIndexValue < lowestZIndex)
+                            lowestZIndex = zIndexValue;
+                        continue;
+                    }
+                    if (drawable && pos) {
+                        if (sprite.value().sprite.getTexture() != nullptr) {
+                            sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
+                            window.draw(sprite.value().sprite);
+                            std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
+                        } else if (color) {
+                            sf::RectangleShape rectangle(sf::Vector2f(50, 50));
+                            rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
+                            rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
+                            window.draw(rectangle);
+                            std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
+                        } else {
+                            throw std::runtime_error("No drawable component found");
+                        }
                     }
                 }
-            }
+            } while (currentZIndex != lowestZIndex);
         }
 
         void spriteSystem(GameEngine::Registry &r, std::size_t entityId) {
