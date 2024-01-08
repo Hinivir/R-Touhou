@@ -63,7 +63,7 @@ namespace GameEngine
                 auto &controllable = controllables[i];
                 auto &vel = velocities[i];
 
-                if (controllable && vel) {
+                if ((controllable || controllable.value().isControllable) && vel) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
                         vel.value().vol_y -= 1;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -93,18 +93,34 @@ namespace GameEngine
                     if (sprite.value().sprite.getTexture() != nullptr) {
                         sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
                         window.draw(sprite.value().sprite);
-                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
                     } else if (color) {
                         sf::RectangleShape rectangle(sf::Vector2f(50, 50));
                         rectangle.setPosition(pos.value().pos_x, pos.value().pos_y);
                         rectangle.setFillColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
                         window.draw(rectangle);
-                        std::cout << "Drawing entity at position (" << pos.value().pos_x << ", " << pos.value().pos_y << ")" << std::endl;
                     } else {
                         throw std::runtime_error("No drawable component found");
                     }
                 }
             }
+        }
+
+        void enenemyMovementSystem(GameEngine::Registry &r) {
+            auto const &velocities = r.getComponent<Velocity>();
+            auto &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<Controllable>();
+
+            for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
+                auto const &vel = velocities[i];
+                auto &pos = positions[i];
+                auto const &controllable = controllables[i];
+
+                if (vel && pos && !controllable || !controllable.value().isControllable) {
+                    pos.value().pos_x += vel.value().vol_x;
+                    pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
+                }
+            }
+
         }
 
         void spriteSystem(GameEngine::Registry &r, std::size_t entityId) {

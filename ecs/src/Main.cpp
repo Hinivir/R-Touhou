@@ -34,7 +34,8 @@ int main()
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
-        registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{});
+        registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{30.0f, 30.0f});
+        registry.addComponent<GameEngine::Velocity>(staticEntity, GameEngine::Velocity{1.5f, 1.5f});
         registry.addComponent<GameEngine::Color>(staticEntity, GameEngine::Color{0, 255, 0, 100});
         registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"",sf::Sprite(),sf::Texture()});
     }
@@ -47,7 +48,8 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        system.positionSystem(registry);
+//        system.positionSystem(registry);
+        system.enenemyMovementSystem(registry);
         system.controlSystem(registry);
 
         system.spriteSystem(registry, movableEntity);
