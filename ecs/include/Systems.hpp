@@ -87,7 +87,7 @@ namespace GameEngine
                     FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, _hasDrawable);
                     FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
                     FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, _hasSprite);
-                    FROM_COMPONENT_TO_VARIABLE(colors, i, color, _hasColor);
+                    FROM_COMPONENT_TO_VARIABLE(colors, i, color, hasColor);
                     FROM_COMPONENT_TO_VARIABLE(zIndexes, i, zIndex, hasZIndex);
 
                     GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
@@ -102,6 +102,8 @@ namespace GameEngine
                     if (drawable && pos) {
                         if (sprite.value().sprite.getTexture() != nullptr) {
                             sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
+                            if (hasColor)
+                                sprite.value().sprite.setColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
                             window.draw(sprite.value().sprite);
                         }
                     }
