@@ -29,7 +29,7 @@ int main()
     registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{0.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
 
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
