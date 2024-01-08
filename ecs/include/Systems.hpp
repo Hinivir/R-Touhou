@@ -84,13 +84,14 @@ namespace GameEngine
                 currentZIndex = lowestZIndex;
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
-                    FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, _hasDrawable);
-                    FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
-                    FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, _hasSprite);
+                    FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, hasDrawable);
+                    if (!hasDrawable || drawable.value().is_visible) continue;
+                    FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
+                    FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
                     FROM_COMPONENT_TO_VARIABLE(colors, i, color, hasColor);
                     FROM_COMPONENT_TO_VARIABLE(zIndexes, i, zIndex, hasZIndex);
-
                     GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+                    GameEngine::Position pos = hasPosition ? position.value() : GameEngine::Position({0.0, 0.0});
 
                     if (zIndexValue < currentZIndex)
                         continue;
@@ -99,13 +100,11 @@ namespace GameEngine
                             lowestZIndex = zIndexValue;
                         continue;
                     }
-                    if (drawable && pos) {
-                        if (sprite.value().sprite.getTexture() != nullptr) {
-                            sprite.value().sprite.setPosition(pos.value().pos_x, pos.value().pos_y);
-                            if (hasColor)
-                                sprite.value().sprite.setColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
-                            window.draw(sprite.value().sprite);
-                        }
+                    if (hasSprite && sprite.value().sprite.getTexture() != nullptr) {
+                        sprite.value().sprite.setPosition(pos.pos_x, pos.pos_y);
+                        if (hasColor)
+                            sprite.value().sprite.setColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
+                        window.draw(sprite.value().sprite);
                     }
                 }
             } while (currentZIndex != lowestZIndex);
