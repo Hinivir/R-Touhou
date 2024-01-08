@@ -17,6 +17,13 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
+#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (i < COMPONENT.size() && COMPONENT[ID].has_value())
+
+#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+
 namespace GameEngine
 {
 
@@ -77,13 +84,13 @@ namespace GameEngine
                 currentZIndex = lowestZIndex;
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
-                    auto &drawable = drawables[i];
-                    auto &pos = positions[i];
-                    auto &sprite = sprites[i];
-                    auto &color = colors[i];
-                    auto &zIndex = zIndexes[i];
+                    FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, _hasDrawable);
+                    FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
+                    FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, _hasSprite);
+                    FROM_COMPONENT_TO_VARIABLE(colors, i, color, _hasColor);
+                    FROM_COMPONENT_TO_VARIABLE(zIndexes, i, zIndex, hasZIndex);
 
-                    GameEngine::ZIndexValue zIndexValue = zIndex.has_value() ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+                    GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
 
                     if (zIndexValue < currentZIndex)
                         continue;
