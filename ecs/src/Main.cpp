@@ -22,6 +22,7 @@
 #include "Components/Sprite.hpp"
 #include "Components/Color.hpp"
 #include "Components/ZIndex.hpp"
+#include "Components/Life.hpp"
 #include "Systems.hpp"
 
 int main()
@@ -39,6 +40,7 @@ int main()
     registry.registerComponent<GameEngine::Sprite>();
     registry.registerComponent<GameEngine::Color>();
     registry.registerComponent<GameEngine::ZIndex>();
+    registry.registerComponent<GameEngine::Life>();
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
     registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
@@ -48,11 +50,11 @@ int main()
     registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
     //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{0, 255, 0, 255});
     registry.addComponent<GameEngine::ZIndex>(movableEntity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::Life>(movableEntity, GameEngine::Life{3});
 
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
-        registry.addComponent<GameEngine::Controllable>(staticEntity, GameEngine::Controllable{false});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{30.0f, 30.0f});
         registry.addComponent<GameEngine::Velocity>(staticEntity, GameEngine::Velocity{1.5f, 0.0f});
         registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
