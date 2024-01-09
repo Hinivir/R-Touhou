@@ -56,6 +56,8 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
             for (size_t i = 0; i < positions.size() && i < velocities.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Position
                 FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
                 GameEngine::Position const &position = hasPosition ? positionComponent.value() : GameEngine::Position();
@@ -77,6 +79,8 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
             for (size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Controllable - Continues if controllable is undefined or no controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
                 if (!hasControllable || !controllable.value().isControllable) continue;
@@ -113,6 +117,8 @@ namespace GameEngine
                 currentZIndex = lowestZIndex;
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
+                    if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
                     if (!hasDrawable || !drawable.value().is_visible) continue;
@@ -160,6 +166,8 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
             for (size_t i = 0; i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
                 if (!hasPosition) continue;
@@ -185,6 +193,8 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Controllable - Continues if controllable is defined and controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
                 if (hasControllable && controllable.value().isControllable) continue;
@@ -229,6 +239,8 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
             for (size_t i = 0; i < sprites.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Sprite - Continues if sprite is undefined or if it has no path
                 FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
                 if (!hasSprite) continue;
@@ -254,6 +266,8 @@ namespace GameEngine
             std::vector<std::size_t> players;
 
             for (std::size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 // Controllable - Continues if controllable is undefined or not controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
                 if (!hasControllable || !controllable.value().isControllable) continue;
@@ -275,6 +289,8 @@ namespace GameEngine
 
             for (auto const &playerID : players) {
                 for (std::size_t j = 0; j < positions.size(); ++j) {
+                    if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), j) != r.garbageEntities.end())
+                        continue;
                     if (playerID == j)
                         continue;
                     // Enemy, Player and Lives - Continues if one of these is undefined
@@ -296,8 +312,10 @@ namespace GameEngine
                     )) {
                         if (life.life > 0)
                             life.life -= 1;
-                        else
+                        else {
+                            r.garbageEntities.push_back(::size_t(playerID));
                             std::cout << "Dead" << std::endl;//killEntity
+                        }
                     }
                 }
             }
@@ -311,6 +329,8 @@ namespace GameEngine
             bool isSpacePressedUnpressed = false;
 
             for (size_t i = 0; i < controllables.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
                 FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
                 FROM_COMPONENT_TO_VARIABLE(controllables, i, control, _hasControllable);
                 if (pos && control && control.value().isControllable) {

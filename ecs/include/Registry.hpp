@@ -26,6 +26,7 @@ namespace GameEngine
         /// @param maxEntities Maximum number of entities
         explicit Registry(const std::size_t maxEntities) : _maxEntities(maxEntities){};
 
+        std::vector<std::size_t> garbageEntities = {};
         /// @brief Register a new Component to the registry
         /// @tparam Component Type of the component to register
         /// @return A reference to the newly created sparseArray
