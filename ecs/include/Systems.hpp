@@ -88,12 +88,12 @@ namespace GameEngine
         }
 
         void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
-            EXTRACT_COMPONENT(GameEngine::Drawable, drawables);
-            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Drawable, drawables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
-            EXTRACT_COMPONENT(GameEngine::Color, colors);
-            EXTRACT_COMPONENT(GameEngine::ZIndex, zIndexes);
-            EXTRACT_COMPONENT(GameEngine::SpriteTextureRect, spriteTextureRects);
+            EXTRACT_COMPONENT_CONST(GameEngine::Color, colors);
+            EXTRACT_COMPONENT_CONST(GameEngine::ZIndex, zIndexes);
+            EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureRect, spriteTextureRects);
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
@@ -101,12 +101,12 @@ namespace GameEngine
                 currentZIndex = lowestZIndex;
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
-                    FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, hasDrawable);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
                     if (!hasDrawable || !drawable.value().is_visible) continue;
-                    FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, position, hasPosition);
                     FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
-                    FROM_COMPONENT_TO_VARIABLE(colors, i, color, hasColor);
-                    FROM_COMPONENT_TO_VARIABLE(zIndexes, i, zIndex, hasZIndex);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, color, hasColor);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndex, hasZIndex);
                     FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRect, hasSpriteTextureRect);
                     GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
                     GameEngine::Position pos = hasPosition ? position.value() : GameEngine::Position({0.0, 0.0});
