@@ -66,11 +66,11 @@ namespace GameEngine
                 if ((controllable && controllable.value().isControllable) && vel) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pos.value().pos_y > -1)
                         pos.value().pos_y -= vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pos.value().pos_y > -1)
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pos.value().pos_y < 1080 - 30)
                         pos.value().pos_y += vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && pos.value().pos_x > -1)
                         pos.value().pos_x -= vel.value().vol_x;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && pos.value().pos_x > -1)
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && pos.value().pos_x < 1920 - 30)
                         pos.value().pos_x += vel.value().vol_x;
                 }
             }
