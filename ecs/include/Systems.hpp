@@ -159,13 +159,17 @@ namespace GameEngine
 
         void spriteSystem(GameEngine::Registry &r) {
             auto &sprites = r.getComponent<Sprite>();
+            auto &sizes = r.getComponent<Size>();
 
             for (size_t i = 0; i < sprites.size(); ++i) {
-                FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite)
+                FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
+                FROM_COMPONENT_TO_VARIABLE(sizes, i, size, hasSize);
                 if (hasSprite && sprite.value().path != "") {
                     //std::cout << "Loading texture from " << sprite.value().path << std::endl;
                     sprite.value().texture.loadFromFile(sprite.value().path);
                     sprite.value().sprite.setTexture(sprite.value().texture);
+                    if (hasSize)
+                        sprite.value().sprite.setScale(size.value().width / sprite.value().texture.getSize().x, size.value().height / sprite.value().texture.getSize().y);
                 }
             }
         }

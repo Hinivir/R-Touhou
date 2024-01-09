@@ -18,6 +18,7 @@
 #include "Components/SpriteTextureRect.hpp"
 #include "Components/Life.hpp"
 #include "Components/Hitbox.hpp"
+#include "Components/Size.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
 
@@ -42,6 +43,7 @@ int main()
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
         ,GameEngine::Hitbox
+        ,GameEngine::Size
     )
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
@@ -49,6 +51,7 @@ int main()
     registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{10.0f, 10.0f});
+    registry.addComponent<GameEngine::Size>(movableEntity, GameEngine::Size{150.0f, 150.0f});
     registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
     //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{0, 255, 0, 255});
     registry.addComponent<GameEngine::ZIndex>(movableEntity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
@@ -58,6 +61,7 @@ int main()
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
+        registry.addComponent<GameEngine::Size>(staticEntity, GameEngine::Size{25.0f, 25.0f});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{30.0f, 30.0f});
         registry.addComponent<GameEngine::Velocity>(staticEntity, GameEngine::Velocity{1.5f, 0.0f});
         registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
