@@ -59,13 +59,11 @@ int main()
     registry.addComponent<GameEngine::Hitbox>(movableEntity, GameEngine::Hitbox{});
 
     GameEngine::Entity background = registry.spawnEntity();
-
     registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
-    //registry.addComponent<GameEngine::Color>(background, GameEngine::Color{0, 255, 0, 255});
-
 
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
@@ -91,7 +89,8 @@ int main()
             window.close();
         }
         //system.loggingSystem(registry);
-        system.enenemyMovementSystem(registry);
+        system.enemyMovementSystem(registry);
+        system.backgroundParallax(registry);
         system.controlSystem(registry);
         system.spriteSystem(registry);
 

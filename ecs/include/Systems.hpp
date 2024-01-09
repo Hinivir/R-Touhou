@@ -138,7 +138,7 @@ namespace GameEngine
             }
         }
 
-        void enenemyMovementSystem(GameEngine::Registry &r) {
+        void enemyMovementSystem(GameEngine::Registry &r) {
             auto const &velocities = r.getComponent<Velocity>();
             auto &positions = r.getComponent<Position>();
             auto const &controllables = r.getComponent<Controllable>();
@@ -156,6 +156,26 @@ namespace GameEngine
                 }
             }
         }
+
+        // Wait new system movement Viktor
+        void backgroundParallax(GameEngine::Registry &r) {
+            auto const &velocities = r.getComponent<Velocity>();
+            auto &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<Controllable>();
+            auto const &Hitboxes = r.getComponent<Hitbox>();
+
+ //            for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
+            auto const &vel = velocities[0];
+            auto &pos = positions[0];
+            auto const &controllable = controllables[0];
+            auto const &hitbox = Hitboxes[0];
+
+            if (vel && pos && !controllable && hitbox) {
+                pos.value().pos_x -= vel.value().vol_x;
+                pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
+            }
+ //            }
+         }
 
         void spriteSystem(GameEngine::Registry &r) {
             auto &sprites = r.getComponent<Sprite>();
