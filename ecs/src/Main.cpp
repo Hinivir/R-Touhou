@@ -45,7 +45,7 @@ int main()
     registry.addComponent<GameEngine::Drawable>(movableEntity, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(movableEntity, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Velocity>(movableEntity, GameEngine::Velocity{10.0f, 10.0f});
-    registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(movableEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
     //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{0, 255, 0, 255});
     registry.addComponent<GameEngine::ZIndex>(movableEntity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
 
@@ -55,7 +55,7 @@ int main()
         registry.addComponent<GameEngine::Controllable>(staticEntity, GameEngine::Controllable{false});
         registry.addComponent<GameEngine::Position>(staticEntity, GameEngine::Position{30.0f, 30.0f});
         registry.addComponent<GameEngine::Velocity>(staticEntity, GameEngine::Velocity{1.5f, 0.0f});
-        registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png",sf::Sprite(),sf::Texture()});
+        registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
         //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{255, 0, 0, 255});
         registry.addComponent<GameEngine::ZIndex>(staticEntity, GameEngine::ZIndex{});
     }
