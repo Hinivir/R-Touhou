@@ -122,14 +122,18 @@ namespace GameEngine
         void initEnemy(GameEngine::Registry &r) {
             auto &positions = r.getComponent<Position>();
             auto const &controllables = r.getComponent<Controllable>();
+            auto const &Hitboxes = r.getComponent<Hitbox>();
 
             for (size_t i = 0; i < positions.size(); ++i) {
                 auto &pos = positions[i];
                 auto const &controllable = controllables[i];
+                auto const &hitbox = Hitboxes[i];
 
                 if (pos && !controllable || !controllable.value().isControllable) {
-                    pos.value().pos_x = rand() % 1080 + 1920;
-                    pos.value().pos_y = rand() % 1000;
+                    if (hitbox) {
+                        pos.value().pos_x = rand() % 1080 + 1920;
+                        pos.value().pos_y = rand() % 1000;
+                    }
                 }
             }
         }
@@ -138,13 +142,15 @@ namespace GameEngine
             auto const &velocities = r.getComponent<Velocity>();
             auto &positions = r.getComponent<Position>();
             auto const &controllables = r.getComponent<Controllable>();
+            auto const &Hitboxes = r.getComponent<Hitbox>();
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
                 auto const &vel = velocities[i];
                 auto &pos = positions[i];
                 auto const &controllable = controllables[i];
+                auto const &hitbox = Hitboxes[i];
 
-                if (vel && pos && !controllable || !controllable.value().isControllable) {
+                if (vel && pos && !controllable && hitbox) {
                     pos.value().pos_x -= vel.value().vol_x;
                     pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
                 }
