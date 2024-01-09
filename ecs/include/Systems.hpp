@@ -9,8 +9,15 @@
 #define SYSTEM_H_
 
 #include "Registry.hpp"
-#include "Components/Position.hpp"
+#include "Components/Color.hpp"
+#include "Components/Controllable.hpp"
+#include "Components/Drawable.hpp"
 #include "Components/Life.hpp"
+#include "Components/Position.hpp"
+#include "Components/Sprite.hpp"
+#include "Components/SpriteTextureRect.hpp"
+#include "Components/Velocity.hpp"
+#include "Components/ZIndex.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -19,6 +26,9 @@
 #include <SFML/Network.hpp>
 
 #define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (i < COMPONENT.size() && COMPONENT[ID].has_value())
+
+#define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
+#define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
 
 #define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
     bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
@@ -78,12 +88,12 @@ namespace GameEngine
         }
 
         void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
-            auto &drawables = r.getComponent<GameEngine::Drawable>();
-            auto &positions = r.getComponent<GameEngine::Position>();
-            auto &sprites = r.getComponent<GameEngine::Sprite>();
-            auto &colors = r.getComponent<GameEngine::Color>();
-            auto &zIndexes = r.getComponent<GameEngine::ZIndex>();
-            auto &spriteTextureRects = r.getComponent<GameEngine::SpriteTextureRect>();
+            EXTRACT_COMPONENT(GameEngine::Drawable, drawables);
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
+            EXTRACT_COMPONENT(GameEngine::Color, colors);
+            EXTRACT_COMPONENT(GameEngine::ZIndex, zIndexes);
+            EXTRACT_COMPONENT(GameEngine::SpriteTextureRect, spriteTextureRects);
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
