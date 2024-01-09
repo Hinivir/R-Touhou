@@ -63,7 +63,7 @@ namespace GameEngine
                 auto &pos = positions[i];
                 auto &vel = velocities[i];
 
-                if ((controllable || controllable.value().isControllable) && vel) {
+                if ((controllable && controllable.value().isControllable) && vel) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
                         pos.value().pos_y -= vel.value().vol_y;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -90,7 +90,7 @@ namespace GameEngine
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
                     FROM_COMPONENT_TO_VARIABLE(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || drawable.value().is_visible) continue;
+                    if (!hasDrawable || !drawable.value().is_visible) continue;
                     FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
                     FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
                     FROM_COMPONENT_TO_VARIABLE(colors, i, color, hasColor);
@@ -151,8 +151,9 @@ namespace GameEngine
             auto &sprites = r.getComponent<Sprite>();
 
             for (size_t i = 0; i < sprites.size(); ++i) {
-                auto &sprite = sprites[i];
-                if (!sprite.value().path.empty()) {
+                FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite)
+                if (hasSprite && sprite.value().path != "") {
+                    //std::cout << "Loading texture from " << sprite.value().path << std::endl;
                     sprite.value().texture.loadFromFile(sprite.value().path);
                     sprite.value().sprite.setTexture(sprite.value().texture);
                 }
@@ -192,6 +193,28 @@ namespace GameEngine
         }
 
 
+
+        void attackSystem(GameEngine::Registry &r) {
+            auto &positions = r.getComponent<Position>();
+            auto &controllables = r.getComponent<Controllable>();
+            bool isSpacePressedUnpressed = false;
+
+            for (size_t i = 0; i < controllables.size(); ++i) {
+                FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
+                FROM_COMPONENT_TO_VARIABLE(controllables, i, control, _hasControllable);
+                if (pos && control && control.value().isControllable) {
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
+                        GameEngine::Entity bullet = r.spawnEntity();
+                        r.addComponent<Position>(bullet, Position{pos.value().pos_x + 50, pos.value().pos_y + 50});
+                        r.addComponent<Velocity>(bullet, Velocity{-10.0f, 0.0f});
+                        r.addComponent<Drawable>(bullet, Drawable{true});
+                        r.addComponent<Sprite>(bullet, Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
+                        r.addComponent<ZIndex>(bullet, ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                    }
+                }
+            }
+            isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+        }
 
     };
 }
