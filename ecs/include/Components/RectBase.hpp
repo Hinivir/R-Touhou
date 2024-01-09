@@ -12,7 +12,7 @@
 
 namespace GameEngine
 {
-    template <typename T>
+    template <typename T, char UNIQUE_ID>
     struct RectBase {
         T left = GAME_ENGINE_RECT_BASE_DEFAULT_VALUE;
         T top = GAME_ENGINE_RECT_BASE_DEFAULT_VALUE;

@@ -64,8 +64,8 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
                 if (hasPosition && hasVelocity) {
-                    std ::cerr << i << ": Position = { " << position.pos_x << ", " << position.pos_y
-                               << " } , Velocity = { " << velocity.vol_x << ", " << velocity.vol_y << " }"
+                    std ::cerr << i << ": Position = { " << position.x << ", " << position.y
+                               << " } , Velocity = { " << velocity.x << ", " << velocity.y << " }"
                                << std ::endl;
                 }
             }
@@ -88,14 +88,14 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && position.pos_y > -1)
-                    position.pos_y -= velocity.vol_y;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && position.pos_y < 1080 - 30)
-                    position.pos_y += velocity.vol_y;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && position.pos_x > -1)
-                    position.pos_x -= velocity.vol_x;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && position.pos_x < 1920 - 30)
-                    position.pos_x += velocity.vol_x;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && position.y > -1)
+                    position.y -= velocity.y;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && position.y < 1080 - 30)
+                    position.y += velocity.y;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && position.x > -1)
+                    position.x -= velocity.x;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && position.x < 1920 - 30)
+                    position.x += velocity.x;
             }
         }
 
@@ -144,7 +144,7 @@ namespace GameEngine
                     FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
                     GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
 
-                    sprite.setPosition(position.pos_x, position.pos_y);
+                    sprite.setPosition(position.x, position.y);
                     if (hasColor)
                         sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
                     if (hasSpriteTextureRect)
@@ -173,8 +173,8 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
                 if (!hasHitbox) continue;
 
-                position.pos_x = rand() % 1080 + 1920;
-                position.pos_y = rand() % 1000;
+                position.x = rand() % 1080 + 1920;
+                position.y = rand() % 1000;
             }
         }
 
@@ -199,8 +199,8 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
                 if (!hasHitbox) continue;
 
-                position.pos_x -= velocity.vol_x;
-                position.pos_y += rand() & 1 ? velocity.vol_y : -velocity.vol_y;
+                position.x -= velocity.x;
+                position.y += rand() & 1 ? velocity.y : -velocity.y;
             }
         }
 
@@ -218,8 +218,8 @@ namespace GameEngine
             auto const &hitbox = Hitboxes[0];
 
             if (vel && pos && !controllable && hitbox) {
-                pos.value().pos_x -= vel.value().vol_x;
-                pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
+                pos.value().x -= vel.value().x;
+                pos.value().y += rand() & 1 ? vel.value().y : -vel.value().y;
             }
  //            }
          }
@@ -287,10 +287,10 @@ namespace GameEngine
                     GameEngine::Life &life = lifeComponent.value();
 
                     if (isColliding(
-                        player.value().pos_x,
-                        player.value().pos_y,
-                        enemy.value().pos_x,
-                        enemy.value().pos_y,
+                        player.value().x,
+                        player.value().y,
+                        enemy.value().x,
+                        enemy.value().y,
                         100,
                         100
                     )) {
@@ -316,7 +316,7 @@ namespace GameEngine
                 if (pos && control && control.value().isControllable) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
-                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{pos.value().pos_x + 50, pos.value().pos_y + 50});
+                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{pos.value().x + 50, pos.value().y + 50});
                         r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{-10.0f, 0.0f});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
                         r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});

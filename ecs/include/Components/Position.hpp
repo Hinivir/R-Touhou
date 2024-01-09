@@ -8,13 +8,12 @@
 #ifndef POSITION_HPP_
 #define POSITION_HPP_
 
+#include "Components/Position2Base.hpp"
+
 namespace GameEngine
 {
-    struct Position
-    {
-        float pos_x;
-        float pos_y;
-    };
+    using PositionValue = float;
+    using Position = GameEngine::Position2Base<GameEngine::PositionValue, 'P'>;
 } // namespace GameEngine
 
 #endif /* !POSITION_HPP_ */
