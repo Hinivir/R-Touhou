@@ -78,12 +78,12 @@ namespace GameEngine
         }
 
         void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
-            auto &drawables = r.getComponent<Drawable>();
-            auto &positions = r.getComponent<Position>();
-            auto &sprites = r.getComponent<Sprite>();
-            auto &colors = r.getComponent<Color>();
-            auto &zIndexes = r.getComponent<ZIndex>();
-            auto &spriteTextureRects = r.getComponent<SpriteTextureRect>();
+            auto &drawables = r.getComponent<GameEngine::Drawable>();
+            auto &positions = r.getComponent<GameEngine::Position>();
+            auto &sprites = r.getComponent<GameEngine::Sprite>();
+            auto &colors = r.getComponent<GameEngine::Color>();
+            auto &zIndexes = r.getComponent<GameEngine::ZIndex>();
+            auto &spriteTextureRects = r.getComponent<GameEngine::SpriteTextureRect>();
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
@@ -122,8 +122,8 @@ namespace GameEngine
         }
 
         void initEnemy(GameEngine::Registry &r) {
-            auto &positions = r.getComponent<Position>();
-            auto const &controllables = r.getComponent<Controllable>();
+            auto &positions = r.getComponent<GameEngine::Position>();
+            auto const &controllables = r.getComponent<GameEngine::Controllable>();
 
             for (size_t i = 0; i < positions.size(); ++i) {
                 auto &pos = positions[i];
@@ -137,9 +137,9 @@ namespace GameEngine
         }
 
         void enenemyMovementSystem(GameEngine::Registry &r) {
-            auto const &velocities = r.getComponent<Velocity>();
-            auto &positions = r.getComponent<Position>();
-            auto const &controllables = r.getComponent<Controllable>();
+            auto const &velocities = r.getComponent<GameEngine::Velocity>();
+            auto &positions = r.getComponent<GameEngine::Position>();
+            auto const &controllables = r.getComponent<GameEngine::Controllable>();
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
                 auto const &vel = velocities[i];
@@ -154,7 +154,7 @@ namespace GameEngine
         }
 
         void spriteSystem(GameEngine::Registry &r) {
-            auto &sprites = r.getComponent<Sprite>();
+            auto &sprites = r.getComponent<GameEngine::Sprite>();
 
             for (size_t i = 0; i < sprites.size(); ++i) {
                 FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite)
@@ -167,8 +167,8 @@ namespace GameEngine
         }
 
         void collisionSystem(GameEngine::Registry &r) {
-            auto const &controllables = r.getComponent<Controllable>();
-            auto const &positions = r.getComponent<Position>();
+            auto const &controllables = r.getComponent<GameEngine::Controllable>();
+            auto const &positions = r.getComponent<GameEngine::Position>();
             auto &lives = r.getComponent<Life>();
             std::vector<std::size_t> players;
 
@@ -206,8 +206,8 @@ namespace GameEngine
 
 
         void attackSystem(GameEngine::Registry &r) {
-            auto &positions = r.getComponent<Position>();
-            auto &controllables = r.getComponent<Controllable>();
+            auto &positions = r.getComponent<GameEngine::Position>();
+            auto &controllables = r.getComponent<GameEngine::Controllable>();
             bool isSpacePressedUnpressed = false;
 
             for (size_t i = 0; i < controllables.size(); ++i) {
@@ -216,11 +216,11 @@ namespace GameEngine
                 if (pos && control && control.value().isControllable) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
-                        r.addComponent<Position>(bullet, Position{pos.value().pos_x + 50, pos.value().pos_y + 50});
-                        r.addComponent<Velocity>(bullet, Velocity{-10.0f, 0.0f});
-                        r.addComponent<Drawable>(bullet, Drawable{true});
-                        r.addComponent<Sprite>(bullet, Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
-                        r.addComponent<ZIndex>(bullet, ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{pos.value().pos_x + 50, pos.value().pos_y + 50});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{-10.0f, 0.0f});
+                        r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
+                        r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                     }
                 }
             }
