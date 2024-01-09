@@ -24,6 +24,9 @@
 #include "Components/ZIndex.hpp"
 #include "Components/Life.hpp"
 #include "Systems.hpp"
+#include "Macros/ForEach.hpp"
+
+#define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
 int main()
 {
@@ -33,14 +36,16 @@ int main()
 
     window.setFramerateLimit(60);
 
-    registry.registerComponent<GameEngine::Controllable>();
-    registry.registerComponent<GameEngine::Drawable>();
-    registry.registerComponent<GameEngine::Position>();
-    registry.registerComponent<GameEngine::Velocity>();
-    registry.registerComponent<GameEngine::Sprite>();
-    registry.registerComponent<GameEngine::Color>();
-    registry.registerComponent<GameEngine::ZIndex>();
-    registry.registerComponent<GameEngine::Life>();
+    GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT
+        ,GameEngine::Color
+        ,GameEngine::Controllable
+        ,GameEngine::Drawable
+        ,GameEngine::Life
+        ,GameEngine::Position
+        ,GameEngine::Sprite
+        ,GameEngine::Velocity
+        ,GameEngine::ZIndex
+    )
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
     registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
