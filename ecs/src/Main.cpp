@@ -62,15 +62,6 @@ int main()
     registry.addComponent<GameEngine::Life>(movableEntity, GameEngine::Life{3});
     registry.addComponent<GameEngine::Hitbox>(movableEntity, GameEngine::Hitbox{});
 
-    GameEngine::Entity movableEntity2 = registry.spawnEntity();
-    registry.addComponent<GameEngine::Controllable>(movableEntity2, GameEngine::Controllable{true});
-    registry.addComponent<GameEngine::Drawable>(movableEntity2, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Position>(movableEntity2, GameEngine::Position{100.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(movableEntity2, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
-    //registry.addComponent<GameEngine::Color>(movableEntity2, GameEngine::Color{0, 255, 0, 255});
-    registry.addComponent<GameEngine::ZIndex>(movableEntity2, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
-    registry.addComponent<GameEngine::Life>(movableEntity2, GameEngine::Life{3});
-
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
