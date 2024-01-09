@@ -64,13 +64,13 @@ namespace GameEngine
                 auto &vel = velocities[i];
 
                 if ((controllable && controllable.value().isControllable) && vel) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pos.value().pos_y > -1)
                         pos.value().pos_y -= vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pos.value().pos_y > -1)
                         pos.value().pos_y += vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && pos.value().pos_x > -1)
                         pos.value().pos_x -= vel.value().vol_x;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && pos.value().pos_x > -1)
                         pos.value().pos_x += vel.value().vol_x;
                 }
             }
