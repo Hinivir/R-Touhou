@@ -194,15 +194,19 @@ namespace GameEngine
         }
 
         void spriteSystem(GameEngine::Registry &r) {
-            auto &sprites = r.getComponent<GameEngine::Sprite>();
+            EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
 
             for (size_t i = 0; i < sprites.size(); ++i) {
-                FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite)
-                if (hasSprite && sprite.value().path != "") {
-                    //std::cout << "Loading texture from " << sprite.value().path << std::endl;
-                    sprite.value().texture.loadFromFile(sprite.value().path);
-                    sprite.value().sprite.setTexture(sprite.value().texture);
-                }
+                // Sprite - Continues if sprite is undefined or if it has no path
+                FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
+                if (!hasSprite) continue;
+                GameEngine::Sprite &sprite = spriteComponent.value();
+                std::string const &path = sprite.path;
+                if (path == "") continue;
+
+                //std::cout << "Loading texture from " << sprite.value().path << std::endl;
+                sprite.texture.loadFromFile(sprite.path);
+                sprite.sprite.setTexture(sprite.texture);
             }
         }
 
