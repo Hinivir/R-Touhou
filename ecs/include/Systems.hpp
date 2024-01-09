@@ -65,25 +65,30 @@ namespace GameEngine
         }
 
         void controlSystem(GameEngine::Registry &r) {
-            auto const &controllables = r.getComponent<Controllable>();
-            auto &positions = r.getComponent<Position>();
-            auto velocities = r.getComponent<Velocity>();
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
             for (size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
-                auto &controllable = controllables[i];
-                auto &pos = positions[i];
-                auto &vel = velocities[i];
+                // Controllable - Continues if controllable is undefined or no controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (!hasControllable || !controllable.value().isControllable) continue;
+                // Position - Continues if position if undefined
+                FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
+                if (!hasPosition) continue;
+                GameEngine::Position &position = positionComponent.value();
+                // Velocity
+                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
+                GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
-                if ((controllable && controllable.value().isControllable) && vel) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pos.value().pos_y > -1)
-                        pos.value().pos_y -= vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pos.value().pos_y < 1080 - 30)
-                        pos.value().pos_y += vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && pos.value().pos_x > -1)
-                        pos.value().pos_x -= vel.value().vol_x;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && pos.value().pos_x < 1920 - 30)
-                        pos.value().pos_x += vel.value().vol_x;
-                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && position.pos_y > -1)
+                    position.pos_y -= velocity.vol_y;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && position.pos_y < 1080 - 30)
+                    position.pos_y += velocity.vol_y;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && position.pos_x > -1)
+                    position.pos_x -= velocity.vol_x;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && position.pos_x < 1920 - 30)
+                    position.pos_x += velocity.vol_x;
             }
         }
 
