@@ -101,32 +101,43 @@ namespace GameEngine
                 currentZIndex = lowestZIndex;
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
+                    // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
                     if (!hasDrawable || !drawable.value().is_visible) continue;
-                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, position, hasPosition);
-                    FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
-                    FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, color, hasColor);
-                    FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndex, hasZIndex);
-                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRect, hasSpriteTextureRect);
-                    GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
-                    GameEngine::Position pos = hasPosition ? position.value() : GameEngine::Position({0.0, 0.0});
-                    GameEngine::SpriteTextureRect textureRect = hasSpriteTextureRect ? spriteTextureRect.value() : GameEngine::SpriteTextureRect();
 
-                    if (zIndexValue < currentZIndex)
+                    // ZIndex - Continues if (zIndex != currentZIndex)
+                    FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);
+                    GameEngine::ZIndexValue const zIndex = hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+                    if (zIndex < currentZIndex)
                         continue;
-                    if (zIndexValue != currentZIndex) {
-                        if (lowestZIndex == currentZIndex || zIndexValue < lowestZIndex)
-                            lowestZIndex = zIndexValue;
+                    if (zIndex != currentZIndex) {
+                        if (lowestZIndex == currentZIndex || zIndex < lowestZIndex)
+                            lowestZIndex = zIndex;
                         continue;
                     }
-                    if (hasSprite && sprite.value().sprite.getTexture() != nullptr) {
-                        sprite.value().sprite.setPosition(pos.pos_x, pos.pos_y);
-                        if (hasColor)
-                            sprite.value().sprite.setColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
-                        if (hasSpriteTextureRect)
-                            sprite.value().sprite.setTextureRect({textureRect.left, textureRect.top, textureRect.width, textureRect.height});
-                        window.draw(sprite.value().sprite);
-                    }
+
+                    // Sprite - Continues if sprite is undefined or if it has no texture
+                    FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
+                    if (!hasSprite) continue;
+                    sf::Sprite &sprite = spriteComponent.value().sprite;
+                    if (sprite.getTexture() == nullptr) continue;
+
+                    // Color
+                    FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
+                    GameEngine::Color const color = hasColor ? colorComponent.value() : GameEngine::Color();
+                    // Position
+                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
+                    GameEngine::Position const position = hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
+                    // SpriteTextureRects
+                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
+                    GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
+
+                    sprite.setPosition(position.pos_x, position.pos_y);
+                    if (hasColor)
+                        sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
+                    if (hasSpriteTextureRect)
+                        sprite.setTextureRect({spriteTextureRect.left, spriteTextureRect.top, spriteTextureRect.width, spriteTextureRect.height});
+                    window.draw(sprite);
                 }
             } while (currentZIndex != lowestZIndex);
         }
