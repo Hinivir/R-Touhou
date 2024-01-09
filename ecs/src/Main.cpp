@@ -23,6 +23,7 @@
 #include "Components/Color.hpp"
 #include "Components/ZIndex.hpp"
 #include "Components/Life.hpp"
+#include "Components/Hitbox.hpp"
 #include "Systems.hpp"
 
 int main()
@@ -41,6 +42,7 @@ int main()
     registry.registerComponent<GameEngine::Color>();
     registry.registerComponent<GameEngine::ZIndex>();
     registry.registerComponent<GameEngine::Life>();
+    registry.registerComponent<GameEngine::Hitbox>();
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
     registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
@@ -51,6 +53,7 @@ int main()
     //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{0, 255, 0, 255});
     registry.addComponent<GameEngine::ZIndex>(movableEntity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
     registry.addComponent<GameEngine::Life>(movableEntity, GameEngine::Life{3});
+    registry.addComponent<GameEngine::Hitbox>(movableEntity, GameEngine::Hitbox{});
 
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
@@ -60,6 +63,7 @@ int main()
         registry.addComponent<GameEngine::Sprite>(staticEntity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
         //registry.addComponent<GameEngine::Color>(movableEntity, GameEngine::Color{255, 0, 0, 255});
         registry.addComponent<GameEngine::ZIndex>(staticEntity, GameEngine::ZIndex{});
+        registry.addComponent<GameEngine::Hitbox>(staticEntity, GameEngine::Hitbox{});
     }
 
     system.initEnemy(registry);

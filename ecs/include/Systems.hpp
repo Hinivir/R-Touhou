@@ -9,8 +9,6 @@
 #define SYSTEM_H_
 
 #include "Registry.hpp"
-#include "Components/Position.hpp"
-#include "Components/Life.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -164,6 +162,7 @@ namespace GameEngine
         void collisionSystem(GameEngine::Registry &r) {
             auto const &controllables = r.getComponent<Controllable>();
             auto const &positions = r.getComponent<Position>();
+            auto const &hitboxes = r.getComponent<Hitbox>();
             auto &lives = r.getComponent<Life>();
             std::vector<std::size_t> players;
 
@@ -171,8 +170,9 @@ namespace GameEngine
                 auto const &controllable = controllables[i];
                 auto const &pos = positions[i];
                 auto const &life = lives[i];
+                auto const &hitbox = hitboxes[i];
 
-                if (controllable && pos && life)
+                if (controllable && pos && life && hitbox)
                     players.push_back(i);
             }
 
@@ -181,7 +181,8 @@ namespace GameEngine
                     if (player == j)
                         continue;
                     auto const &ennemy = positions[j];
-                    if (isColliding(
+                    auto const &ennemyHitbox = hitboxes[j];
+                    if (ennemyHitbox && isColliding(
                         positions[player].value().pos_x,
                         positions[player].value().pos_y,
                         ennemy.value().pos_x,
