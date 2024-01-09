@@ -172,19 +172,24 @@ namespace GameEngine
         }
 
         void enenemyMovementSystem(GameEngine::Registry &r) {
-            auto const &velocities = r.getComponent<GameEngine::Velocity>();
-            auto &positions = r.getComponent<GameEngine::Position>();
-            auto const &controllables = r.getComponent<GameEngine::Controllable>();
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-                auto const &vel = velocities[i];
-                auto &pos = positions[i];
-                auto const &controllable = controllables[i];
+                // Controllable - Continues if controllable is defined and controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (hasControllable && controllable.value().isControllable) continue;
+                // Position - Continues if position if undefined
+                FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
+                if (!hasPosition) continue;
+                GameEngine::Position &position = positionComponent.value();
+                // Velocity
+                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
+                GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
-                if (vel && pos && !controllable || !controllable.value().isControllable) {
-                    pos.value().pos_x -= vel.value().vol_x;
-                    pos.value().pos_y += rand() & 1 ? vel.value().vol_y : -vel.value().vol_y;
-                }
+                position.pos_x -= velocity.vol_x;
+                position.pos_y += rand() & 1 ? velocity.vol_y : -velocity.vol_y;
             }
         }
 
