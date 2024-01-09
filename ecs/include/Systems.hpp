@@ -313,7 +313,7 @@ namespace GameEngine
                         if (life.life > 0)
                             life.life -= 1;
                         else {
-                            r.garbageEntities.push_back(::size_t(playerID));
+                            r.garbageEntities.push_back(std::size_t(playerID));
                             std::cout << "Dead" << std::endl;//killEntity
                         }
                     }
