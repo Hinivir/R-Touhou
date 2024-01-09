@@ -81,6 +81,7 @@ namespace GameEngine
             auto &sprites = r.getComponent<Sprite>();
             auto &colors = r.getComponent<Color>();
             auto &zIndexes = r.getComponent<ZIndex>();
+            auto &spriteTextureRects = r.getComponent<SpriteTextureRect>();
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
@@ -94,8 +95,10 @@ namespace GameEngine
                     FROM_COMPONENT_TO_VARIABLE(sprites, i, sprite, hasSprite);
                     FROM_COMPONENT_TO_VARIABLE(colors, i, color, hasColor);
                     FROM_COMPONENT_TO_VARIABLE(zIndexes, i, zIndex, hasZIndex);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRect, hasSpriteTextureRect);
                     GameEngine::ZIndexValue zIndexValue = hasZIndex ? zIndex.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
                     GameEngine::Position pos = hasPosition ? position.value() : GameEngine::Position({0.0, 0.0});
+                    GameEngine::SpriteTextureRect textureRect = hasSpriteTextureRect ? spriteTextureRect.value() : GameEngine::SpriteTextureRect();
 
                     if (zIndexValue < currentZIndex)
                         continue;
@@ -108,6 +111,8 @@ namespace GameEngine
                         sprite.value().sprite.setPosition(pos.pos_x, pos.pos_y);
                         if (hasColor)
                             sprite.value().sprite.setColor(sf::Color(color.value().r, color.value().g, color.value().b, color.value().a));
+                        if (hasSpriteTextureRect)
+                            sprite.value().sprite.setTextureRect({textureRect.left, textureRect.top, textureRect.width, textureRect.height});
                         window.draw(sprite.value().sprite);
                     }
                 }
