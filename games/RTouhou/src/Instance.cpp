@@ -36,7 +36,7 @@ void RTouhou::Instance::init(void)
     LType::EntityInstance fish = addEntity(GAME_ENTITY);
 
     if (fish) {
-        fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/Fish.png"));
+        fish->setSprite(LType::Sprite("resources/R-Touhou/graphics/¨Player.png"));
         fish->getSprite().flipV = false;
         fish->getPosition().x = 100.0;
         fish->getPosition().y = 100.0;

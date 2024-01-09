@@ -138,7 +138,7 @@ namespace GameEngine
         /// @return A reference to the newly added component
         template <typename Component, typename... Params>
         typename SparseArray<Component>::ReferenceType emplaceComponent(const Entity &entity, Params &&...params)
-        {
+        { 
             return getComponent<Component>().emplaceAt(entity, params...);
         };
 

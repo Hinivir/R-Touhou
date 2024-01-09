@@ -10,6 +10,7 @@
 
 #include "Registry.hpp"
 #include "Components/Position.hpp"
+#include "Components/Life.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -64,13 +65,13 @@ namespace GameEngine
                 auto &vel = velocities[i];
 
                 if ((controllable && controllable.value().isControllable) && vel) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pos.value().pos_y > -1)
                         pos.value().pos_y -= vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pos.value().pos_y < 1080 - 30)
                         pos.value().pos_y += vel.value().vol_y;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && pos.value().pos_x > -1)
                         pos.value().pos_x -= vel.value().vol_x;
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && pos.value().pos_x < 1920 - 30)
                         pos.value().pos_x += vel.value().vol_x;
                 }
             }
@@ -168,13 +169,15 @@ namespace GameEngine
         void collisionSystem(GameEngine::Registry &r) {
             auto const &controllables = r.getComponent<Controllable>();
             auto const &positions = r.getComponent<Position>();
+            auto &lives = r.getComponent<Life>();
             std::vector<std::size_t> players;
 
             for (std::size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
                 auto const &controllable = controllables[i];
                 auto const &pos = positions[i];
+                auto const &life = lives[i];
 
-                if (controllable && pos)
+                if (controllable && pos && life)
                     players.push_back(i);
             }
 
@@ -191,7 +194,10 @@ namespace GameEngine
                         100,
                         100
                     )) {
-                        std::cout << "COLLISION" << std::endl;
+                        if (lives[player].value().life > 0)
+                            lives[player].value().life -= 1;
+                        else
+                            std::cout << "Dead" << std::endl;//killEntity
                     }
                 }
             }
