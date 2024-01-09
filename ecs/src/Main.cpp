@@ -68,6 +68,9 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            window.close();
+        }
         //system.loggingSystem(registry);
         system.enenemyMovementSystem(registry);
         system.controlSystem(registry);
