@@ -22,6 +22,7 @@
 #include "Components/Sprite.hpp"
 #include "Components/Color.hpp"
 #include "Components/ZIndex.hpp"
+#include "Components/SpriteTextureRect.hpp"
 #include "Components/Life.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
