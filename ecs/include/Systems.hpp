@@ -153,17 +153,21 @@ namespace GameEngine
         }
 
         void initEnemy(GameEngine::Registry &r) {
-            auto &positions = r.getComponent<GameEngine::Position>();
-            auto const &controllables = r.getComponent<GameEngine::Controllable>();
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
 
             for (size_t i = 0; i < positions.size(); ++i) {
-                auto &pos = positions[i];
-                auto const &controllable = controllables[i];
+                // Position - Continues if position is undefined
+                FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
+                if (!hasPosition) continue;
+                GameEngine::Position &position = positionComponent.value();
 
-                if (pos && !controllable || !controllable.value().isControllable) {
-                    pos.value().pos_x = rand() % 1080 + 1920;
-                    pos.value().pos_y = rand() % 1000;
-                }
+                // Controllable - Continues if controllable is defined and controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (hasControllable && controllable.value().isControllable) continue;
+
+                position.pos_x = rand() % 1080 + 1920;
+                position.pos_y = rand() % 1000;
             }
         }
 
