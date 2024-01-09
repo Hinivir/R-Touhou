@@ -65,6 +65,14 @@ int main()
     registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
 
+    GameEngine::Entity score = registry.spawnEntity();
+    registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+
+    std::string score_0 = "Score: 0";
+    //registry.addComponent<GameEngine::Text>(score, GameEngine::Text{"../resources/R-Touhou/font/font.ttf", score_0, 24, sf::Color::Black});
+
     for (int i = 0; i < 5; ++i) {
         GameEngine::Entity staticEntity = registry.spawnEntity();
         registry.addComponent<GameEngine::Drawable>(staticEntity, GameEngine::Drawable{true});
