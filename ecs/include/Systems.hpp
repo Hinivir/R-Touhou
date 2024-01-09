@@ -12,8 +12,10 @@
 #include "Components/Color.hpp"
 #include "Components/Controllable.hpp"
 #include "Components/Drawable.hpp"
+#include "Components/Hitbox.hpp"
 #include "Components/Life.hpp"
 #include "Components/Position.hpp"
+#include "Components/Size.hpp"
 #include "Components/Sprite.hpp"
 #include "Components/SpriteTextureRect.hpp"
 #include "Components/Velocity.hpp"
@@ -155,6 +157,7 @@ namespace GameEngine
         void initEnemy(GameEngine::Registry &r) {
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
             for (size_t i = 0; i < positions.size(); ++i) {
                 // Position - Continues if position is undefined
@@ -166,6 +169,10 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
                 if (hasControllable && controllable.value().isControllable) continue;
 
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
+                if (!hasHitbox) continue;
+
                 position.pos_x = rand() % 1080 + 1920;
                 position.pos_y = rand() % 1000;
             }
@@ -175,6 +182,7 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
                 // Controllable - Continues if controllable is defined and controllable
@@ -187,6 +195,9 @@ namespace GameEngine
                 // Velocity
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
+                if (!hasHitbox) continue;
 
                 position.pos_x -= velocity.vol_x;
                 position.pos_y += rand() & 1 ? velocity.vol_y : -velocity.vol_y;
@@ -195,6 +206,7 @@ namespace GameEngine
 
         void spriteSystem(GameEngine::Registry &r) {
             EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
             for (size_t i = 0; i < sprites.size(); ++i) {
                 // Sprite - Continues if sprite is undefined or if it has no path
@@ -204,15 +216,20 @@ namespace GameEngine
                 std::string const &path = sprite.path;
                 if (path == "") continue;
 
-                //std::cout << "Loading texture from " << sprite.value().path << std::endl;
                 sprite.texture.loadFromFile(sprite.path);
                 sprite.sprite.setTexture(sprite.texture);
+
+                // Size
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, size, hasSize);
+                if (hasSize)
+                    sprite.sprite.setScale(size.value().width / sprite.texture.getSize().x, size.value().height / sprite.texture.getSize().y);
             }
         }
 
         void collisionSystem(GameEngine::Registry &r) {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
             EXTRACT_COMPONENT(GameEngine::Life, lives);
             std::vector<std::size_t> players;
 
@@ -229,6 +246,10 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(lives, i, _life, hasLife);
                 if (!hasLife) continue;
 
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
+                if (!hasHitbox) continue;
+
                 players.push_back(i);
             }
 
@@ -238,9 +259,10 @@ namespace GameEngine
                         continue;
                     // Enemy, Player and Lives - Continues if one of these is undefined
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, j, enemy, hasEnemy);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, j, _enemyHitbox, hasEnemyHitbox);
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, playerID, player, hasPlayer);
                     FROM_COMPONENT_TO_VARIABLE(lives, playerID, lifeComponent, hasLife);
-                    if (!hasEnemy || !hasPlayer || !hasLife)
+                    if (!hasEnemy || !hasPlayer || !hasLife || !hasEnemyHitbox)
                         continue;
                     GameEngine::Life &life = lifeComponent.value();
 
