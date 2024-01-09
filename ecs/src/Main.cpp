@@ -44,6 +44,7 @@ int main()
         ,GameEngine::Life
         ,GameEngine::Position
         ,GameEngine::Sprite
+        ,GameEngine::SpriteTextureRect
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
     )
