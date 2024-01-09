@@ -25,7 +25,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (i < COMPONENT.size() && COMPONENT[ID].has_value())
+#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
 
 #define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
 #define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
@@ -211,35 +211,49 @@ namespace GameEngine
         }
 
         void collisionSystem(GameEngine::Registry &r) {
-            auto const &controllables = r.getComponent<GameEngine::Controllable>();
-            auto const &positions = r.getComponent<GameEngine::Position>();
-            auto &lives = r.getComponent<Life>();
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
+            EXTRACT_COMPONENT(GameEngine::Life, lives);
             std::vector<std::size_t> players;
 
             for (std::size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
-                auto const &controllable = controllables[i];
-                auto const &pos = positions[i];
-                auto const &life = lives[i];
+                // Controllable - Continues if controllable is undefined or not controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (!hasControllable || !controllable.value().isControllable) continue;
 
-                if (controllable && pos && life)
-                    players.push_back(i);
+                // Position - Continues if position is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, _position, hasPosition);
+                if (!hasPosition) continue;
+
+                // Life - Continues if life is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(lives, i, _life, hasLife);
+                if (!hasLife) continue;
+
+                players.push_back(i);
             }
 
-            for (auto const &player : players) {
+            for (auto const &playerID : players) {
                 for (std::size_t j = 0; j < positions.size(); ++j) {
-                    if (player == j)
+                    if (playerID == j)
                         continue;
-                    auto const &ennemy = positions[j];
+                    // Enemy, Player and Lives - Continues if one of these is undefined
+                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, j, enemy, hasEnemy);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, playerID, player, hasPlayer);
+                    FROM_COMPONENT_TO_VARIABLE(lives, playerID, lifeComponent, hasLife);
+                    if (!hasEnemy || !hasPlayer || !hasLife)
+                        continue;
+                    GameEngine::Life &life = lifeComponent.value();
+
                     if (isColliding(
-                        positions[player].value().pos_x,
-                        positions[player].value().pos_y,
-                        ennemy.value().pos_x,
-                        ennemy.value().pos_y,
+                        player.value().pos_x,
+                        player.value().pos_y,
+                        enemy.value().pos_x,
+                        enemy.value().pos_y,
                         100,
                         100
                     )) {
-                        if (lives[player].value().life > 0)
-                            lives[player].value().life -= 1;
+                        if (life.life > 0)
+                            life.life -= 1;
                         else
                             std::cout << "Dead" << std::endl;//killEntity
                     }
