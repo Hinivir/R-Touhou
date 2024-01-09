@@ -22,6 +22,7 @@
 #include "Components/Sprite.hpp"
 #include "Components/Color.hpp"
 #include "Components/ZIndex.hpp"
+#include "Components/SpriteTextureRect.hpp"
 #include "Systems.hpp"
 
 int main()
@@ -39,6 +40,7 @@ int main()
     registry.registerComponent<GameEngine::Sprite>();
     registry.registerComponent<GameEngine::Color>();
     registry.registerComponent<GameEngine::ZIndex>();
+    registry.registerComponent<GameEngine::SpriteTextureRect>();
 
     GameEngine::Entity movableEntity = registry.spawnEntity();
     registry.addComponent<GameEngine::Controllable>(movableEntity, GameEngine::Controllable{true});
