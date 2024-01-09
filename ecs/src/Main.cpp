@@ -5,13 +5,6 @@
 ** Main.cpp
 */
 
-/*
-** EPITECH PROJECT, 2024
-** L-Type-Game-RTouhou
-** File description:
-** Main.cpp
-*/
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Registry.hpp"
