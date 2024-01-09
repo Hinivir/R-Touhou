@@ -50,15 +50,20 @@ namespace GameEngine
         ~System() = default;
 
         void loggingSystem(GameEngine::Registry &r) {
-            auto const &positions = r.getComponent<GameEngine::Position>();
-            auto const &velocities = r.getComponent<GameEngine::Velocity>();
+            EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
             for (size_t i = 0; i < positions.size() && i < velocities.size(); ++i) {
-                auto const &pos = positions[i];
-                auto const &vel = velocities[i];
-                if (pos && vel) {
-                    std ::cerr << i << ": Position = { " << pos.value().pos_x << ", " << pos.value().pos_y
-                               << " } , Velocity = { " << vel.value().vol_x << ", " << vel.value().vol_y << " }"
+                // Position
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
+                GameEngine::Position const &position = hasPosition ? positionComponent.value() : GameEngine::Position();
+                // Velocity
+                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
+                GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
+
+                if (hasPosition && hasVelocity) {
+                    std ::cerr << i << ": Position = { " << position.pos_x << ", " << position.pos_y
+                               << " } , Velocity = { " << velocity.vol_x << ", " << velocity.vol_y << " }"
                                << std ::endl;
                 }
             }
