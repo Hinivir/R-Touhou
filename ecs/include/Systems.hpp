@@ -109,6 +109,7 @@ namespace GameEngine
             EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
             EXTRACT_COMPONENT_CONST(GameEngine::Color, colors);
             EXTRACT_COMPONENT_CONST(GameEngine::ZIndex, zIndexes);
+            EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureAnimation, spriteTextureAnimations);
             EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureRect, spriteTextureRects);
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
@@ -139,6 +140,7 @@ namespace GameEngine
                     if (!hasSprite) continue;
                     sf::Sprite &sprite = spriteComponent.value().sprite;
                     if (sprite.getTexture() == nullptr) continue;
+                    sf::Vector2u const &spriteTextureSize = spriteComponent.value().texture.getSize();
 
                     // Color
                     FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
@@ -146,15 +148,27 @@ namespace GameEngine
                     // Position
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
                     GameEngine::Position const position = hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
+                    // SpriteTextureAnimation
+                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
+                    GameEngine::SpriteTextureAnimation const spriteTextureAnimation = hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value() : GameEngine::SpriteTextureAnimation();
                     // SpriteTextureRects
                     FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
                     GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
 
+                    sf::IntRect textureRect = hasSpriteTextureRect ? sf::IntRect{spriteTextureRect.left, spriteTextureRect.top, spriteTextureRect.width, spriteTextureRect.height} : sf::IntRect{0, 0, static_cast<int>(spriteTextureSize.x), static_cast<int>(spriteTextureSize.y)};
+
                     sprite.setPosition(position.x, position.y);
                     if (hasColor)
                         sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
-                    if (hasSpriteTextureRect)
-                        sprite.setTextureRect({spriteTextureRect.left, spriteTextureRect.top, spriteTextureRect.width, spriteTextureRect.height});
+                    if (hasSpriteTextureAnimation) {
+                        textureRect.width /= std::max(spriteTextureAnimation.slicing.x, 1);
+                        textureRect.height /= std::max(spriteTextureAnimation.slicing.y, 1);
+                        textureRect.left += spriteTextureAnimation.frame.y * textureRect.width;
+                        textureRect.top += spriteTextureAnimation.frame.x * textureRect.height;
+                    }
+                    if (hasSpriteTextureRect || hasSpriteTextureAnimation)
+                        sprite.setTextureRect(textureRect);
+                    textureRect = sprite.getTextureRect();
                     window.draw(sprite);
                 }
             } while (currentZIndex != lowestZIndex);
