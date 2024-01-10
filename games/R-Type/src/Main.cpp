@@ -30,7 +30,7 @@ GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{0.0f, 500.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
-    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{300});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
@@ -44,7 +44,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{1.5f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Path>(entity, GameEngine::Path{30.0f, 30.0f, 0.0f, 0.0f});
@@ -61,7 +61,7 @@ GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float wi
     registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{widthWindow, heightWindow});
     registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
 //    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"../resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"./resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
 
     return backgroundStar;
@@ -75,7 +75,7 @@ GameEngine::Entity createGroundDown(GameEngine::Registry &registry, float widthW
     registry.addComponent<GameEngine::Size>(groundDown, GameEngine::Size{1920.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(groundDown, GameEngine::Position{0.0f, 0.0f});
     // registry.addComponent<GameEngine::Velocity>(groundDown, GameEngine::Velocity{10.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(groundDown, GameEngine::Sprite{"../resources/R-Touhou/graphics/Ground.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(groundDown, GameEngine::Sprite{"./resources/R-Touhou/graphics/Ground.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(groundDown, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE + 1});
     registry.addComponent<GameEngine::Projectile>(groundDown, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Controllable>(groundDown, GameEngine::Controllable{false});
@@ -91,7 +91,7 @@ GameEngine::Entity createGroundUp(GameEngine::Registry &registry, float widthWin
     registry.addComponent<GameEngine::Size>(groundUp, GameEngine::Size{1920.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(groundUp, GameEngine::Position{0.0f, 1030.0f});
     // registry.addComponent<GameEngine::Velocity>(groundUp, GameEngine::Velocity{10.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(groundUp, GameEngine::Sprite{"../resources/R-Touhou/graphics/Ground.png",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(groundUp, GameEngine::Sprite{"./resources/R-Touhou/graphics/Ground.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(groundUp, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE + 2});
     registry.addComponent<GameEngine::Projectile>(groundUp, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Controllable>(groundUp, GameEngine::Controllable{false});
@@ -109,7 +109,7 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
     std::string score_0 = "Score: 0";
-    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "../resources/R-Touhou/font/arial.ttf", 20});
+    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "./resources/R-Touhou/font/arial.ttf", 20});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
 
