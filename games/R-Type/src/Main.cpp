@@ -48,10 +48,28 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     return entity;
 }
 
-int main()
+GameEngine::Entity setBackground(GameEngine::Registry &registry, float widthWindow, float heightWindow)
 {
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "ECS");
-    GameEngine::Registry registry(1024);
+    GameEngine::Entity background = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Size>(background, GameEngine::Size{widthWindow, heightWindow});
+    registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{10.0f, 0.0f});
+    registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+
+    return background;
+}
+
+int main(void)
+{
+    float widthWindow = 1920;
+    float heightWindow = 1080;
+    int nbRegistry = 1024;
+
+    sf::RenderWindow window(sf::VideoMode(widthWindow, heightWindow), "ECS");
+    GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
     window.setFramerateLimit(60);
@@ -73,12 +91,7 @@ int main()
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
 
-    GameEngine::Entity background = registry.spawnEntity();
-    registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
-    registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{10.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
-    registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    GameEngine::Entity background = setBackground(registry, widthWindow, heightWindow);
 
     GameEngine::Entity score = registry.spawnEntity();
     registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
