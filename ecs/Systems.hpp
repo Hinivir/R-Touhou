@@ -24,6 +24,7 @@
 #include "Components/Projectile.hpp"
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
+#include "Components/Window.hpp"
 
 #include <list>
 #include <SFML/Graphics.hpp>
@@ -117,26 +118,21 @@ namespace GameEngine
                 GameEngine::Size const &size = hasSize ? sizeComponent.value() : GameEngine::Size();
 
                 if ((controllable && controllable.value().isControllable) && hasVelocity) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                        if ((position.y -= velocity.y) <= 0)
-                            position.y = 0;
-                        else
-                            position.y -= velocity.y;
-                    }
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                        if ((position.y += velocity.y) >= 1080 - size.height)
-                            position.y = 1080 - size.height;
-                        else
-                            position.y += velocity.y;
-                    }
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                        if ((position.x -= velocity.x) <= 0)
-                            position.x = 0;
-                        else
-                            position.x -= velocity.x;
-                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                        if (position.y > 50)
+                            position.y -= 10;
+
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                        if (position.y < WINDOW_HEIGHT - size.width - 50)
+                            position.y += 10;
+
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                        if (position.x > 0)
+                            position.x -= 10;
+
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                        position.x += velocity.x;
+                        if (position.x < WINDOW_WIDTH - size.width)
+                            position.x += 10;
                 }
             }
         }
@@ -162,7 +158,7 @@ namespace GameEngine
                         continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || !drawable.value().is_visible) continue;
+                    if (!hasDrawable || !drawable.value().isVisible) continue ;
 
                     // ZIndex - Continues if (zIndex != currentZIndex)
                     FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);
@@ -196,11 +192,13 @@ namespace GameEngine
                         GameEngine::Text &text = textComponent.value();
                         if (hasColor)
                             text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-                        if (text.text.getFont() == nullptr) {
-                            if (!text.font.loadFromFile(text.fontPath))
+                        if (!text.isLoaded) {
+                            if (text.font.loadFromFile(text.fontPath))
                                 text.text.setFont(text.font);
-                            if (text.text.getFont() == nullptr)
+                            if (text.text.getFont() == nullptr) {
                                 goto drawSystemEndOfHasText;
+                            }
+                            text.isLoaded = true;
                         }
                         text.text.setString(text.string);
                         text.text.setPosition(position.x, position.y);
@@ -307,18 +305,23 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = velociyComponent.value();
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
                 GameEngine::Position &position = positionComponent.value();
-                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectile, hasProjectile);
-                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, path, hasPath);
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllableComponent, hasControllable);
+                GameEngine::Controllable const &controllable = controllableComponent.value();
+                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
+                GameEngine::Projectile const &projectile = projectileComponent.value();
+                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
+                if (!hasPath) continue;
+                GameEngine::Path const &path = pathComponent.value();
 
                 if (
+                    hasVelocity && hasPosition && hasPath &&
+                    (!hasControllable || !controllable.isControllable) &&
+                    (!hasProjectile || !projectile.isProjectile)) {
+                        position.x -= velocity.x;
+                        position.y -= velocity.y;
+                } else if (
                     hasVelocity && hasPosition && hasPath
-                    && (!hasControllable || !controllable.value().isControllable)
-                    && (!hasProjectile || !projectile.value().isProjectile)
-                    && (position.x >= path.value().endX && position.y >= path.value().endY)) {
-                    position.x -= velocity.x;
-                    position.y -= velocity.y;
-                } else if (hasVelocity && hasPosition && (!hasControllable || !controllable.value().isControllable) && (hasProjectile && projectile.value().isProjectile) && hasPath) {
+                    && !hasControllable && hasProjectile) {
                     position.x += velocity.x;
                     position.y += velocity.y;
                 }
@@ -409,7 +412,7 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(sizes, playerID, playerSize, hasPlayerHitbox);
                 FROM_COMPONENT_TO_VARIABLE(lives, playerID, playerLife, hasLife);
                 if (!hasPlayerPosition || !hasPlayerHitbox || !hasLife) continue;
- 
+
                 for (std::size_t j = 0; j < positions.size(); ++j) {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), j) != r.garbageEntities.end())
                         continue;

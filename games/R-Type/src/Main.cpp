@@ -10,6 +10,7 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
+#include "Components/Window.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
@@ -31,7 +32,7 @@ GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
-    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{300});
+    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{3});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
     return entity;
@@ -43,7 +44,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
-    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{1.5f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{15.5f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
@@ -53,21 +54,21 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     return entity;
 }
 
-GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry)
 {
     GameEngine::Entity backgroundStar = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{widthWindow, heightWindow});
+    registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{WINDOW_WIDTH, WINDOW_HEIGHT});
     registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
-//    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
+    // registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"./resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
 
     return backgroundStar;
 }
 
-GameEngine::Entity createGroundDown(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createGroundDown(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundDown = registry.spawnEntity();
 
@@ -83,7 +84,7 @@ GameEngine::Entity createGroundDown(GameEngine::Registry &registry, float widthW
     return groundDown;
 }
 
-GameEngine::Entity createGroundUp(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createGroundUp(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundUp = registry.spawnEntity();
 
@@ -109,21 +110,36 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
     std::string score_0 = "Score: 0";
-    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "./resources/R-Touhou/font/arial.ttf", 20});
+    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "./resources/R-Touhou/font/arial.ttf", 40});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
 
     return score;
 }
 
+GameEngine::Entity createGameOver(GameEngine::Registry &registry)
+{
+    GameEngine::Entity gameOver = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
+    registry.addComponent<GameEngine::Position>(gameOver, GameEngine::Position{1920 / 2 - 220, 1080 / 2 - 120});
+    registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
+    std::string gameover_0 = "Game Over";
+    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameover_0, "../resources/R-Touhou/font/arial.ttf", 80});
+    registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
+
+    return gameOver;
+}
+
 int main(void)
 {
-    float widthWindow = 1920;//both
-    float heightWindow = 1080;
     int nbRegistry = 1024;
+    bool isGameOver = false;
 
     //client
-    sf::RenderWindow window(sf::VideoMode(widthWindow, heightWindow), "ECS");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
@@ -149,10 +165,11 @@ int main(void)
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
-    GameEngine::Entity backgroundStar = createBackgroundStar(registry, widthWindow, heightWindow);
-    GameEngine::Entity groundDown = createGroundDown(registry, widthWindow, heightWindow);
-    GameEngine::Entity groundUp = createGroundUp(registry, widthWindow, heightWindow);
+    GameEngine::Entity backgroundStar = createBackgroundStar(registry);
+    GameEngine::Entity groundDown = createGroundDown(registry);
+    GameEngine::Entity groundUp = createGroundUp(registry);
     GameEngine::Entity score = createScore(registry);
+    GameEngine::Entity gameOver = createGameOver(registry);
 
     for (int i = 0; i < 5; ++i)
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
@@ -167,8 +184,8 @@ int main(void)
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
-//        system.loggingSystem(registry);
-//        system.backgroundParallax(registry);
+        // system.loggingSystem(registry);
+        // system.backgroundParallax(registry);
         system.controlSystem(registry);
         system.spriteSystem(registry);
 
@@ -179,8 +196,10 @@ int main(void)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
-        if (registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0)
-            std::cout << "Game Over" << std::endl;
+        if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            isGameOver = true;
+        }
     }
     return 0;
 }
