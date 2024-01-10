@@ -179,7 +179,6 @@ int main(void)
         system.collisionSystem(registry);
         system.deleteEntitiesSystem(registry);
         window.display();
-        window.clear();
     }
     return 0;
 }
