@@ -162,15 +162,14 @@ namespace GameEngine
                         continue;
                     }
 
-                    // Sprite - Continues if sprite is undefined or if it has no texture
-                    FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
-
                     // Color
                     FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
                     GameEngine::Color const color = hasColor ? colorComponent.value() : GameEngine::Color();
                     // Position
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
                     GameEngine::Position const position = hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
+                    // Sprite
+                    FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
                     // SpriteTextureAnimation
                     FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
                     GameEngine::SpriteTextureAnimation const spriteTextureAnimation = hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value() : GameEngine::SpriteTextureAnimation();
@@ -182,22 +181,39 @@ namespace GameEngine
                     FROM_COMPONENT_TO_VARIABLE(texts, i, textComponent, hasText);
 
                     if (hasText) {
+                        GameEngine::Text &text = textComponent.value();
                         std::cout << "Text" << std::endl;
                         if (hasColor)
-                            textComponent.value().text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-                        textComponent.value().font.loadFromFile(textComponent.value().fontPath);
-                        textComponent.value().text.setFont(textComponent.value().font);
-                        textComponent.value().text.setString(textComponent.value().string);
-                        textComponent.value().text.setPosition(position.x, position.y);
-                        textComponent.value().text.setCharacterSize(textComponent.value().fontSize);
-                        window.draw(textComponent.value().text);
-                        continue;
+                            text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+                        if (text.text.getFont() == nullptr) {
+                            if (!text.font.loadFromFile(text.fontPath))
+                                text.text.setFont(text.font);
+                            if (text.text.getFont() == nullptr)
+                                goto drawSystemEndOfHasText;
+                        }
+                        text.text.setString(text.string);
+                        text.text.setPosition(position.x, position.y);
+                        text.text.setCharacterSize(text.fontSize);
+                        window.draw(text.text);
                     }
+                    drawSystemEndOfHasText:
                     if (hasSprite) {
+                        // Sprite
                         sf::Sprite &sprite = spriteComponent.value().sprite;
-                        if (sprite.getTexture() == nullptr) continue;
+
+                        // SpriteTextureAnimation
+                        FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
+                        GameEngine::SpriteTextureAnimation const spriteTextureAnimation = hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value() : GameEngine::SpriteTextureAnimation();
+
+                        // SpriteTextureRects
+                        FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
+                        GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
+
+                        //
                         sf::Vector2u const &spriteTextureSize = spriteComponent.value().texture.getSize();
                         sf::IntRect textureRect = hasSpriteTextureRect ? sf::IntRect{spriteTextureRect.left, spriteTextureRect.top, spriteTextureRect.width, spriteTextureRect.height} : sf::IntRect{0, 0, static_cast<int>(spriteTextureSize.x), static_cast<int>(spriteTextureSize.y)};
+
+                        if (sprite.getTexture() == nullptr) continue; //goto drawSystemEndOfHasSprite; (removed because pointing at the end of a for() loop)
                         sprite.setPosition(position.x, position.y);
                         if (hasColor)
                             sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
@@ -212,6 +228,7 @@ namespace GameEngine
                         textureRect = sprite.getTextureRect();
                         window.draw(sprite);
                     }
+                    //drawSystemEndOfHasSprite: (removed because at the end of a for() loop)
                 }
             } while (currentZIndex != lowestZIndex);
         }
