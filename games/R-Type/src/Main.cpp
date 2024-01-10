@@ -107,13 +107,13 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
 
     registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
-    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
+    std::string score_0 = "Score: 0";
+    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "../resources/R-Touhou/font/arial.ttf", 20});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
-    std::string score_0 = "Score: 0";
-    // add text to game engine
-    // registry.addComponent<GameEngine::Text>(score, GameEngine::Text{"../resources/R-Touhou/font/font.ttf", score_0, 24, sf::Color::Black});
-    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
     return score;
 }
@@ -145,6 +145,7 @@ int main(void)
         ,GameEngine::ZIndex
         ,GameEngine::Path
         ,GameEngine::Projectile
+        ,GameEngine::Text
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
