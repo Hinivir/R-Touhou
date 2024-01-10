@@ -32,7 +32,7 @@ GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
-    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{300});
+    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{3});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
     return entity;
@@ -44,7 +44,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
-    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{100.5f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{15.5f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
@@ -117,9 +117,26 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     return score;
 }
 
+GameEngine::Entity createGameOver(GameEngine::Registry &registry)
+{
+    GameEngine::Entity gameOver = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
+    registry.addComponent<GameEngine::Position>(gameOver, GameEngine::Position{1920 / 2 - 220, 1080 / 2 - 120});
+    registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
+    std::string gameover_0 = "Game Over";
+    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameover_0, "../resources/R-Touhou/font/arial.ttf", 80});
+    registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
+
+    return gameOver;
+}
+
 int main(void)
 {
     int nbRegistry = 1024;
+    bool isGameOver = false;
 
     //client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
@@ -152,6 +169,7 @@ int main(void)
     GameEngine::Entity groundDown = createGroundDown(registry);
     GameEngine::Entity groundUp = createGroundUp(registry);
     GameEngine::Entity score = createScore(registry);
+    GameEngine::Entity gameOver = createGameOver(registry);
 
     for (int i = 0; i < 5; ++i)
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
@@ -178,8 +196,10 @@ int main(void)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
-        if (registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0)
-            std::cout << "Game Over" << std::endl;
+        if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            isGameOver = true;
+        }
     }
     return 0;
 }
