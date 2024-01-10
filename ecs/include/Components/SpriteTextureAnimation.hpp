@@ -13,10 +13,10 @@
 
 namespace GameEngine
 {
-    using SpriteTextureAnimationSlicingValue = std::size_t;
+    using SpriteTextureAnimationSlicingValue = int;
     using SpriteTextureAnimationSlicing = GameEngine::Position2BaseDefault1<GameEngine::SpriteTextureAnimationSlicingValue, 's'>;
 
-    using SpriteTextureAnimationFrameValue = std::size_t;
+    using SpriteTextureAnimationFrameValue = int;
     using SpriteTextureAnimationFrame = GameEngine::Position2Base<GameEngine::SpriteTextureAnimationFrameValue, 'f'>;
 
     struct SpriteTextureAnimation {
