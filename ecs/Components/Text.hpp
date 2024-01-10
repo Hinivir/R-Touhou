@@ -15,9 +15,11 @@
 namespace GameEngine
 {
     struct Text {
-        std::string path;
-        sf::Text Text;
-        sf::Texture texture;
+        sf::Text text;
+        sf::Font font;
+        std::string string;
+        std::string fontPath;
+        std::size_t fontSize;
     };
 }
 
