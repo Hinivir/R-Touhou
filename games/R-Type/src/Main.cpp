@@ -53,19 +53,19 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     return entity;
 }
 
-GameEngine::Entity setBackground(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float widthWindow, float heightWindow)
 {
-    GameEngine::Entity background = registry.spawnEntity();
+    GameEngine::Entity backgroundStar = registry.spawnEntity();
 
-    registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Size>(background, GameEngine::Size{widthWindow, heightWindow});
-    registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
-    registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{10.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
-    registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
-    registry.addComponent<GameEngine::Projectile>(background, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{widthWindow, heightWindow});
+    registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
+    registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"../resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
+    registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    registry.addComponent<GameEngine::Projectile>(backgroundStar, GameEngine::Projectile{false});
 
-    return background;
+    return backgroundStar;
 }
 
 int main(void)
@@ -99,7 +99,7 @@ int main(void)
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
 
-    GameEngine::Entity background = setBackground(registry, widthWindow, heightWindow);
+    GameEngine::Entity backgroundStar = createBackgroundStar(registry, widthWindow, heightWindow);
 
     GameEngine::Entity score = registry.spawnEntity();
     registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
