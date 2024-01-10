@@ -176,13 +176,11 @@ namespace GameEngine
                     // SpriteTextureRects
                     FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
                     GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
-
-
+                    // Text
                     FROM_COMPONENT_TO_VARIABLE(texts, i, textComponent, hasText);
 
                     if (hasText) {
                         GameEngine::Text &text = textComponent.value();
-                        std::cout << "Text" << std::endl;
                         if (hasColor)
                             text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
                         if (text.text.getFont() == nullptr) {
