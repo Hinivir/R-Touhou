@@ -294,8 +294,6 @@ namespace GameEngine
 
         void movementSystem(GameEngine::Registry &r)
         {
-            std::cout << "OK8888" << std::endl;
-
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
