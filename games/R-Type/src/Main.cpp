@@ -169,7 +169,7 @@ int main(void)
             window.close();
 //        system.loggingSystem(registry);
 //        system.backgroundParallax(registry);
-        system.controlSystem(registry);
+        system.controlSystem(registry, widthWindow, heightWindow);
         system.spriteSystem(registry);
 
         system.attackSystem(registry);

@@ -92,7 +92,7 @@ namespace GameEngine
             }
         }
 
-        void controlSystem(GameEngine::Registry &r)
+        void controlSystem(GameEngine::Registry &r, float widthWindow, float heightWindow)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -117,26 +117,21 @@ namespace GameEngine
                 GameEngine::Size const &size = hasSize ? sizeComponent.value() : GameEngine::Size();
 
                 if ((controllable && controllable.value().isControllable) && hasVelocity) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                        if ((position.y -= velocity.y) <= 0)
-                            position.y = 0;
-                        else
-                            position.y -= velocity.y;
-                    }
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                        if ((position.y += velocity.y) >= 1080 - size.height)
-                            position.y = 1080 - size.height;
-                        else
-                            position.y += velocity.y;
-                    }
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                        if ((position.x -= velocity.x) <= 0)
-                            position.x = 0;
-                        else
-                            position.x -= velocity.x;
-                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                        if (position.y > 50)
+                            position.y -= 10;
+
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                        if (position.y < heightWindow - size.width - 50)
+                            position.y += 10;
+
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                        if (position.x > 0)
+                            position.x -= 10;
+
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                        position.x += velocity.x;
+                        if (position.x < widthWindow - size.width)
+                            position.x += 10;
                 }
             }
         }
@@ -409,7 +404,7 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(sizes, playerID, playerSize, hasPlayerHitbox);
                 FROM_COMPONENT_TO_VARIABLE(lives, playerID, playerLife, hasLife);
                 if (!hasPlayerPosition || !hasPlayerHitbox || !hasLife) continue;
- 
+
                 for (std::size_t j = 0; j < positions.size(); ++j) {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), j) != r.garbageEntities.end())
                         continue;
