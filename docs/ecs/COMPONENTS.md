@@ -25,6 +25,8 @@
   - [Velocity](#velocity)
   - [Window](#window)
   - [ZIndex](#zindex)
+    - [Members](#members-4)
+    - [Associated Content](#associated-content-1)
 
 # Components
 
@@ -115,3 +117,26 @@ Defines an entity's hitbox for collisions.
 ## Window
 
 ## ZIndex
+
+*From Components/ZIndex.hpp*
+
+Defines the layer at which the entity is displayed.
+
+For example, a background should have a lower layer than the objects standing before it.
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|zIndex|ZIndexValue|Layer at which the entity should be displayed|1000 (GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE)|
+
+### Associated Content
+
+Associated Content:
+```cpp
+#define GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE 0
+#define GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE 1000
+```
+```cpp
+using GameEngine::ZIndexValue = unsigned int;
+```
