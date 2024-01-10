@@ -157,7 +157,7 @@ namespace GameEngine
                         continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || !drawable.value().is_visible) continue;
+                    if (!hasDrawable || !drawable.value().isVisible) continue ;
 
                     // ZIndex - Continues if (zIndex != currentZIndex)
                     FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);

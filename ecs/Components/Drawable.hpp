@@ -12,7 +12,7 @@ namespace GameEngine
 {
     struct Drawable
     {
-        bool is_visible = false;
+        bool isVisible = false;
     };
 } // namespace GameEngine
 
