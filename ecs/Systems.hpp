@@ -294,6 +294,8 @@ namespace GameEngine
 
         void movementSystem(GameEngine::Registry &r)
         {
+            std::cout << "OK8888" << std::endl;
+
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
@@ -314,16 +316,26 @@ namespace GameEngine
                 GameEngine::Path const &path = pathComponent.value();
 
                 if (
+                    hasVelocity && hasPosition && !hasControllable && !hasProjectile) {
+
+                    // std::cout << "OK9999" << std::endl;
+                    position.x -= 10;
+
+                } else if (
                     hasVelocity && hasPosition && hasPath &&
                     (!hasControllable || !controllable.isControllable) &&
                     (!hasProjectile || !projectile.isProjectile)) {
+
                         position.x -= velocity.x;
                         position.y -= velocity.y;
+
                 } else if (
                     hasVelocity && hasPosition && hasPath
                     && !hasControllable && hasProjectile) {
-                    position.x += velocity.x;
-                    position.y += velocity.y;
+
+                        position.x += velocity.x;
+                        position.y += velocity.y;
+
                 }
             }
         }
@@ -467,7 +479,7 @@ namespace GameEngine
                         r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.x + size.value().height, position.y + size.value().width / 2});
                         r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{100.0f, 0.0f});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
+                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
                         r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                         r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{true});
                         r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.x + size.value().height, position.y + size.value().width / 2, 1920 + 50, 1080 + 50});

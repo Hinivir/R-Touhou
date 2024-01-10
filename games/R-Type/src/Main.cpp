@@ -61,9 +61,11 @@ GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{WINDOW_WIDTH, WINDOW_HEIGHT});
     registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
-    // registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"./resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    // registry.addComponent<GameEngine::Controllable>(backgroundStar, GameEngine::Controllable{false});
+    // registry.addComponent<GameEngine::Projectile>(backgroundStar, GameEngine::Projectile{false});
 
     return backgroundStar;
 }
