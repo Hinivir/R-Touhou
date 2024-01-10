@@ -8,6 +8,18 @@
   - [Controllable](#controllable)
   - [Drawable](#drawable)
   - [Hitbox](#hitbox)
+  - [Life](#life)
+  - [Path](#path)
+  - [Position](#position)
+  - [Projectile](#projectile)
+  - [Size](#size)
+  - [Sprite](#sprite)
+  - [SpriteTextureAnimation](#spritetextureanimation)
+  - [SpriteTextureRect](#spritetexturerect)
+  - [Text](#text)
+  - [Velocity](#velocity)
+  - [Window](#window)
+  - [ZIndex](#zindex)
 
 # Components
 
@@ -64,3 +76,27 @@ Defines an entity's hitbox for collisions.
 
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
+
+## Life
+
+## Path
+
+## Position
+
+## Projectile
+
+## Size
+
+## Sprite
+
+## SpriteTextureAnimation
+
+## SpriteTextureRect
+
+## Text
+
+## Velocity
+
+## Window
+
+## ZIndex
