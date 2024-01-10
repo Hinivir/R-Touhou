@@ -477,7 +477,7 @@ namespace GameEngine
                         r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.x + size.value().height, position.y + size.value().width / 2});
                         r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{100.0f, 0.0f});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
+                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"./games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
                         r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                         r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{true});
                         r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.x + size.value().height, position.y + size.value().width / 2, 1920 + 50, 1080 + 50});
