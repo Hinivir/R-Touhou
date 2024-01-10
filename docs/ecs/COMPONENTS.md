@@ -27,14 +27,16 @@
     - [Members](#members-5)
     - [Associated Content](#associated-content-2)
   - [SpriteTextureRect](#spritetexturerect)
-  - [Text](#text)
-  - [Velocity](#velocity)
     - [Members](#members-6)
     - [Associated Content](#associated-content-3)
-  - [Window](#window)
-  - [ZIndex](#zindex)
+  - [Text](#text)
+  - [Velocity](#velocity)
     - [Members](#members-7)
     - [Associated Content](#associated-content-4)
+  - [Window](#window)
+  - [ZIndex](#zindex)
+    - [Members](#members-8)
+    - [Associated Content](#associated-content-5)
 
 # Components
 
@@ -176,6 +178,36 @@ struct GameEngine::Position2BaseDefault1;
 ```
 
 ## SpriteTextureRect
+
+*From ecs/Components/SpriteTextureRect.hpp*
+
+Defines the area displayed from the entity's sprite's texture.
+
+When combined with `GameEngine::SpriteTextureAnimation`, the cropping is applied **BEFORE** the texture animation.
+
+It uses `GameEngine::RectBase` from `ecs/Components/SpriteTextureRect.hpp`.
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|left|SpriteTextureRectValue|Left coordinate of the texture rectangle|0 (GAME_ENGINE_RECT_BASE_DEFAULT_VALUE)|
+|top|SpriteTextureRectValue|Top coordinate of the texture rectangle|0 (GAME_ENGINE_RECT_BASE_DEFAULT_VALUE)|
+|width|SpriteTextureRectValue|Width of the texture rectangle|0 (GAME_ENGINE_RECT_BASE_DEFAULT_VALUE)|
+|height|SpriteTextureRectValue|Height of the texture rectangle is sliced|0 (GAME_ENGINE_RECT_BASE_DEFAULT_VALUE)|
+
+### Associated Content
+
+```cpp
+using GameEngine::SpriteTextureRectValue = int;
+```
+```cpp
+#define GAME_ENGINE_RECT_BASE_DEFAULT_VALUE 0
+```
+```cpp
+template <typename T, char UNIQUE_ID>
+struct GameEngine::RectBase;
+```
 
 ## Text
 
