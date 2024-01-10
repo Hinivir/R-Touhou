@@ -24,6 +24,7 @@
 #include "Components/Projectile.hpp"
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
+#include "Components/Window.hpp"
 
 #include <list>
 #include <SFML/Graphics.hpp>
@@ -92,7 +93,7 @@ namespace GameEngine
             }
         }
 
-        void controlSystem(GameEngine::Registry &r, float widthWindow, float heightWindow)
+        void controlSystem(GameEngine::Registry &r)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -122,7 +123,7 @@ namespace GameEngine
                             position.y -= 10;
 
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                        if (position.y < heightWindow - size.width - 50)
+                        if (position.y < WINDOW_HEIGHT - size.width - 50)
                             position.y += 10;
 
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -130,7 +131,7 @@ namespace GameEngine
                             position.x -= 10;
 
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                        if (position.x < widthWindow - size.width)
+                        if (position.x < WINDOW_WIDTH - size.width)
                             position.x += 10;
                 }
             }
