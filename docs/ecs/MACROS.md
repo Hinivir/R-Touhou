@@ -1,7 +1,9 @@
-# LTYPE - MACROS
+# LTYPE - ECS - MACROS
+
+[Go back to ECS](../ECS.md)
 
 # Table of Contents
-- [LTYPE - MACROS](#ltype---macros)
+- [LTYPE - ECS - MACROS](#ltype---ecs---macros)
 - [Table of Contents](#table-of-contents)
 - [Macros](#macros)
   - [GAME\_ENGINE\_FOR\_EACH](#game_engine_for_each)

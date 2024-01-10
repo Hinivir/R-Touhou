@@ -1,7 +1,9 @@
-# LTYPE - COMPONENTS
+# LTYPE - ECS - COMPONENTS
+
+[Go back to ECS](../ECS.md)
 
 # Table of Contents
-- [LTYPE - COMPONENTS](#ltype---components)
+- [LTYPE - ECS - COMPONENTS](#ltype---ecs---components)
 - [Table of Contents](#table-of-contents)
 - [Components](#components)
   - [Color](#color)
