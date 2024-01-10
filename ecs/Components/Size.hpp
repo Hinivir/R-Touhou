@@ -11,8 +11,8 @@
 namespace GameEngine
 {
     struct Size {
-        float width;
-        float height;
+        float width = 50.0f;
+        float height = 50.0f;
     };
 }
 

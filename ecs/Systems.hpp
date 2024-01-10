@@ -21,12 +21,16 @@
 #include "Components/SpriteTextureRect.hpp"
 #include "Components/Velocity.hpp"
 #include "Components/ZIndex.hpp"
+#include "Components/Projectile.hpp"
+#include "Components/Path.hpp"
 
+#include <list>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+#include <iostream>
 
 #define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
 
@@ -74,10 +78,12 @@ namespace GameEngine
             }
         }
 
-        void controlSystem(GameEngine::Registry &r) {
+        void controlSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
             for (size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
                 if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
@@ -85,26 +91,44 @@ namespace GameEngine
                 // Controllable - Continues if controllable is undefined or no controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
                 if (!hasControllable || !controllable.value().isControllable) continue;
-                // Position - Continues if position if undefined
+                // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                if (!hasPosition) continue;
+                //if (!hasPosition) continue;
                 GameEngine::Position &position = positionComponent.value();
                 // Velocity
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
+                // Size
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize);
+                GameEngine::Size const &size = hasSize ? sizeComponent.value() : GameEngine::Size();
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && position.y > -1)
-                    position.y -= velocity.y;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && position.y < 1080 - 30)
-                    position.y += velocity.y;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && position.x > -1)
-                    position.x -= velocity.x;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && position.x < 1920 - 30)
-                    position.x += velocity.x;
+                if ((controllable && controllable.value().isControllable) && hasVelocity) {
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+                        if ((position.y -= velocity.y) <= 0)
+                            position.y = 0;
+                        else
+                            position.y -= velocity.y;
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+                        if ((position.y += velocity.y) >= 1080 - size.height)
+                            position.y = 1080 - size.height;
+                        else
+                            position.y += velocity.y;
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+                        if ((position.x -= velocity.x) <= 0)
+                            position.x = 0;
+                        else
+                            position.x -= velocity.x;
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                        position.x += velocity.x;
+                }
             }
         }
 
-        void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window) {
+        void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Drawable, drawables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
@@ -120,7 +144,7 @@ namespace GameEngine
                 for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
                 {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
-                    continue;
+                        continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
                     if (!hasDrawable || !drawable.value().is_visible) continue;
@@ -175,81 +199,114 @@ namespace GameEngine
             } while (currentZIndex != lowestZIndex);
         }
 
-        void initEnemy(GameEngine::Registry &r) {
+        void initEnemy(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
+            EXTRACT_COMPONENT(GameEngine::Path, paths);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
+            EXTRACT_COMPONENT(GameEngine::Projectile, projectiles);
 
             for (size_t i = 0; i < positions.size(); ++i) {
                 if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                     continue;
                 // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                if (!hasPosition) continue;
+                if (!hasPosition)
+                    continue;
                 GameEngine::Position &position = positionComponent.value();
 
                 // Controllable - Continues if controllable is defined and controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                if (hasControllable && controllable.value().isControllable) continue;
+                if (hasControllable && controllable.value().isControllable)
+                    continue;
 
                 // Hitbox - Continues if hitbox is undefined
-                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
-                if (!hasHitbox) continue;
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, hitbox, hasHitbox);
+                if (!hasHitbox)
+                    continue;
 
+                // Path - Continues if path is not defined
+                FROM_COMPONENT_TO_VARIABLE(paths, i, pathComponent, hasPath);
+                if (!hasPath)
+                    continue;
+
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize)
+
+                FROM_COMPONENT_TO_VARIABLE(projectiles, i, projectileComponent, hasProjectile);
+                // if (hasProjectile) continue;
+                GameEngine::Projectile &projectile = projectileComponent.value();
+
+                GameEngine::Path &path = pathComponent.value();
+                GameEngine::Size const &size = sizeComponent.value();
                 position.x = rand() % 1080 + 1920;
                 position.y = rand() % 1000;
+                path.startX = position.x;
+                path.startY = position.y;
+                path.endY = -100 + size.width;
+                projectile.isProjectile = false;
             }
         }
 
-        void enemyMovementSystem(GameEngine::Registry &r) {
-            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
-            EXTRACT_COMPONENT(GameEngine::Position, positions);
+        void movementSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
-            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Path, paths);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
-                    continue;
-                // Controllable - Continues if controllable is defined and controllable
-                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                if (hasControllable && controllable.value().isControllable) continue;
-                // Position - Continues if position if undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velociyComponent, hasVelocity);
+                GameEngine::Velocity const &velocity = velociyComponent.value();
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                if (!hasPosition) continue;
                 GameEngine::Position &position = positionComponent.value();
-                // Velocity
-                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
-                GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
-                // Hitbox - Continues if hitbox is undefined
-                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
-                if (!hasHitbox) continue;
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectile, hasProjectile);
+                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, path, hasPath);
 
-                position.x -= velocity.x;
-                position.y += rand() & 1 ? velocity.y : -velocity.y;
+                if (
+                    hasVelocity && hasPosition && hasPath
+                    && (!hasControllable || !controllable.value().isControllable)
+                    && (!hasProjectile || !projectile.value().isProjectile)
+                    && (position.x >= path.value().endX && position.y >= path.value().endY)) {
+                    position.x -= velocity.x;
+                    position.y -= velocity.y;
+                } else if (hasVelocity && hasPosition && (!hasControllable || !controllable.value().isControllable) && (hasProjectile && projectile.value().isProjectile) && hasPath) {
+                    position.x += velocity.x;
+                    position.y += velocity.y;
+                }
             }
         }
 
         // Wait new system movement Viktor
-        void backgroundParallax(GameEngine::Registry &r) {
-            auto const &velocities = r.getComponent<Velocity>();
-            auto &positions = r.getComponent<Position>();
-            auto const &controllables = r.getComponent<Controllable>();
-            auto const &Hitboxes = r.getComponent<Hitbox>();
+        void backgroundParallax(GameEngine::Registry &r)
+        {
+            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
- //            for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-            auto const &vel = velocities[0];
-            auto &pos = positions[0];
-            auto const &controllable = controllables[0];
-            auto const &hitbox = Hitboxes[0];
+            //for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
+            FROM_COMPONENT_TO_VARIABLE_CONST(velocities, 0, velocityComponent, hasVelocity);
+            GameEngine::Velocity const &velocity = velocityComponent.value();
+            FROM_COMPONENT_TO_VARIABLE(positions, 0, positionComponent, hasPosition);
+            GameEngine::Position &position = positionComponent.value();
+            FROM_COMPONENT_TO_VARIABLE_CONST(controllables, 0, controllableComponent, hasControllable);
+            GameEngine::Controllable const &controllable = controllableComponent.value();
+            FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, 0, hitboxComponent, hasHitbox);
+            GameEngine::Hitbox const &hitbox = hitboxComponent.value();
 
-            if (vel && pos && !controllable && hitbox) {
-                pos.value().x -= vel.value().x;
-                pos.value().y += rand() & 1 ? vel.value().y : -vel.value().y;
+            if (hasVelocity && hasPosition && !hasControllable && hasHitbox) {
+                position.x -= velocity.x;
+                position.y += rand() & 1 ? velocity.y : -velocity.y;
             }
- //            }
+            //}
          }
 
-        void spriteSystem(GameEngine::Registry &r) {
+        void spriteSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
             EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
@@ -273,7 +330,8 @@ namespace GameEngine
             }
         }
 
-        void collisionSystem(GameEngine::Registry &r) {
+        void collisionSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
@@ -329,39 +387,69 @@ namespace GameEngine
                             life.life -= 1;
                         else {
                             r.garbageEntities.push_back(std::size_t(playerID));
-                            std::cout << "Dead" << std::endl;//killEntity
+                            std::cout << "Dead" << std::endl;
                         }
                     }
                 }
             }
         }
 
-
-
         void attackSystem(GameEngine::Registry &r) {
             auto &positions = r.getComponent<GameEngine::Position>();
             auto &controllables = r.getComponent<GameEngine::Controllable>();
+            EXTRACT_COMPONENT(GameEngine::Size, sizes);
             bool isSpacePressedUnpressed = false;
 
             for (size_t i = 0; i < controllables.size(); ++i) {
                 if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                     continue;
-                FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
+                FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, _hasPosition);
+                GameEngine::Position &position = positionComponent.value();
                 FROM_COMPONENT_TO_VARIABLE(controllables, i, control, _hasControllable);
-                if (pos && control && control.value().isControllable) {
+                FROM_COMPONENT_TO_VARIABLE(sizes, i, size, _hasSize)
+
+                if (_hasPosition && _hasControllable && control.value().isControllable) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
-                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{pos.value().x + 50, pos.value().y + 50});
-                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{-10.0f, 0.0f});
+                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.x + size.value().height, position.y + size.value().width / 2});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{100.0f, 0.0f});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
                         r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"../resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
                         r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                        r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{true});
+                        r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.x + size.value().height, position.y + size.value().width / 2, 1920 + 50, 1080 + 50});
+                    }
+                }
+                isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+            }
+        }
+
+
+        void deleteEntitiesSystem(GameEngine::Registry &r)
+        {
+            auto &positions = r.getComponent<Position>();
+            auto &paths = r.getComponent<Path>();
+            auto &projectiles = r.getComponent<Projectile>();
+
+            for (size_t i = 0; i < positions.size(); ++i) {
+                FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
+                FROM_COMPONENT_TO_VARIABLE(paths, i, path, _hasPath);
+                FROM_COMPONENT_TO_VARIABLE(projectiles, i, projectile, _hasProjectile);
+                if (_hasPosition && _hasPath) {
+                    if (_hasProjectile && projectile.value().isProjectile) {
+                        if (pos.value().x >= path.value().endX || pos.value().y >= path.value().endY) {
+                            auto entityId = r.getEntityById(i);
+                            r.garbageEntities.push_back((std::size_t)entityId);
+                        }
+                    } else {
+                        if (pos.value().x <= path.value().endX || pos.value().y <= path.value().endY) {
+                            auto entityId = r.getEntityById(i);
+                            r.garbageEntities.push_back((std::size_t)entityId);
+                        }
                     }
                 }
             }
-            isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
         }
-
     };
 }
 

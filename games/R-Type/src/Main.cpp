@@ -29,10 +29,11 @@ GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{true});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
-    registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{150.0f, 150.0f});
+    registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Player.png",sf::Sprite(),sf::Texture()});
-    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{3});
+    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{300});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
+    registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
     return entity;
 }
 
@@ -40,11 +41,15 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = spawnBaseEntity(registry);
 
-    registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{25.0f, 25.0f});
+    registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{1.5f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
+    registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Path>(entity, GameEngine::Path{30.0f, 30.0f, 0.0f, 0.0f});
+    registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{2});
+    registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
     return entity;
 }
 
@@ -58,6 +63,7 @@ GameEngine::Entity setBackground(GameEngine::Registry &registry, float widthWind
     registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    registry.addComponent<GameEngine::Projectile>(background, GameEngine::Projectile{false});
 
     return background;
 }
@@ -87,6 +93,8 @@ int main(void)
         ,GameEngine::SpriteTextureRect
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
+        ,GameEngine::Path
+        ,GameEngine::Projectile
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
@@ -97,6 +105,7 @@ int main(void)
     registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
     std::string score_0 = "Score: 0";
     //registry.addComponent<GameEngine::Text>(score, GameEngine::Text{"../resources/R-Touhou/font/font.ttf", score_0, 24, sf::Color::Black});
@@ -115,18 +124,18 @@ int main(void)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
             window.close();
         }
-        //system.loggingSystem(registry);
-        system.enemyMovementSystem(registry);
+        system.loggingSystem(registry);
         system.backgroundParallax(registry);
         system.controlSystem(registry);
         system.spriteSystem(registry);
 
         system.attackSystem(registry);
         system.drawSystem(registry, window);
+        system.movementSystem(registry);
         system.collisionSystem(registry);
+        system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
     }
-
     return 0;
 }

@@ -99,7 +99,7 @@ namespace GameEngine
         /// @brief Get an entity by its id
         /// @param id Id of the entity to get
         /// @return The entity
-        static Entity getEntityById(const std::size_t &id) { return Entity(id); };
+        Entity getEntityById(const std::size_t &id) { return Entity(id); };
 
         void killEntity(const Entity &entity)
         {

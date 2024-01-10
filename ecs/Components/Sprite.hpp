@@ -8,8 +8,6 @@
 #ifndef L_TYPE_GAME_RTouhou_SPRITE_HPP
 #define L_TYPE_GAME_RTouhou_SPRITE_HPP
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics.hpp>
 
 namespace GameEngine
