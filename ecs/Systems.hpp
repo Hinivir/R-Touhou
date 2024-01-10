@@ -305,18 +305,23 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = velociyComponent.value();
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
                 GameEngine::Position &position = positionComponent.value();
-                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectile, hasProjectile);
-                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, path, hasPath);
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllableComponent, hasControllable);
+                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
+                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
 
                 if (
                     hasVelocity && hasPosition && hasPath
-                    && (!hasControllable || !controllable.value().isControllable)
-                    && (!hasProjectile || !projectile.value().isProjectile)
-                    && (position.x >= path.value().endX && position.y >= path.value().endY)) {
+                    && !hasControllable && !hasProjectile){
+                    GameEngine::Controllable const &controllable = controllableComponent.value();
+                    GameEngine::Path const &path = pathComponent.value();
                     position.x -= velocity.x;
                     position.y -= velocity.y;
-                } else if (hasVelocity && hasPosition && (!hasControllable || !controllable.value().isControllable) && (hasProjectile && projectile.value().isProjectile) && hasPath) {
+                } else if (
+                    hasVelocity && hasPosition && hasPath
+                    && !hasControllable && hasProjectile) {
+                    GameEngine::Projectile const &projectile = projectileComponent.value();
+                    GameEngine::Controllable const &controllable = controllableComponent.value();
+                    GameEngine::Path const &path = pathComponent.value();
                     position.x += velocity.x;
                     position.y += velocity.y;
                 }
