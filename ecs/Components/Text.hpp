@@ -10,7 +10,6 @@
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics.hpp>
 
 namespace GameEngine
 {

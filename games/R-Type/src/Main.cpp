@@ -136,16 +136,16 @@ int main(void)
         ,GameEngine::Drawable
         ,GameEngine::Hitbox
         ,GameEngine::Life
+        ,GameEngine::Path
         ,GameEngine::Position
+        ,GameEngine::Projectile
         ,GameEngine::Size
         ,GameEngine::Sprite
         ,GameEngine::SpriteTextureAnimation
         ,GameEngine::SpriteTextureRect
+        ,GameEngine::Text
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
-        ,GameEngine::Path
-        ,GameEngine::Projectile
-        ,GameEngine::Text
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
