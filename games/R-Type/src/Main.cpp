@@ -60,26 +60,27 @@ GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float wi
     registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{widthWindow, heightWindow});
     registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
-    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
+//    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"../resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
-    registry.addComponent<GameEngine::Projectile>(backgroundStar, GameEngine::Projectile{false});
 
     return backgroundStar;
 }
 
 int main(void)
 {
-    float widthWindow = 1920;
+    float widthWindow = 1920;//both
     float heightWindow = 1080;
     int nbRegistry = 1024;
 
+    //client
     sf::RenderWindow window(sf::VideoMode(widthWindow, heightWindow), "ECS");
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
     window.setFramerateLimit(60);
 
+    //both
     GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT
         ,GameEngine::Color
         ,GameEngine::Controllable
@@ -121,11 +122,10 @@ int main(void)
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
-        }
-        system.loggingSystem(registry);
-        system.backgroundParallax(registry);
+//        system.loggingSystem(registry);
+//        system.backgroundParallax(registry);
         system.controlSystem(registry);
         system.spriteSystem(registry);
 
@@ -136,6 +136,8 @@ int main(void)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
+        if (registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0)
+            std::cout << "Game Over" << std::endl;
     }
     return 0;
 }

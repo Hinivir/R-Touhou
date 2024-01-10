@@ -42,9 +42,22 @@
 #define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
     bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
-bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width, std::size_t height)
-{
-    return (x1 < x2 + width && x1 + width > x2 && y1 < y2 + height && y1 + height > y2);
+bool isColliding(
+    std::size_t x1,
+    std::size_t y1,
+    std::size_t x2,
+    std::size_t y2,
+    std::size_t width1,
+    std::size_t height1,
+    std::size_t width2,
+    std::size_t height2
+) {
+    return (
+        x1 < x2 + width2 &&
+        x1 + width1 > x2 &&
+        y1 < y2 + height2 &&
+        y1 + height1 > y2
+    );
 }
 
 namespace GameEngine
@@ -286,7 +299,6 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
-            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
 
             //for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
             FROM_COMPONENT_TO_VARIABLE_CONST(velocities, 0, velocityComponent, hasVelocity);
@@ -295,10 +307,8 @@ namespace GameEngine
             GameEngine::Position &position = positionComponent.value();
             FROM_COMPONENT_TO_VARIABLE_CONST(controllables, 0, controllableComponent, hasControllable);
             GameEngine::Controllable const &controllable = controllableComponent.value();
-            FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, 0, hitboxComponent, hasHitbox);
-            GameEngine::Hitbox const &hitbox = hitboxComponent.value();
 
-            if (hasVelocity && hasPosition && !hasControllable && hasHitbox) {
+            if (hasVelocity && hasPosition && !hasControllable) {
                 position.x -= velocity.x;
                 position.y += rand() & 1 ? velocity.y : -velocity.y;
             }
@@ -335,6 +345,7 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
             EXTRACT_COMPONENT(GameEngine::Life, lives);
             std::vector<std::size_t> players;
 
@@ -361,33 +372,40 @@ namespace GameEngine
             }
 
             for (auto const &playerID : players) {
+                // Player - Continues if player is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, playerID, playerPosition, hasPlayerPosition);
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, playerID, playerSize, hasPlayerHitbox);
+                FROM_COMPONENT_TO_VARIABLE(lives, playerID, playerLife, hasLife);
+                if (!hasPlayerPosition || !hasPlayerHitbox || !hasLife) continue;
+ 
                 for (std::size_t j = 0; j < positions.size(); ++j) {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), j) != r.garbageEntities.end())
                         continue;
                     if (playerID == j)
                         continue;
                     // Enemy, Player and Lives - Continues if one of these is undefined
-                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, j, enemy, hasEnemy);
-                    FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, j, _enemyHitbox, hasEnemyHitbox);
-                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, playerID, player, hasPlayer);
-                    FROM_COMPONENT_TO_VARIABLE(lives, playerID, lifeComponent, hasLife);
-                    if (!hasEnemy || !hasPlayer || !hasLife || !hasEnemyHitbox)
-                        continue;
-                    GameEngine::Life &life = lifeComponent.value();
+                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, j, enemyPosition, hasEnemyPosition);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(sizes, j, enemySize, hasEnemySize);
+                    FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, j, enemyHitbox, hasEnemyHitbox);
+                    if (!hasEnemyPosition || !hasEnemySize || !hasEnemyHitbox) continue;
 
+                    GameEngine::Life &life = playerLife.value();
                     if (isColliding(
-                        player.value().x,
-                        player.value().y,
-                        enemy.value().x,
-                        enemy.value().y,
-                        100,
-                        100
+                        playerPosition.value().x,
+                        playerPosition.value().y,
+                        enemyPosition.value().x,
+                        enemyPosition.value().y,
+                        playerSize.value().width,
+                        playerSize.value().height,
+                        enemySize.value().width,
+                        enemySize.value().height
                     )) {
-                        if (life.life > 0)
+                        if (life.life > 0) {
                             life.life -= 1;
-                        else {
+                            break;
+                        } else {
                             r.garbageEntities.push_back(std::size_t(playerID));
-                            std::cout << "Dead" << std::endl;
+                            break;
                         }
                     }
                 }
