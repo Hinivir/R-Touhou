@@ -68,6 +68,23 @@ GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float wi
     return backgroundStar;
 }
 
+GameEngine::Entity createScore(GameEngine::Registry &registry)
+{
+    GameEngine::Entity score = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
+
+    std::string score_0 = "Score: 0";
+    // add text to game engine
+    // registry.addComponent<GameEngine::Text>(score, GameEngine::Text{"../resources/R-Touhou/font/font.ttf", score_0, 24, sf::Color::Black});
+    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
+
+    return score;
+}
+
 int main(void)
 {
     float widthWindow = 1920;
@@ -98,17 +115,8 @@ int main(void)
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
-
     GameEngine::Entity backgroundStar = createBackgroundStar(registry, widthWindow, heightWindow);
-
-    GameEngine::Entity score = registry.spawnEntity();
-    registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
-    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
-    registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
-
-    std::string score_0 = "Score: 0";
-    //registry.addComponent<GameEngine::Text>(score, GameEngine::Text{"../resources/R-Touhou/font/font.ttf", score_0, 24, sf::Color::Black});
+    GameEngine::Entity score = createScore(registry);
 
     for (int i = 0; i < 5; ++i)
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
