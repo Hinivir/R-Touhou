@@ -8,18 +8,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Registry.hpp"
-#include "Components/Position.hpp"
-#include "Components/Velocity.hpp"
-#include "Components/Drawable.hpp"
-#include "Components/Controllable.hpp"
-#include "Components/Sprite.hpp"
-#include "Components/Color.hpp"
-#include "Components/ZIndex.hpp"
-#include "Components/SpriteTextureAnimation.hpp"
-#include "Components/SpriteTextureRect.hpp"
-#include "Components/Life.hpp"
-#include "Components/Hitbox.hpp"
-#include "Components/Size.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
 
@@ -37,15 +25,15 @@ int main()
         ,GameEngine::Color
         ,GameEngine::Controllable
         ,GameEngine::Drawable
+        ,GameEngine::Hitbox
         ,GameEngine::Life
         ,GameEngine::Position
+        ,GameEngine::Size
         ,GameEngine::Sprite
         ,GameEngine::SpriteTextureAnimation
         ,GameEngine::SpriteTextureRect
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
-        ,GameEngine::Hitbox
-        ,GameEngine::Size
     )
 
     GameEngine::Entity movableEntity = registry.spawnEntity();

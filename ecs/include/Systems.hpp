@@ -17,6 +17,7 @@
 #include "Components/Position.hpp"
 #include "Components/Size.hpp"
 #include "Components/Sprite.hpp"
+#include "Components/SpriteTextureAnimation.hpp"
 #include "Components/SpriteTextureRect.hpp"
 #include "Components/Velocity.hpp"
 #include "Components/ZIndex.hpp"
