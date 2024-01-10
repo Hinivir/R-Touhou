@@ -127,7 +127,7 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
     std::string gameover_0 = "Game Over";
-    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameover_0, "../resources/R-Touhou/font/arial.ttf", 80});
+    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameover_0, "./resources/R-Touhou/font/arial.ttf", 80});
     registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
 
     return gameOver;
