@@ -20,19 +20,21 @@
   - [Size](#size)
   - [Sprite](#sprite)
   - [SpriteTextureAnimation](#spritetextureanimation)
+    - [Members](#members-4)
+    - [Associated Content](#associated-content-1)
   - [SpriteTextureRect](#spritetexturerect)
   - [Text](#text)
   - [Velocity](#velocity)
   - [Window](#window)
   - [ZIndex](#zindex)
-    - [Members](#members-4)
-    - [Associated Content](#associated-content-1)
+    - [Members](#members-5)
+    - [Associated Content](#associated-content-2)
 
 # Components
 
 ## Color
 
-*From Components/Color.hpp*
+*From ecs/Components/Color.hpp*
 
 Defines a entity's color by it's RGBA value.
 
@@ -49,7 +51,6 @@ This component can be used to change the color (**r**, **g**, **b**) or the opac
 
 ### Associated Content
 
-Associated Content:
 ```cpp
 #define GAME_ENGINE_COLOR_VALUE_MIN_VALUE 0
 #define GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE 255
@@ -73,7 +74,7 @@ Defines if an entity can be controlled by the player
 
 ## Drawable
 
-*From Cecs/omponents/Drawable.hpp*
+*From ecs/Components/Drawable.hpp*
 
 Defines an entity's visibility.
 
@@ -108,6 +109,40 @@ Defines an entity's hitbox for collisions.
 
 ## SpriteTextureAnimation
 
+*From ecs/Components/SpriteTextureAnimation.hpp*
+
+Defines the slicing of a entity's sprite's texture for animating
+
+When combined with `GameEngine::SpriteTextureRect`, the slicing is applied **AFTER** the texture rect.
+
+It uses `GameEngine::Position2Base` and `GameEngine::Position2BaseDefault1` from `ecs/Components/Position2Base.hpp`
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|slicing|SpriteTextureAnimationSlicing|Defines how the texture is sliced|{1,1}|
+|frame|SpriteTextureAnimationFrame|Defines which frame should be used|{0,0}|
+
+### Associated Content
+
+```cpp
+using GameEngine::SpriteTextureAnimationSlicingValue = int;
+using GameEngine::SpriteTextureAnimationSlicing = GameEngine::Position2BaseDefault1<GameEngine::SpriteTextureAnimationSlicingValue, 's'>;
+using GameEngine::SpriteTextureAnimationFrameValue = int;
+using GameEngine::SpriteTextureAnimationFrame = GameEngine::Position2Base<GameEngine::SpriteTextureAnimationFrameValue, 'f'>;
+```
+```cpp
+#define GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE 0
+#define GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE_1 1
+```
+```cpp
+template <typename T, char UNIQUE_ID>
+struct GameEngine::Position2Base;
+template <typename T, char UNIQUE_ID>
+struct GameEngine::Position2BaseDefault1;
+```
+
 ## SpriteTextureRect
 
 ## Text
@@ -118,7 +153,7 @@ Defines an entity's hitbox for collisions.
 
 ## ZIndex
 
-*From Components/ZIndex.hpp*
+*From ecs/Components/ZIndex.hpp*
 
 Defines the layer at which the entity is displayed.
 
@@ -132,7 +167,6 @@ For example, a background should have a lower layer than the objects standing be
 
 ### Associated Content
 
-Associated Content:
 ```cpp
 #define GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE 0
 #define GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE 1000
