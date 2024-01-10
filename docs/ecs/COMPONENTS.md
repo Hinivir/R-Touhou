@@ -16,19 +16,21 @@
   - [Life](#life)
   - [Path](#path)
   - [Position](#position)
+    - [Members](#members-4)
+    - [Associated Content](#associated-content-1)
   - [Projectile](#projectile)
   - [Size](#size)
   - [Sprite](#sprite)
   - [SpriteTextureAnimation](#spritetextureanimation)
-    - [Members](#members-4)
-    - [Associated Content](#associated-content-1)
+    - [Members](#members-5)
+    - [Associated Content](#associated-content-2)
   - [SpriteTextureRect](#spritetexturerect)
   - [Text](#text)
   - [Velocity](#velocity)
   - [Window](#window)
   - [ZIndex](#zindex)
-    - [Members](#members-5)
-    - [Associated Content](#associated-content-2)
+    - [Members](#members-6)
+    - [Associated Content](#associated-content-3)
 
 # Components
 
@@ -101,6 +103,32 @@ Defines an entity's hitbox for collisions.
 
 ## Position
 
+*From ecs/Components/Position.hpp*
+
+Defines the position of an entity.
+
+It uses `GameEngine::Position2Base` from `ecs/Components/Position2Base.hpp`.
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|x|PositionValue|Position on the x (horizontal) axis|0 (GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE)|
+|y|PositionValue|Position on the y (vertical) axis|0 (GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE)|
+
+### Associated Content
+
+```cpp
+using GameEngine::PositionValue = float;
+```
+```cpp
+#define GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE 0
+```
+```cpp
+template <typename T, char UNIQUE_ID>
+struct GameEngine::Position2Base;
+```
+
 ## Projectile
 
 ## Size
@@ -111,11 +139,11 @@ Defines an entity's hitbox for collisions.
 
 *From ecs/Components/SpriteTextureAnimation.hpp*
 
-Defines the slicing of a entity's sprite's texture for animating
+Defines the slicing of a entity's sprite's texture for animating.
 
 When combined with `GameEngine::SpriteTextureRect`, the slicing is applied **AFTER** the texture rect.
 
-It uses `GameEngine::Position2Base` and `GameEngine::Position2BaseDefault1` from `ecs/Components/Position2Base.hpp`
+It uses `GameEngine::Position2Base` and `GameEngine::Position2BaseDefault1` from `ecs/Components/Position2Base.hpp`.
 
 ### Members
 
