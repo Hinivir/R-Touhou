@@ -306,23 +306,22 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
                 GameEngine::Position &position = positionComponent.value();
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllableComponent, hasControllable);
-                GameEngine::Controllable const &controllable = controllableComponent.value();
                 FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
-                GameEngine::Projectile const &projectile = projectileComponent.value();
                 FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
-                GameEngine::Path const &path = pathComponent.value();
 
                 if (
                     hasVelocity && hasPosition && hasPath
-                    && (!hasControllable || !controllable.isControllable)
-                    && (!hasProjectile || !projectile.isProjectile)
-                    && (position.x >= path.endX && position.y >= path.endY)) {
+                    && !hasControllable && !hasProjectile){
+                    GameEngine::Controllable const &controllable = controllableComponent.value();
+                    GameEngine::Path const &path = pathComponent.value();
                     position.x -= velocity.x;
                     position.y -= velocity.y;
                 } else if (
                     hasVelocity && hasPosition && hasPath
-                    && (!hasControllable || !controllable.isControllable)
-                    && (hasProjectile && projectile.isProjectile)) {
+                    && !hasControllable && hasProjectile) {
+                    GameEngine::Projectile const &projectile = projectileComponent.value();
+                    GameEngine::Controllable const &controllable = controllableComponent.value();
+                    GameEngine::Path const &path = pathComponent.value();
                     position.x += velocity.x;
                     position.y += velocity.y;
                 }
