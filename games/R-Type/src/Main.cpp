@@ -10,6 +10,7 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
+#include "Components/Window.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
@@ -53,21 +54,21 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     return entity;
 }
 
-GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry)
 {
     GameEngine::Entity backgroundStar = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{widthWindow, heightWindow});
+    registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{WINDOW_WIDTH, WINDOW_HEIGHT});
     registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
-//    registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
+    // registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{10.0f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(backgroundStar, GameEngine::Sprite{"../resources/R-Touhou/graphics/BackgroundStar.jpg",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
 
     return backgroundStar;
 }
 
-GameEngine::Entity createGroundDown(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createGroundDown(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundDown = registry.spawnEntity();
 
@@ -83,7 +84,7 @@ GameEngine::Entity createGroundDown(GameEngine::Registry &registry, float widthW
     return groundDown;
 }
 
-GameEngine::Entity createGroundUp(GameEngine::Registry &registry, float widthWindow, float heightWindow)
+GameEngine::Entity createGroundUp(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundUp = registry.spawnEntity();
 
@@ -118,12 +119,10 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
 
 int main(void)
 {
-    float widthWindow = 1920;//both
-    float heightWindow = 1080;
     int nbRegistry = 1024;
 
     //client
-    sf::RenderWindow window(sf::VideoMode(widthWindow, heightWindow), "ECS");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
@@ -149,9 +148,9 @@ int main(void)
     )
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
-    GameEngine::Entity backgroundStar = createBackgroundStar(registry, widthWindow, heightWindow);
-    GameEngine::Entity groundDown = createGroundDown(registry, widthWindow, heightWindow);
-    GameEngine::Entity groundUp = createGroundUp(registry, widthWindow, heightWindow);
+    GameEngine::Entity backgroundStar = createBackgroundStar(registry);
+    GameEngine::Entity groundDown = createGroundDown(registry);
+    GameEngine::Entity groundUp = createGroundUp(registry);
     GameEngine::Entity score = createScore(registry);
 
     for (int i = 0; i < 5; ++i)
@@ -167,9 +166,9 @@ int main(void)
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
-//        system.loggingSystem(registry);
-//        system.backgroundParallax(registry);
-        system.controlSystem(registry, widthWindow, heightWindow);
+        // system.loggingSystem(registry);
+        // system.backgroundParallax(registry);
+        system.controlSystem(registry);
         system.spriteSystem(registry);
 
         system.attackSystem(registry);
