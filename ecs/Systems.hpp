@@ -192,11 +192,13 @@ namespace GameEngine
                         GameEngine::Text &text = textComponent.value();
                         if (hasColor)
                             text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-                        if (text.text.getFont() == nullptr) {
-                            if (!text.font.loadFromFile(text.fontPath))
+                        if (!text.isLoaded) {
+                            if (text.font.loadFromFile(text.fontPath))
                                 text.text.setFont(text.font);
-                            if (text.text.getFont() == nullptr)
+                            if (text.text.getFont() == nullptr) {
                                 goto drawSystemEndOfHasText;
+                            }
+                            text.isLoaded = true;
                         }
                         text.text.setString(text.string);
                         text.text.setPosition(position.x, position.y);

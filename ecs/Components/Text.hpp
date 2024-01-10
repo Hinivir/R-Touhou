@@ -19,6 +19,7 @@ namespace GameEngine
         std::string string;
         std::string fontPath;
         std::size_t fontSize;
+        bool isLoaded = false;
     };
 }
 

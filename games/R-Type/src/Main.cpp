@@ -110,7 +110,7 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
     std::string score_0 = "Score: 0";
-    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "../resources/R-Touhou/font/arial.ttf", 20});
+    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "../resources/R-Touhou/font/arial.ttf", 40});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
 
