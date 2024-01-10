@@ -15,12 +15,12 @@ int main(void) {
     sf::RenderWindow window(sf::VideoMode(widthWindow, heightWindow), "Parallax Background");
 
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("Star.jpg")) {
+    if (!backgroundTexture.loadFromFile("TestParallaxExample/Star.jpg")) {
         return -1;
     }
 
     sf::Texture groundTexture;
-    if (!groundTexture.loadFromFile("Ground.png")) {
+    if (!groundTexture.loadFromFile("TestParallaxExample/Ground.png")) {
         return -1;
     }
 
