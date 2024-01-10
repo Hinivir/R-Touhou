@@ -44,7 +44,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
-    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{1.5f, 0.0f});
+    registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{100.5f, 0.0f});
     registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"../resources/R-Touhou/graphics/Enemy.png",sf::Sprite(),sf::Texture()});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
     registry.addComponent<GameEngine::Projectile>(entity, GameEngine::Projectile{false});
