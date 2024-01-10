@@ -5,9 +5,14 @@
 - [Table of Contents](#table-of-contents)
 - [Components](#components)
   - [Color](#color)
+    - [Members](#members)
+    - [Associated Content](#associated-content)
   - [Controllable](#controllable)
+    - [Members](#members-1)
   - [Drawable](#drawable)
+    - [Members](#members-2)
   - [Hitbox](#hitbox)
+    - [Members](#members-3)
   - [Life](#life)
   - [Path](#path)
   - [Position](#position)
@@ -31,12 +36,16 @@ Defines a entity's color by it's RGBA value.
 
 This component can be used to change the color (**r**, **g**, **b**) or the opacity (**a**) of an entity's sprite.
 
+### Members
+
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
 |r|ColorValue|Red channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
 |g|ColorValue|Green channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
 |b|ColorValue|Blue channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
 |a|ColorValue|Alpha channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
+
+### Associated Content
 
 Associated Content:
 ```cpp
@@ -54,6 +63,8 @@ using GameEngine::ColorValue = unsigned char;
 
 Defines if an entity can be controlled by the player
 
+### Members
+
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
 |isControllable|bool|If the entity can be controlled by the player|false|
@@ -64,6 +75,8 @@ Defines if an entity can be controlled by the player
 
 Defines an entity's visibility.
 
+### Members
+
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
 |isVisible|bool|If the sprite has to be drawn on screen|false|
@@ -73,6 +86,8 @@ Defines an entity's visibility.
 *From ecs/Components/Hitbox.hpp*
 
 Defines an entity's hitbox for collisions.
+
+### Members
 
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
