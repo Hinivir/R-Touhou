@@ -15,6 +15,7 @@
 #include "Components/Sprite.hpp"
 #include "Components/Color.hpp"
 #include "Components/ZIndex.hpp"
+#include "Components/SpriteTextureAnimation.hpp"
 #include "Components/SpriteTextureRect.hpp"
 #include "Components/Life.hpp"
 #include "Components/Hitbox.hpp"
@@ -39,6 +40,7 @@ int main()
         ,GameEngine::Life
         ,GameEngine::Position
         ,GameEngine::Sprite
+        ,GameEngine::SpriteTextureAnimation
         ,GameEngine::SpriteTextureRect
         ,GameEngine::Velocity
         ,GameEngine::ZIndex
