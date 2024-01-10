@@ -27,10 +27,12 @@
   - [SpriteTextureRect](#spritetexturerect)
   - [Text](#text)
   - [Velocity](#velocity)
-  - [Window](#window)
-  - [ZIndex](#zindex)
     - [Members](#members-6)
     - [Associated Content](#associated-content-3)
+  - [Window](#window)
+  - [ZIndex](#zindex)
+    - [Members](#members-7)
+    - [Associated Content](#associated-content-4)
 
 # Components
 
@@ -176,6 +178,32 @@ struct GameEngine::Position2BaseDefault1;
 ## Text
 
 ## Velocity
+
+*From ecs/Components/Velocity.hpp*
+
+Defines the velocity of an entity, describing the movement of it.
+
+It uses `GameEngine::Position2Base` from `ecs/Components/Position2Base.hpp`.
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|x|VelocityValue|Velocity on the x (horizontal) axis|0 (GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE)|
+|y|VelocityValue|Velocity on the y (vertical) axis|0 (GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE)|
+
+### Associated Content
+
+```cpp
+using GameEngine::VelocityValue = float;
+```
+```cpp
+#define GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE 0
+```
+```cpp
+template <typename T, char UNIQUE_ID>
+struct GameEngine::Position2Base;
+```
 
 ## Window
 
