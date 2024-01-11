@@ -358,7 +358,7 @@ namespace GameEngine
                 position.y += rand() & 1 ? velocity.y : -velocity.y;
             }
             //}
-         }
+        }
 
         void spriteSystem(GameEngine::Registry &r)
         {
