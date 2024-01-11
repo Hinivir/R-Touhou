@@ -14,8 +14,6 @@
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
-
-
 GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();
@@ -113,8 +111,8 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
-    std::string score_0 = "Score: 0";
-    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), score_0, "./resources/R-Touhou/font/arial.ttf", 40});
+    std::string scoreText = "Score: 0";
+    registry.addComponent<GameEngine::Text>(score, GameEngine::Text{sf::Text(), sf::Font(), scoreText, "./resources/R-Touhou/font/arial.ttf", 40});
     registry.addComponent<GameEngine::Projectile>(score, GameEngine::Projectile{false});
 
 
@@ -126,12 +124,12 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     GameEngine::Entity gameOver = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
-    registry.addComponent<GameEngine::Position>(gameOver, GameEngine::Position{1920 / 2 - 220, 1080 / 2 - 120});
+    registry.addComponent<GameEngine::Position>(gameOver, GameEngine::Position{WINDOW_WIDTH / 2 - 220, WINDOW_HEIGHT / 2 - 120});
     registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
     registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
     registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
-    std::string gameover_0 = "Game Over";
-    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameover_0, "./resources/R-Touhou/font/arial.ttf", 80});
+    std::string gameOverText = "Game Over";
+    registry.addComponent<GameEngine::Text>(gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameOverText, "./resources/R-Touhou/font/arial.ttf", 80});
     registry.addComponent<GameEngine::Projectile>(gameOver, GameEngine::Projectile{false});
 
     return gameOver;
@@ -143,7 +141,6 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
     isGameOver = false;
     return isGameOver;
 }
-
 
 int main(void)
 {
