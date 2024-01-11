@@ -14,6 +14,8 @@
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
+
+
 GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();
@@ -135,10 +137,19 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     return gameOver;
 }
 
+bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool &isGameOver)
+{
+    registry.clear();
+    isGameOver = false;
+    return isGameOver;
+}
+
+
 int main(void)
 {
     int nbRegistry = 1024;
     bool isGameOver = false;
+    std::vector<GameEngine::Entity> entityVector;
 
     //client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
@@ -173,8 +184,10 @@ int main(void)
     GameEngine::Entity score = createScore(registry);
     GameEngine::Entity gameOver = createGameOver(registry);
 
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < std::rand() % 31; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
+        entityVector.push_back(staticEntity);
+    }
 
     system.initEnemy(registry);
 
@@ -199,8 +212,21 @@ int main(void)
         window.display();
         window.clear();
         if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            for (const auto& entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            window.clear(sf::Color::Black);
             registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
+            if (isGameOver == true && sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+                std::cout << "restart" << std::endl;
+                registry.garbageEntities.clear();
+                registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = false;
+                isGameOver = restartGame(registry, window, isGameOver);
+            }
         }
     }
     return 0;
