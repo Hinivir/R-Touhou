@@ -502,22 +502,24 @@ namespace GameEngine
                 if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                     continue;
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, _hasPosition);
-                GameEngine::Position &position = positionComponent.value();
+                auto position = positions[i];
                 FROM_COMPONENT_TO_VARIABLE(controllables, i, control, _hasControllable);
                 FROM_COMPONENT_TO_VARIABLE(sizes, i, size, _hasSize)
+                auto sizePlayer = sizes[i];
 
                 if (_hasPosition && _hasControllable && control.value().isControllable) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
-                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.x + size.value().height, position.y + size.value().width / 2});
-                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{100.0f, 0.0f});
                         r.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.value().x - sizePlayer.value().width, position.value().y + sizePlayer.value().height / 2});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{75.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+                        // flashbang because of the sprite
                         r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
                         r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                         r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
-                        r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.x + size.value().height, position.y + size.value().width / 2, 1920 + 50, 1080 + 50});
+                        r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.value().x, position.value().y, 1920 + 50, 1080 + 50});
                     }
                 }
                 isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
