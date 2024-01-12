@@ -511,7 +511,7 @@ namespace GameEngine
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
                         r.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
-                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.value().x - sizePlayer.value().width, position.value().y + sizePlayer.value().height / 2});
+                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.value().x, position.value().y + sizePlayer.value().height / 2});
                         r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{75.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
