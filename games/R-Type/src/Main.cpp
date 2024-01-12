@@ -135,6 +135,22 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     return gameOver;
 }
 
+GameEngine::Entity createYouWin(GameEngine::Registry &registry)
+{
+    GameEngine::Entity youWin = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(youWin, GameEngine::Drawable{false});
+    registry.addComponent<GameEngine::Position>(youWin, GameEngine::Position{WINDOW_WIDTH / 2 - 220, WINDOW_HEIGHT / 2 - 120});
+    registry.addComponent<GameEngine::ZIndex>(youWin, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Projectile>(youWin, GameEngine::Projectile{false});
+    registry.addComponent<GameEngine::Color>(youWin, GameEngine::Color{255, 255, 255, 255});
+    std::string youWinText = "You Win !";
+    registry.addComponent<GameEngine::Text>(youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "./resources/R-Touhou/font/arial.ttf", 80});
+    registry.addComponent<GameEngine::Projectile>(youWin, GameEngine::Projectile{false});
+
+    return youWin;
+}
+
 bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool &isGameOver)
 {
     registry.clear();
@@ -145,6 +161,7 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
 int main(void)
 {
     int nbRegistry = 1024;
+    int testscore = 0;
     bool isGameOver = false;
     std::vector<GameEngine::Entity> entityVector;
 
@@ -180,6 +197,7 @@ int main(void)
     GameEngine::Entity groundUp = createGroundUp(registry);
     GameEngine::Entity score = createScore(registry);
     GameEngine::Entity gameOver = createGameOver(registry);
+    GameEngine::Entity youWin = createYouWin(registry);
 
     for (int i = 0; i < std::rand() % 31; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
@@ -208,6 +226,16 @@ int main(void)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
+        if (testscore == 100) {
+            for (const auto& entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            window.clear(sf::Color::Black);
+            registry.getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+        }
         if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
             for (const auto& entity : entityVector)
                 registry.garbageEntities.push_back(entity);
@@ -218,12 +246,12 @@ int main(void)
             window.clear(sf::Color::Black);
             registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
-            if (isGameOver == true && sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+        }
+        if (isGameOver == true && sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
                 std::cout << "restart" << std::endl;
                 registry.garbageEntities.clear();
                 registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = false;
                 isGameOver = restartGame(registry, window, isGameOver);
-            }
         }
     }
     return 0;

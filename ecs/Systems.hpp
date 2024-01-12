@@ -501,11 +501,15 @@ namespace GameEngine
                 if (_hasPosition && _hasPath) {
                     if (_hasProjectile && projectile.value().isProjectile) {
                         if (pos.value().x >= path.value().endX || pos.value().y >= path.value().endY) {
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                                continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
                         }
                     } else {
                         if (pos.value().x <= path.value().endX || pos.value().y <= path.value().endY) {
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                                continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
                         }
