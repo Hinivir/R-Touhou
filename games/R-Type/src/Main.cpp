@@ -203,7 +203,7 @@ int main(void)
         // system.backgroundParallax(registry);
         system.controlSystem(registry);
 
-        if (cooldown == 3) {
+        if (cooldown == 7) {
             system.attackSystem(registry);
             cooldown = 0;
         }
