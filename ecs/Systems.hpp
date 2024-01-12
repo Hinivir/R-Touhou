@@ -39,27 +39,17 @@
 #define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
 #define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
 
-#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
-#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
+    auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                        \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
+    auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
-bool isColliding(
-    std::size_t x1,
-    std::size_t y1,
-    std::size_t x2,
-    std::size_t y2,
-    std::size_t width1,
-    std::size_t height1,
-    std::size_t width2,
-    std::size_t height2
-) {
-    return (
-        x1 < x2 + width2 &&
-        x1 + width1 > x2 &&
-        y1 < y2 + height2 &&
-        y1 + height1 > y2
-    );
+bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width1,
+    std::size_t height1, std::size_t width2, std::size_t height2)
+{
+    return (x1 < x2 + width2 && x1 + width1 > x2 && y1 < y2 + height2 && y1 + height1 > y2);
 }
 
 namespace GameEngine
@@ -71,7 +61,8 @@ namespace GameEngine
         System() = default;
         ~System() = default;
 
-        void loggingSystem(GameEngine::Registry &r) {
+        void loggingSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
@@ -86,9 +77,8 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
                 if (hasPosition && hasVelocity) {
-                    std ::cerr << i << ": Position = { " << position.x << ", " << position.y
-                               << " } , Velocity = { " << velocity.x << ", " << velocity.y << " }"
-                               << std ::endl;
+                    std ::cerr << i << ": Position = { " << position.x << ", " << position.y << " } , Velocity = { "
+                               << velocity.x << ", " << velocity.y << " }" << std ::endl;
                 }
             }
         }
@@ -105,10 +95,11 @@ namespace GameEngine
                     continue;
                 // Controllable - Continues if controllable is undefined or no controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                if (!hasControllable || !controllable.value().isControllable) continue;
+                if (!hasControllable || !controllable.value().isControllable)
+                    continue;
                 // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                //if (!hasPosition) continue;
+                // if (!hasPosition) continue;
                 GameEngine::Position &position = positionComponent.value();
                 // Velocity
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
@@ -152,17 +143,18 @@ namespace GameEngine
 
             do {
                 currentZIndex = lowestZIndex;
-                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
-                {
+                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i) {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                         continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || !drawable.value().isVisible) continue ;
+                    if (!hasDrawable || !drawable.value().isVisible)
+                        continue;
 
                     // ZIndex - Continues if (zIndex != currentZIndex)
                     FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);
-                    GameEngine::ZIndexValue const zIndex = hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+                    GameEngine::ZIndexValue const zIndex =
+                        hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
                     if (zIndex < currentZIndex)
                         continue;
                     if (zIndex != currentZIndex) {
@@ -256,24 +248,21 @@ namespace GameEngine
                     continue;
                 // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                if (!hasPosition)
-                    continue;
+                if (!hasPosition) continue;
                 GameEngine::Position &position = positionComponent.value();
+                if (position.x != 30.0f && position.y != 30.0f) continue;
 
                 // Controllable - Continues if controllable is defined and controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                if (hasControllable && controllable.value().isControllable)
-                    continue;
+                if (hasControllable && controllable.value().isControllable) continue;
 
                 // Hitbox - Continues if hitbox is undefined
                 FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, hitbox, hasHitbox);
-                if (!hasHitbox)
-                    continue;
+                if (!hasHitbox) continue;
 
                 // Path - Continues if path is not defined
                 FROM_COMPONENT_TO_VARIABLE(paths, i, pathComponent, hasPath);
-                if (!hasPath)
-                    continue;
+                if (!hasPath) continue;
 
                 FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize)
 
@@ -283,7 +272,11 @@ namespace GameEngine
                 GameEngine::Path &path = pathComponent.value();
                 GameEngine::Size const &size = sizeComponent.value();
                 position.x = rand() % 1080 + 1920;
-                position.y = rand() % 1000;
+                position.y = rand() % 1000 - 50;
+                if (position.y < 50)
+                    position.y = 50;
+                if (position.y > 1030)
+                    position.y = 1030;
                 path.startX = position.x;
                 path.startY = position.y;
                 path.endY = -100 + size.width;
@@ -297,6 +290,7 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Path, paths);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velociyComponent, hasVelocity);
@@ -307,46 +301,27 @@ namespace GameEngine
                 GameEngine::Controllable const &controllable = controllableComponent.value();
                 FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
                 FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
-                if (!hasPath) continue;
-                GameEngine::Path const &path = pathComponent.value();
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize);
 
-                if (
-                    hasVelocity && hasPosition && !hasControllable && !hasProjectile) {
-                    position.x -= 10;
-                } else if (
-                    hasVelocity && hasPosition && hasPath &&
+                if (hasVelocity && hasPosition && hasPath &&
                     (!hasControllable || !controllable.isControllable) && !hasProjectile) {
-                        position.x -= velocity.x;
-                        position.y -= velocity.y;
-                } else if (
-                    hasVelocity && hasPosition && hasPath
-                    && !hasControllable && hasProjectile) {
-                        position.x += velocity.x;
-                        position.y += velocity.y;
-                }
-            }
-        }
-
-        // Wait new system movement Viktor
-        void backgroundParallax(GameEngine::Registry &r)
-        {
-            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
-            EXTRACT_COMPONENT(GameEngine::Position, positions);
-            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
-
-            //for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-            FROM_COMPONENT_TO_VARIABLE_CONST(velocities, 0, velocityComponent, hasVelocity);
-            GameEngine::Velocity const &velocity = velocityComponent.value();
-            FROM_COMPONENT_TO_VARIABLE(positions, 0, positionComponent, hasPosition);
-            GameEngine::Position &position = positionComponent.value();
-            FROM_COMPONENT_TO_VARIABLE_CONST(controllables, 0, controllableComponent, hasControllable);
-            GameEngine::Controllable const &controllable = controllableComponent.value();
-
-            if (hasVelocity && hasPosition && !hasControllable) {
+                    position.x -= velocity.x;
+                    position.y -= velocity.y;
+                } else if (hasVelocity && hasPosition && hasPath && !hasControllable && hasProjectile) {
+                    position.x += velocity.x;
+                    position.y += velocity.y;
+                } else if (hasVelocity && hasPosition && !hasPath && !hasControllable && !hasProjectile &&
+                           sizeComponent.value().width == 1920 && sizeComponent.value().height == 1080) {
+                    if (position.x < -1920) {
+                        position.x = 1920;
+                    }
+                position.x -= velocity.x;
                 position.x -= velocity.x;
                 position.y += rand() & 1 ? velocity.y : -velocity.y;
+                    position.x -= velocity.x;
+                position.y += rand() & 1 ? velocity.y : -velocity.y;
+                }
             }
-            //}
         }
 
         void spriteSystem(GameEngine::Registry &r)
@@ -483,7 +458,7 @@ namespace GameEngine
                                     projectileSize.value().width, projectileSize.value().height)) {
                                 r.garbageEntities.push_back(std::size_t(enemyID));
                                 r.garbageEntities.push_back(std::size_t(j));
-                                score += 10;
+                                score += 5;
                                 break;
                             }
                         }
@@ -515,7 +490,6 @@ namespace GameEngine
                         r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{75.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-                        // flashbang because of the sprite
                         r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
                         r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                         r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
@@ -525,7 +499,6 @@ namespace GameEngine
                 isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
             }
         }
-
 
         void deleteEntitiesSystem(GameEngine::Registry &r)
         {
@@ -557,6 +530,6 @@ namespace GameEngine
             }
         }
     };
-}
+} // namespace GameEngine
 
 #endif

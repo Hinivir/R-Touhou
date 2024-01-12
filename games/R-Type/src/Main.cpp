@@ -154,16 +154,18 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
     return isGameOver;
 }
 
-int main(void)
+int main()
 {
     int nbRegistry = 2048;
-    int testscore = 0;
+    int totalScore = 0;
     bool isGameOver = false;
-    int cooldown = 0;
+    int shootCoolDown = 0;
+    int enemyCoolDown = 0;
+    bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
 
     // client
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
@@ -176,9 +178,16 @@ int main(void)
         GameEngine::Text, GameEngine::Velocity, GameEngine::ZIndex)
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
-    GameEngine::Entity backgroundStar = createBackgroundStar(registry);
+    entityVector.push_back(movableEntity);
+    GameEngine::Entity backgroundStar1 = createBackgroundStar(registry);
+    entityVector.push_back(backgroundStar1);
+    GameEngine::Entity backgroundStar2 = createBackgroundStar(registry);
+    registry.getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
+    entityVector.push_back(backgroundStar2);
     GameEngine::Entity groundDown = createGroundDown(registry);
+    entityVector.push_back(groundDown);
     GameEngine::Entity groundUp = createGroundUp(registry);
+    entityVector.push_back(groundUp);
     GameEngine::Entity score = createScore(registry);
     GameEngine::Entity gameOver = createGameOver(registry);
     GameEngine::Entity youWin = createYouWin(registry);
@@ -198,38 +207,51 @@ int main(void)
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
-        registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
-        // system.loggingSystem(registry);
-        // system.backgroundParallax(registry);
+        registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
         system.controlSystem(registry);
 
-        if (cooldown == 7) {
+        if (shootCoolDown == 7) {
             system.attackSystem(registry);
-            cooldown = 0;
+            shootCoolDown = 0;
         }
-        cooldown++;
+        if (enemyCoolDown == 50 && spawnEnemy) {
+            for (int i = 0; i < std::rand() % 31; ++i) {
+                GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
+                entityVector.push_back(staticEntity);
+            }
+            enemyCoolDown = 0;
+            system.initEnemy(registry);
+        }
+        enemyCoolDown++;
+        shootCoolDown++;
         system.spriteSystem(registry);
         system.drawSystem(registry, window);
         system.movementSystem(registry);
-        system.collisionSystem(registry, testscore);
+        system.collisionSystem(registry, totalScore);
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
-        if (testscore == 100) {
+        if (totalScore == 100) {
+            enemyCoolDown = 0;
+            spawnEnemy = false;
             for (const auto &entity : entityVector)
                 registry.garbageEntities.push_back(entity);
             registry.garbageEntities.push_back(movableEntity);
-            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(backgroundStar1);
+            registry.garbageEntities.push_back(backgroundStar2);
             registry.garbageEntities.push_back(groundDown);
             registry.garbageEntities.push_back(groundUp);
             window.clear(sf::Color::Black);
             registry.getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
         if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            enemyCoolDown = 0;
+            spawnEnemy = false;
             for (const auto &entity : entityVector)
                 registry.garbageEntities.push_back(entity);
             registry.garbageEntities.push_back(movableEntity);
-            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(backgroundStar1);
+            registry.garbageEntities.push_back(backgroundStar2);
             registry.garbageEntities.push_back(groundDown);
             registry.garbageEntities.push_back(groundUp);
             window.clear(sf::Color::Black);
