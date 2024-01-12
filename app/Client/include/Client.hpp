@@ -49,7 +49,7 @@ class Client {
         void addUsersWhenConnected(const std::string& message);
         void addNewUser(const std::string& message);
 
-        void runGame();
+        void runGameTmp();
 
         void upFunction(std::size_t player_number);
         void downFunction(std::size_t player_number);
@@ -57,5 +57,8 @@ class Client {
         void rightFunction(std::size_t player_number);
         void actionFunction(std::size_t player_number);
         void quitFunction(std::size_t player_number);
+
+        void initGame(std::string const gamename);
+        void runGame(void);
 };
 #endif

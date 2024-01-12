@@ -47,6 +47,9 @@
             void acceptClients(void);
             void broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender);
             void notifyGameReady(void);
+
+            void initGame(std::string const gamename);
+            void runGame(void);
     };
 #endif
 

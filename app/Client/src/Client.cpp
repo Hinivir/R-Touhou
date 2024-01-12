@@ -100,7 +100,7 @@ void Client::getNewMessage()
 }
 
 //this is a temporary function, we will have to change it with the game code
-void Client::runGame()
+void Client::runGameTmp()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
     std::size_t player_number = this->players.size();
