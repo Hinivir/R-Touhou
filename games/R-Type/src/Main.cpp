@@ -212,6 +212,174 @@ int main(void)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
+
+        if (testscore == 100) {
+            for (const auto& entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            window.clear(sf::Color::Black);
+            registry.getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+        }
+        if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            for (const auto &entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            window.clear(sf::Color::Black);
+            registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            isGameOver = true;
+        }
+    }
+    return 0;
+}
+
+
+
+int mainForServer(void)
+{
+    int nbRegistry = 1024;
+    int testscore = 0;
+    bool isGameOver = false;
+    std::vector<GameEngine::Entity> entityVector;
+
+    GameEngine::Registry registry(nbRegistry);
+    GameEngine::System system;
+
+    //both
+    GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT
+        ,GameEngine::Color
+        ,GameEngine::Controllable
+        ,GameEngine::Drawable
+        ,GameEngine::Hitbox
+        ,GameEngine::Life
+        ,GameEngine::Path
+        ,GameEngine::Position
+        ,GameEngine::Projectile
+        ,GameEngine::Size
+        ,GameEngine::Sprite
+        ,GameEngine::SpriteTextureAnimation
+        ,GameEngine::SpriteTextureRect
+        ,GameEngine::Text
+        ,GameEngine::Velocity
+        ,GameEngine::ZIndex
+    )
+
+    GameEngine::Entity movableEntity = spawnMovableEntity(registry);
+    GameEngine::Entity backgroundStar = createBackgroundStar(registry);
+    GameEngine::Entity groundDown = createGroundDown(registry);
+    GameEngine::Entity groundUp = createGroundUp(registry);
+    GameEngine::Entity score = createScore(registry);
+    GameEngine::Entity gameOver = createGameOver(registry);
+    GameEngine::Entity youWin = createYouWin(registry);
+
+    for (int i = 0; i < std::rand() % 31; ++i) {
+        GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
+        entityVector.push_back(staticEntity);
+    }
+    //entityVector must be sent to clients
+
+    system.initEnemy(registry);
+
+    while (1) {
+        registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
+        system.attackSystem(registry);
+        system.movementSystem(registry);
+        system.collisionSystem(registry, testscore);
+        system.deleteEntitiesSystem(registry);
+
+        if (testscore == 100) {
+            for (const auto& entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            registry.getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+        }
+        if (!isGameOver && registry.getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+            for (const auto &entity : entityVector)
+                registry.garbageEntities.push_back(entity);
+            registry.garbageEntities.push_back(movableEntity);
+            registry.garbageEntities.push_back(backgroundStar);
+            registry.garbageEntities.push_back(groundDown);
+            registry.garbageEntities.push_back(groundUp);
+            registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            isGameOver = true;
+        }
+    }
+    return 0;
+}
+
+
+int mainForClient(void)
+{
+    int nbRegistry = 1024;
+    int testscore = 0;
+    bool isGameOver = false;
+    std::vector<GameEngine::Entity> entityVector;
+
+    //client
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+    GameEngine::Registry registry(nbRegistry);
+    GameEngine::System system;
+
+    window.setFramerateLimit(60);
+
+    //both
+    GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT
+        ,GameEngine::Color
+        ,GameEngine::Controllable
+        ,GameEngine::Drawable
+        ,GameEngine::Hitbox
+        ,GameEngine::Life
+        ,GameEngine::Path
+        ,GameEngine::Position
+        ,GameEngine::Projectile
+        ,GameEngine::Size
+        ,GameEngine::Sprite
+        ,GameEngine::SpriteTextureAnimation
+        ,GameEngine::SpriteTextureRect
+        ,GameEngine::Text
+        ,GameEngine::Velocity
+        ,GameEngine::ZIndex
+    )
+
+    GameEngine::Entity movableEntity = spawnMovableEntity(registry);
+    GameEngine::Entity backgroundStar = createBackgroundStar(registry);
+    GameEngine::Entity groundDown = createGroundDown(registry);
+    GameEngine::Entity groundUp = createGroundUp(registry);
+    GameEngine::Entity score = createScore(registry);
+    GameEngine::Entity gameOver = createGameOver(registry);
+    GameEngine::Entity youWin = createYouWin(registry);
+
+    //entityVector must be sent to clients
+
+    system.initEnemy(registry);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            window.close();
+        registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
+
+        system.backgroundParallax(registry);
+        system.controlSystem(registry);
+        system.spriteSystem(registry);
+        system.attackSystem(registry);
+        system.drawSystem(registry, window);
+        system.deleteEntitiesSystem(registry);
+        window.display();
+        window.clear();
+        /*i don't know for the two ifs*/
         if (testscore == 100) {
             for (const auto& entity : entityVector)
                 registry.garbageEntities.push_back(entity);

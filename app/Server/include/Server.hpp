@@ -33,6 +33,7 @@
             std::vector<udp::endpoint> alreadyConnectedClients;
             std::vector<udp::endpoint> connectedClients;
             std::vector<udp::endpoint> readyClients;
+            bool inGame = false;
 
         public:
             Server(const std::string& ip, int const port);

@@ -13,7 +13,8 @@ void Server::initGame(std::string const gamename)
         std::cout << "R-type game init" << std::endl;
         //get the init function from the ecs
     }
-    //add this logic for all of the games
+    this->inGame = true;
+    this->runGame();
 }
 
 void Server::runGame()
