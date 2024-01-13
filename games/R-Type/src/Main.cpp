@@ -35,8 +35,14 @@ GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
         entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Player.png", sf::Sprite(), sf::Texture()});
     registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{3});
     registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
-    registry.addComponent<GameEngine::Color>(entity, GameEngine::Color{static_cast<GameEngine::ColorValue>(205 * entityColor[0] + 50), static_cast<GameEngine::ColorValue>(205 * entityColor[1] + 50), static_cast<GameEngine::ColorValue>(205 * entityColor[2] + 50)});
-    registry.addComponent<GameEngine::Outline>(entity, GameEngine::Outline{5, {static_cast<GameEngine::ColorValue>(100 * entityColor[0]), static_cast<GameEngine::ColorValue>(100 * entityColor[1]), static_cast<GameEngine::ColorValue>(100 * entityColor[2])}});
+    registry.addComponent<GameEngine::Color>(
+        entity, GameEngine::Color{static_cast<GameEngine::ColorValue>(205 * entityColor[0] + 50),
+                    static_cast<GameEngine::ColorValue>(205 * entityColor[1] + 50),
+                    static_cast<GameEngine::ColorValue>(205 * entityColor[2] + 50)});
+    registry.addComponent<GameEngine::Outline>(
+        entity, GameEngine::Outline{5, {static_cast<GameEngine::ColorValue>(100 * entityColor[0]),
+                                           static_cast<GameEngine::ColorValue>(100 * entityColor[1]),
+                                           static_cast<GameEngine::ColorValue>(100 * entityColor[2])}});
     return entity;
 }
 
