@@ -252,8 +252,15 @@ namespace GameEngine
                             sprite.setTextureRect(textureRect);
                         textureRect = sprite.getTextureRect();
                         if (hasOutline && outline.thickness > 0) {
-                            sprite.setColor(sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
-                            for (sf::Vector2f const coor: {sf::Vector2f(-outline.thickness, -outline.thickness), sf::Vector2f(-outline.thickness, 0), sf::Vector2f(-outline.thickness, outline.thickness), sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness), sf::Vector2f(outline.thickness, -outline.thickness), sf::Vector2f(outline.thickness, 0), sf::Vector2f(outline.thickness, outline.thickness)}) {
+                            sprite.setColor(
+                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
+                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
+                                     sf::Vector2f(-outline.thickness, 0),
+                                     sf::Vector2f(-outline.thickness, outline.thickness),
+                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
+                                     sf::Vector2f(outline.thickness, -outline.thickness),
+                                     sf::Vector2f(outline.thickness, 0),
+                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
                                 sprite.setPosition(position.x + coor.x, position.y + coor.y);
                                 window.draw(sprite);
                             }
