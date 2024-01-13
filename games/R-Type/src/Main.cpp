@@ -19,6 +19,7 @@ GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
     GameEngine::Entity entity = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Outline>(entity, GameEngine::Outline{5});
     return entity;
 }
 
@@ -173,7 +174,7 @@ int main()
 
     // both
     GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT, GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable,
-        GameEngine::Hitbox, GameEngine::Life, GameEngine::Path, GameEngine::Position, GameEngine::Projectile,
+        GameEngine::Hitbox, GameEngine::Life, GameEngine::Outline, GameEngine::Path, GameEngine::Position, GameEngine::Projectile,
         GameEngine::Size, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect,
         GameEngine::Text, GameEngine::Velocity, GameEngine::ZIndex)
 
