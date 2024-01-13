@@ -1,196 +1,84 @@
-Client Documentation
-====================================
+.. _client-doc:
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Client documentation
+====================
 
-Client.hpp
-------------------------------------
+Here is the documentation of the client.
 
-.. code:: cpp
+Table of Contents
+-----------------
 
-    #ifndef CLIENT_HPP
-    #define CLIENT_HPP
+1. `How to run a client`_
+2. `Explaining the code`_
 
-        #include <iostream>
-        #include <queue>
-        #include <asio.hpp>
+How to run a client
+-------------------
 
-        class Client {
-        private:
-            asio::ip::udp::socket socket_; // socket for the client
-            asio::ip::udp::endpoint server_endpoint_; // endpoint for the server
-            std::queue<std::string> _messageQueue; // queue for the messages
+Before trying to connect a client, you must run a server. See the `Client documentation`_.
 
-        public:
-            // constructor and destructor
-            Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port);
-            ~Client();
-            // the function to send a message
-            void sendMessage(const std::string& message);
-            // the function to get the new message
-            void getNewMessage(void);
-            // the function to run the client
-            void runClient(void);
-    };
+The binary of the client can be found in ``/app/Client/``.
+You can launch a client by running this command:
 
-    #endif
+.. code-block:: bash
 
-The hpp file for the client
+    ./L-Type-Client [ip] [port]
 
-Client.cpp : Include
-------------------------------------
+where ``ip`` is the ip where the server is running, and ``port`` is the port where the server runs.
+You can connect as many clients as you want.
 
-.. code:: cpp
+Explaining the code
+-------------------
 
-    #include "../include/Client.hpp"
-    #include <iostream>
-    #include <map>
-    #include <string>
+All prototypes of the Client functions are regrouped in a ``Client`` class. See ``/app/Client/include/Client.hpp``.
 
-The include of the client
+Here are basic explanations of how the client works.
 
-Client.cpp : inputHandler
-------------------------------------
+Client connection
+~~~~~~~~~~~~~~~~~
 
-.. code:: cpp
+We use the ``asio`` library for our clients and server. It allows us to use the udp protocol instead of tcp, which allows us to send more packages but they are more sensitive.
 
-    static const std::map<char, std::string> inputHandler = {
-        {'z', "UP"},
-        {'s', "DOWN"},
-        {'q', "LEFT"},
-        {'d', "RIGHT"},
-        {' ', "ACTION"},
-        {27, "QUIT"}
-    };
+.. code-block:: cpp
 
-The map for the input handler that transform the input into a message
+    Client(
+         asio::io_context& ioContext,
+         const std::string& serverAddress,
+         const std::string& serverPort
+    );
 
-Client.cpp : Client::Client
-------------------------------------
+- ``ioContext`` provides the Core I/O functionality for asynchronous I/O objects
+- ``serverAddress`` is the ip address given as argument when executing the program
+- ``serverPort`` is the server port given as argument when executing the program
 
-.. code:: cpp
+When exiting the program, the client will disconnect with the destructor ``~Client()``.
 
-    Client::Client(asio::io_context& io_context, const std::string& server_ip, std::size_t server_port)
-        : socket_(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0)),
-            server_endpoint_(asio::ip::address::from_string(server_ip), server_port) {}
+Send and receive messages
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-The constructor of the client that take the io_context, the server ip and the server port
+The client is able to receive and send messages asynchronously. To do that, a thread will be running to handle new messages, while the main program sends them.
 
-Client.cpp : Client::~Client
-------------------------------------
+.. code-block:: cpp
 
-.. code:: cpp
+    void sendMessage(const std::string& message);
+    void getNewMessage();
+    void handleMessageInGame(const std::string& message);
+    void ParseMessage(const std::string message);
 
-    Client::~Client() {}
+- ``sendMessage``: takes the message as an argument and send it to the server
+- ``getNewMessage``: receive new messages from server
+- ``handleMessageInGame``: takes the received message if we are in a game, and will handle inputs
+- ``ParseMessage``: takes the received message, will setup the game, create place for new users
 
-The destructor of the client
+In-game functions
+~~~~~~~~~~~~~~~~~
 
-Client.cpp : Client::sendMessage
-------------------------------------
+.. code-block:: cpp
 
-.. code:: cpp
-
-    void Client::sendMessage(const std::string& message) {
-        // send the message to the server
-        socket_.send_to(asio::buffer(message), server_endpoint_);
-    }
-
-The function to send a message to the server
-
-Client.cpp : Client::getNewMessage
-------------------------------------
-
-.. code:: cpp
-
-    void Client::getNewMessage(void) {
-        // the buffer for the message
-        std::array<char, 1024> recv_buf = {0};
-        // asio error code
-        asio::error_code error;
-        // receive the message from the server
-        std::size_t len = socket_.receive_from(asio::buffer(recv_buf), server_endpoint_, 0, error);
-        // if there is an error
-        if (error && error != asio::error::message_size)
-            // throw the error
-            throw asio::system_error(error);
-        // make a string with the message
-        std::string message(recv_buf.data(), len);
-        // push the message in the queue
-        this->_messageQueue.push(message);
-        // print the message
-        std::cout << "received message: " << message << std::endl;
-    }
-
-The function to get the new message from the server
-
-Client.cpp : Client::runClient
-------------------------------------
-
-.. code:: cpp
-
-    
-    void Client::runClient(void) {
-        // the string for the message
-        std::string message;
-        // the thread for the read
-        std::thread readThread([&]() {
-            // while the message is not QUIT
-            while (true) {
-                // get the new message
-                this->getNewMessage();
-            }
-        });
-
-        // while the message is not QUIT
-        while (true) {
-            // get the input
-            std::string buffer = {0};
-            std::getline(std::cin, buffer);
-            // send the message
-            this->sendMessage(buffer);
-        }
-        // join the thread
-        readThread.join();
-    }
-
-The function to run the client
-
-main.cpp : Include
-------------------------------------
-
-.. code:: cpp
-
-    #include "include/Client.hpp"
-    #include <iostream>
-
-The include of the main, the client and the iostream
-
-main.cpp :: main
-------------------------------------
-
-.. code:: cpp
-
-    int main(int const argc, char const * const * const argv)
-    {
-        // if the number of arguments is not 3
-        if (argc != 3) {
-            // print the usage of the program
-            std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
-            // return 84
-            return 84;
-        }
-        // get the ip and the port
-        std::string const ip = argv[1];
-        std::size_t const port = std::stoi(argv[2]);
-        // create the io_context
-        asio::io_context io_context;
-        // create the client
-        Client Client(io_context, ip, port);
-        // run the client
-        Client.runClient();
-        return 0;
-    }
-
-The main function of the program
+    void runGame();
+    bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
+    void upFunction(bool isReceived);
+    void downFunction(bool isReceived);
+    void leftFunction(bool isReceived);
+    void rightFunction(bool isReceived);
+    void actionFunction(bool isReceived);
+    void quitFunction(bool isReceived)

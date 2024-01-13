@@ -30,7 +30,6 @@ class Client {
         std::array<char, 1024> receiveBuffer_;
 
         player_t player;
-        player_t other_player;
         std::vector <player_t> players = {};
         bool inGame = false;
 
@@ -52,12 +51,11 @@ class Client {
 
         void runGame();
 
-        bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
-        void upFunction(bool isReceived);
-        void downFunction(bool isReceived);
-        void leftFunction(bool isReceived);
-        void rightFunction(bool isReceived);
-        void actionFunction(bool isReceived);
-        void quitFunction(bool isReceived);
+        void upFunction(std::size_t player_number);
+        void downFunction(std::size_t player_number);
+        void leftFunction(std::size_t player_number);
+        void rightFunction(std::size_t player_number);
+        void actionFunction(std::size_t player_number);
+        void quitFunction(std::size_t player_number);
 };
 #endif

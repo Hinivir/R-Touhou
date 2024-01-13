@@ -28,6 +28,9 @@
             bool isChatLocked = false;
             asio::io_context io_service;
             udp::socket server_socket;
+            size_t nextPlayerNumber = 1;
+            std::map<udp::endpoint, int> playerNumberMap;
+            std::vector<udp::endpoint> alreadyConnectedClients;
             std::vector<udp::endpoint> connectedClients;
             std::vector<udp::endpoint> readyClients;
 
@@ -46,3 +49,4 @@
             void notifyGameReady(void);
     };
 #endif
+
