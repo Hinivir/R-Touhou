@@ -183,6 +183,7 @@ int main()
     registry.registerComponent<GameEngine::Drawable>();
     registry.registerComponent<GameEngine::Hitbox>();
     registry.registerComponent<GameEngine::Life>();
+    registry.registerComponent<GameEngine::Outline>();
     registry.registerComponent<GameEngine::Path>();
     registry.registerComponent<GameEngine::Position>();
     registry.registerComponent<GameEngine::Projectile>();
