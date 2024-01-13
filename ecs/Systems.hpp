@@ -546,7 +546,7 @@ namespace GameEngine
                         r.addComponent<GameEngine::Position>(
                             bullet, GameEngine::Position{
                                         position.value().x, position.value().y + sizePlayer.value().height / 2});
-                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{75.0f, 0.0f});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
                         r.addComponent<GameEngine::Sprite>(
