@@ -9,6 +9,7 @@
   - [GAME\_ENGINE\_FOR\_EACH](#game_engine_for_each)
     - [Code](#code)
     - [Example](#example)
+    - [Warning](#warning)
 
 # Macros
 
@@ -50,3 +51,7 @@ GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT, GameEngine::Color, GameEngine::Drawable
 ```
 
 We still have to define our ACTION macro (here, `REGISTER_COMPONENT`).
+
+### Warning
+
+May **not** work on **Windows** devices!
