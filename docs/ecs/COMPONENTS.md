@@ -61,6 +61,8 @@ This component can be used to change the color (**r**, **g**, **b**) or the opac
 |b|ColorValue|Blue channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
 |a|ColorValue|Alpha channel|255 (GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE)|
 
+The default color is [white].
+
 ### Associated Content
 
 ```cpp
