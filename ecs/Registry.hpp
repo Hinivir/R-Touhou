@@ -22,6 +22,15 @@ namespace GameEngine
     class Registry
     {
       public:
+        void clear()
+        {
+            // Clear all components and reset the state of the registry
+            _container.clear();
+            _deleters.clear();
+            _systems.clear();
+            _emptyIndexes.clear();
+            _numEntities = 0;
+        }
         /// @brief Constructor
         /// @param maxEntities Maximum number of entities
         explicit Registry(const std::size_t maxEntities) : _maxEntities(maxEntities){};

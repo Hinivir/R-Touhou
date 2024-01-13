@@ -11,7 +11,6 @@
 namespace GameEngine
 {
     struct Projectile {
-        bool isProjectile = false;
     };
 } // namespace GameEngine
 
