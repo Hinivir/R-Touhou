@@ -119,12 +119,35 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
 
 void Server::connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
 {
-    std::string message(buffer.data(), bytes_received);
-    auto it = serverCommandHandler.find(message);
-    if (it != serverCommandHandler.end())
-        it->second(*this, client_endpoint, buffer, bytes_received);
-    else
-        broadcastMessage(buffer.data(), bytes_received, client_endpoint);
+    if (bytes_received >= sizeof(client_message_t)) {
+        client_message_t playerInfo = Serialization::deserialize<client_message_t>(
+            std::vector<char>(buffer.begin(), buffer.begin() + sizeof(client_message_t))
+        );
+        broadcastStructure(playerInfo, sizeof(client_message_t), client_endpoint);
+    } else {
+        std::string message(buffer.data(), bytes_received);
+        auto it = serverCommandHandler.find(message);
+        if (it != serverCommandHandler.end())
+            it->second(*this, client_endpoint, buffer, bytes_received);
+        else
+            broadcastMessage(buffer.data(), bytes_received, client_endpoint);
+    }
+}
+
+
+void Server::broadcastStructure(const client_message_t& info, size_t size, const udp::endpoint& sender)
+{
+    for (const auto& client : connectedClients) {
+        if (client != sender) {
+            try {
+                // Serialize the structure before sending
+                std::vector<char> serializedData = Serialization::serialize(info);
+                server_socket.send_to(asio::buffer(serializedData.data(), serializedData.size()), client);
+            } catch (std::exception const &e) {
+                std::cerr << "Error sending structure to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
+            }
+        }
+    }
 }
 
 void Server::notifyGameReady()
