@@ -14,6 +14,7 @@
 #include "Components/Drawable.hpp"
 #include "Components/Hitbox.hpp"
 #include "Components/Life.hpp"
+#include "Components/Outline.Hpp"
 #include "Components/Position.hpp"
 #include "Components/Size.hpp"
 #include "Components/Sprite.hpp"
@@ -141,6 +142,7 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureAnimation, spriteTextureAnimations);
             EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureRect, spriteTextureRects);
             EXTRACT_COMPONENT(GameEngine::Text, texts);
+            EXTRACT_COMPONENT_CONST(GameEngine::Outline, outlines);
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
@@ -169,6 +171,9 @@ namespace GameEngine
                     // Color
                     FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
                     GameEngine::Color const color = hasColor ? colorComponent.value() : GameEngine::Color();
+                    // Outline
+                    FROM_COMPONENT_TO_VARIABLE_CONST(outlines, i, outlineComponent, hasOutline);
+                    GameEngine::Outline const &outline = hasOutline ? outlineComponent.value() : GameEngine::Outline();
                     // Position
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
                     GameEngine::Position const position =
@@ -246,6 +251,15 @@ namespace GameEngine
                         if (hasSpriteTextureRect || hasSpriteTextureAnimation)
                             sprite.setTextureRect(textureRect);
                         textureRect = sprite.getTextureRect();
+                        if (hasOutline && outline.thickness > 0) {
+                            sprite.setColor(sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
+                            for (sf::Vector2f const coor: {sf::Vector2f(-outline.thickness, -outline.thickness), sf::Vector2f(-outline.thickness, 0), sf::Vector2f(-outline.thickness, outline.thickness), sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness), sf::Vector2f(outline.thickness, -outline.thickness), sf::Vector2f(outline.thickness, 0), sf::Vector2f(outline.thickness, outline.thickness)}) {
+                                sprite.setPosition(position.x + coor.x, position.y + coor.y);
+                                window.draw(sprite);
+                            }
+                        }
+                        sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
+                        sprite.setPosition(position.x, position.y);
                         window.draw(sprite);
                     }
                 }
