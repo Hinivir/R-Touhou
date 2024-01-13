@@ -172,10 +172,26 @@ int main()
     window.setFramerateLimit(60);
 
     // both
-    GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT, GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable,
+    /*GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT, GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable,
         GameEngine::Hitbox, GameEngine::Life, GameEngine::Path, GameEngine::Position, GameEngine::Projectile,
         GameEngine::Size, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect,
-        GameEngine::Text, GameEngine::Velocity, GameEngine::ZIndex)
+        GameEngine::Text, GameEngine::Velocity, GameEngine::ZIndex)*/
+
+    registry.registerComponent<GameEngine::Color>();
+    registry.registerComponent<GameEngine::Controllable>();
+    registry.registerComponent<GameEngine::Drawable>();
+    registry.registerComponent<GameEngine::Hitbox>();
+    registry.registerComponent<GameEngine::Life>();
+    registry.registerComponent<GameEngine::Path>();
+    registry.registerComponent<GameEngine::Position>();
+    registry.registerComponent<GameEngine::Projectile>();
+    registry.registerComponent<GameEngine::Size>();
+    registry.registerComponent<GameEngine::Sprite>();
+    registry.registerComponent<GameEngine::SpriteTextureAnimation>();
+    registry.registerComponent<GameEngine::SpriteTextureRect>();
+    registry.registerComponent<GameEngine::Text>();
+    registry.registerComponent<GameEngine::Velocity>();
+    registry.registerComponent<GameEngine::ZIndex>();
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
     entityVector.push_back(movableEntity);
