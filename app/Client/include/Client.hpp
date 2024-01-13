@@ -14,12 +14,25 @@
 
     #include <asio.hpp>
 
-typedef struct {
-    std::size_t player_number;
-    std::size_t pos_x;
-    std::size_t pos_y;
-    bool isConnected = false;
-} player_t;
+    #include <SFML/Window/Keyboard.hpp>
+
+    struct player_t {
+        std::size_t player_number;
+        std::size_t pos_x;
+        std::size_t pos_y;
+        bool isConnected = false;
+    };
+
+    struct client_message_t {
+        std::size_t player_number;
+        sf::Keyboard key;
+    };
+
+    template <typename Component>
+    struct server_message_t {
+        std::size_t component_number;
+        Component* component;
+    };
 
 class Client {
     private:
@@ -31,10 +44,10 @@ class Client {
 
         player_t player;
         std::vector <player_t> players = {};
-        bool inGame = false;
 
     public:
         using KeyFunction = std::function<void(bool)>;
+        bool inGame = false;
 
         Client(
             asio::io_context& ioContext,
@@ -43,6 +56,7 @@ class Client {
         );
         ~Client();
         void sendMessage(const std::string& message);
+        void sendMessage(const client_message_t& message);
         void getNewMessage();
         void handleMessageInGame(const std::string& message);
         void parseMessage(const std::string message);

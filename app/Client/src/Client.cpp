@@ -69,6 +69,19 @@ void Client::sendMessage(const std::string &message)
     );
 }
 
+void Client::sendMessage(const client_message_t &message)
+{
+    socket_.async_send_to(
+        asio::buffer(&message, sizeof(message)),
+        serverEndpoint_,
+        [this](const asio::error_code &error, std::size_t) {
+            if (error) {
+                std::cerr << "Error sending data: " << error.message() << std::endl;
+            }
+        }
+    );
+}
+
 void Client::handleMessageInGame(const std::string &message)
 {
     std::size_t player_number = std::stoi(message.substr(0, 1));
@@ -88,9 +101,14 @@ void Client::getNewMessage()
         senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
-                std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                std::cout << message << std::endl;
-                this->parseMessage(message);
+                if (this->inGame) {
+                    std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+                    this->handleMessageInGame(message);
+                } else {
+                    std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+                    std::cout << message << std::endl;
+                    this->parseMessage(message);
+                }
                 this->getNewMessage();
             } else {
                 std::cerr << "Error receiving data: " << error.message() << std::endl;

@@ -9,22 +9,7 @@
 #define SYSTEM_H_
 
 #include "Registry.hpp"
-#include "Components/Color.hpp"
-#include "Components/Controllable.hpp"
-#include "Components/Drawable.hpp"
-#include "Components/Hitbox.hpp"
-#include "Components/Life.hpp"
-#include "Components/Position.hpp"
-#include "Components/Size.hpp"
-#include "Components/Sprite.hpp"
-#include "Components/SpriteTextureAnimation.hpp"
-#include "Components/SpriteTextureRect.hpp"
-#include "Components/Velocity.hpp"
-#include "Components/ZIndex.hpp"
-#include "Components/Projectile.hpp"
-#include "Components/Path.hpp"
-#include "Components/Text.hpp"
-#include "Components/Window.hpp"
+#include "Components/Components.hpp"
 
 #include <list>
 #include <SFML/Graphics.hpp>

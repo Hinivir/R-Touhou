@@ -29,10 +29,12 @@ int main(int const argc, char const * const * const argv)
     new_client.getNewMessage();
     std::thread ioThread([&ioContext]() { ioContext.run(); });
     for (;;) {
-        std::string newMessage = {0};
-        std::getline(std::cin, newMessage);
-        newMessage += "\n";
-        new_client.sendMessage(newMessage);
+        if (!new_client.inGame) {
+            std::string newMessage = {0};
+            std::getline(std::cin, newMessage);
+            newMessage += "\n";
+            new_client.sendMessage(newMessage);
+        }
     }
     ioContext.stop();
     ioThread.join();

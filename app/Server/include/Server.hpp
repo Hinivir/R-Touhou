@@ -12,6 +12,7 @@
     #include <vector>
     #include <asio.hpp>
     #include <map>
+    #include <SFML/Window/Keyboard.hpp>
 
     #define CONNECTED "101: You are connected!\n"
     #define DISCONNECTED "103: You are disconnected!\n"
@@ -19,6 +20,17 @@
     #define READY "104: You are ready!\n"
     #define SERVER_FULL "105: Server is full!\n"
     using asio::ip::udp;
+
+    struct client_message_t {
+        std::size_t player_number;
+        sf::Keyboard key;
+    };
+
+    template <typename Component>
+    struct server_message_t {
+        std::size_t player_number;
+        Component* component;
+    };
 
     class Server
     {

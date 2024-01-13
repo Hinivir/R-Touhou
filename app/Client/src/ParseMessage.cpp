@@ -23,7 +23,7 @@ void Client::parseMessage(const std::string message)
     //ready
     if (strncmp(message.c_str(), RUN_GAME.c_str(), RUN_GAME.length()) == 0 && !this->inGame) {
         this->inGame = true;
-        std::thread gameThread([&]() { this->runGame(); });
+        std::thread gameThread([&]() { this->runGame("R-type"); });
         gameThread.detach();
     }
     //player number
@@ -37,9 +37,6 @@ void Client::parseMessage(const std::string message)
     std::string messageNewPlayer = message.substr(3, CONNECTED_PLAYER.length());
     if (strncmp(messageNewPlayer.c_str(), NEW_USER.c_str(), NEW_USER.length()) == 0)
         this->addNewUser(message.substr(NEW_USER.length(), 1));
-    //in_game
-    if (this->inGame)
-        this->handleMessageInGame(message);
 }
 
 void Client::addUsersWhenConnected(const std::string& message)

@@ -154,7 +154,6 @@ void Server::broadcastMessage(const std::string& message, size_t messageSize, co
     }
 }
 
-
 void Server::acceptClients()
 {
     std::cout << "Waiting for clients..." << std::endl;
