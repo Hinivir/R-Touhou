@@ -14,16 +14,18 @@
 namespace GameEngine
 {
     template <typename T, char UNIQUE_ID>
-    struct Position2Base {
+    struct Position2Base
+    {
         T x = GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE;
         T y = GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE;
     };
 
     template <typename T, char UNIQUE_ID>
-    struct Position2BaseDefault1 {
+    struct Position2BaseDefault1
+    {
         T x = GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE_1;
         T y = GAME_ENGINE_POSITION_2_BASE_DEFAULT_VALUE_1;
     };
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTOUHOU_POSITION_2_BASE_HPP
+#endif // L_TYPE_GAME_RTOUHOU_POSITION_2_BASE_HPP

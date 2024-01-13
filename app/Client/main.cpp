@@ -8,7 +8,7 @@
 #include "include/Client.hpp"
 #include <iostream>
 
-static bool handle_error(int const argc, char const * const * const argv)
+static bool handle_error(int const argc, char const *const *const argv)
 {
     if (argc != 3) {
         std::cerr << "ERROR: invalid number of arguments" << std::endl;
@@ -17,7 +17,7 @@ static bool handle_error(int const argc, char const * const * const argv)
     return true;
 }
 
-int main(int const argc, char const * const * const argv)
+int main(int const argc, char const *const *const argv)
 {
     if (argc != 3) {
         std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;

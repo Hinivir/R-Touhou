@@ -13,7 +13,8 @@
 
 namespace GameEngine
 {
-    struct Text {
+    struct Text
+    {
         sf::Text text;
         sf::Font font;
         std::string string;
@@ -21,6 +22,6 @@ namespace GameEngine
         std::size_t fontSize;
         bool isLoaded = false;
     };
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTouhou_TEXT_HPP
+#endif // L_TYPE_GAME_RTouhou_TEXT_HPP
