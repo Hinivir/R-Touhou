@@ -65,6 +65,7 @@ GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry)
         GameEngine::Sprite{"./resources/R-Touhou/graphics/BackgroundStar.jpg", sf::Sprite(), sf::Texture()});
     registry.addComponent<GameEngine::ZIndex>(
         backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    registry.addComponent<GameEngine::Color>(backgroundStar, GameEngine::Color{50, 50, 50});
 
     return backgroundStar;
 }
