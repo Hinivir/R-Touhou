@@ -125,8 +125,8 @@ It uses `GameEngine::Color` from `ecs/Components/Color.hpp`.
 
 |Name|Type|Description|Default Value|
 |----|----|-----------|-------------|
-|Thickness|OutlineThicknessValue|Size of the outline in pixels|0 (GAME_ENGINE_OUTLINE_THICKNESS_DEFAULT)|
-|Color|OutlineColorValue|Color of the |0, 0, 0, 255 [black] (GAME_ENGINE_OUTLINE_COLOR_DEFAULT)|
+|thickness|OutlineThicknessValue|Size of the outline in pixels|0 (GAME_ENGINE_OUTLINE_THICKNESS_DEFAULT)|
+|color|OutlineColorValue|Color of the |{0, 0, 0, 255} [black] (GAME_ENGINE_OUTLINE_COLOR_DEFAULT)|
 
 ### Associated Content
 
