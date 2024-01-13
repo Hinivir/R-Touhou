@@ -14,6 +14,8 @@
     #include <map>
     #include <SFML/Window/Keyboard.hpp>
 
+    #include "Entity.hpp"
+
     #define CONNECTED "101: You are connected!\n"
     #define DISCONNECTED "103: You are disconnected!\n"
     #define ERROR "102: Error sending confirmation message to client!\n"
@@ -63,6 +65,7 @@
             std::vector<udp::endpoint> alreadyConnectedClients;
             std::vector<udp::endpoint> connectedClients;
             std::vector<udp::endpoint> readyClients;
+            std::vector<udp::endpoint> initClients;
             bool inGame = false;
 
         public:
@@ -72,6 +75,7 @@
             void handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void handleDisconnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void handleReady(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
+            void handleGameInit(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void closeServer(void);
             void startServer(void);
             void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);

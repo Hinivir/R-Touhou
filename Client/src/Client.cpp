@@ -103,7 +103,8 @@ void Client::getNewMessage()
             if (!error) {
                 if (this->inGame) {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                    this->handleMessageInGame(message);
+                    //this->handleMessageInGame(message);
+                    this->parseMessage(message);
                 } else {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                     std::cout << message << std::endl;
@@ -119,20 +120,25 @@ void Client::getNewMessage()
 
 std::vector<GameEngine::Entity> Client::receiveEnemies()
 {
+    std::cout << "in receiveEnemies" << std::endl;
     std::vector<GameEngine::Entity> enemies;
 
-    socket_.async_receive_from(
-        asio::buffer(receiveBuffer_),
-        senderEndpoint_,
-        [this](const asio::error_code &error, std::size_t bytesTransferred) {
-            std::vector<GameEngine::Entity> enemies(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-            if (error) {
-                std::cerr << "Error receiving data: " << error.message() << std::endl;
-            }
-        }
-    );
+    try {
+        asio::ip::udp::endpoint senderEndpoint;
+        std::size_t bytesTransferred = socket_.receive_from(asio::buffer(receiveBuffer_), senderEndpoint);
+
+        enemies = std::vector<GameEngine::Entity>(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+
+        std::cout << "enemies received" << std::endl;
+        std::cout << enemies.size() << std::endl;
+
+    } catch (const asio::system_error& e) {
+        std::cerr << "Error receiving data: " << e.what() << std::endl;
+    }
+
     return enemies;
 }
+
 
 //this is a temporary function, we will have to change it with the game code
 void Client::runGameTmp()

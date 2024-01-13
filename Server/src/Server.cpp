@@ -41,8 +41,21 @@ void Server::startServer(void)
 const std::map<std::string, std::function<void(Server &, const udp::endpoint&, const std::array<char, 2048>&, size_t)>> Server::serverCommandHandler = {
     {"connect\n", &Server::handleConnect},
     {"disconnect\n", &Server::handleDisconnect},
-    {"ready\n", &Server::handleReady}
+    {"ready\n", &Server::handleReady},
+    {"game init\n", &Server::handleGameInit}
 };
+
+void Server::handleGameInit(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
+{
+    std::cout << "Client has init the game: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
+    initClients.push_back(client_endpoint);
+    if (initClients.size() == connectedClients.size()) {
+        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        isChatLocked = true;
+        notifyGameReady();
+        runGame("R-Type");
+    }
+}
 
 void Server::handleConnect(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
 {
@@ -114,6 +127,7 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
         std::cout << "All clients are ready. Starting the game!" << std::endl;
         isChatLocked = true;
         notifyGameReady();
+        runGame("R-Type");
     }
 }
 
@@ -137,6 +151,7 @@ void Server::connectClient(const udp::endpoint& client_endpoint, const std::arra
 
 void Server::broadcastStructure(const client_message_t& info, size_t size, const udp::endpoint& sender)
 {
+    std::cout << "In BroadcastStructure" << std::endl;
     for (const auto& client : connectedClients) {
         if (client != sender) {
             try {

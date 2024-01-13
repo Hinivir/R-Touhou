@@ -17,15 +17,17 @@ namespace GameEngine {
     class Entity {
         public:
             friend class Registry;
+
+            /// @brief Explicit constructor to create an entity
+            /// @param entity Number of the entity
+            explicit Entity(std::size_t entity) : _entity(entity){};
+
             /// @brief Default destructor
             ~Entity() = default;
 
             /// @brief Overload to be able to use the Entity class as a std::size_t
             operator std::size_t() const { return _entity; };
         private:
-            /// @brief Explicit constructor to create an entity
-            /// @param entity Number of the entity
-            explicit Entity(std::size_t entity) : _entity(entity){};
 
             /// @brief Number of the entity
             std::size_t _entity;
