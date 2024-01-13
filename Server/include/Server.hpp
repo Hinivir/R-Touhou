@@ -79,6 +79,7 @@
             void broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender);
             void broadcastStructure(const client_message_t& info, size_t size, const udp::endpoint& sender);
             void notifyGameReady(void);
+            void sendEnemies(std::vector<GameEngine::Entity> &enemies);
 
             void runGame(std::string const gamename);
     };

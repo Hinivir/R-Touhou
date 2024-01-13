@@ -13,8 +13,10 @@
     #include <array>
 
     #include <asio.hpp>
-
     #include <SFML/Window/Keyboard.hpp>
+
+    #include "Components/Components.hpp"
+    #include "Entity.hpp"
 
     struct player_t {
         std::size_t player_number;
@@ -62,6 +64,7 @@ class Client {
         void parseMessage(const std::string message);
         void addUsersWhenConnected(const std::string& message);
         void addNewUser(const std::string& message);
+        std::vector<GameEngine::Entity> receiveEnemies();
 
         void runGameTmp();
 

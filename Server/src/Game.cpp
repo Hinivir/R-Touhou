@@ -145,9 +145,20 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
     return isGameOver;
 }
 
+void Server::sendEnemies(std::vector<GameEngine::Entity> &enemies)
+{
+    for (const auto& client : connectedClients) {
+        try {
+            std::vector<char> serializedData = Serialization::serialize(enemies);
+            server_socket.send_to(asio::buffer(serializedData.data(), serializedData.size()), client);
+        } catch (std::exception const &e) {
+            std::cerr << "Error sending structure to client " << client.address() << ":" << client.port() << ": " << e.what() << std::endl;
+        }
+    }
+}
+
 void Server::runGame(std::string const gamename)
 {
-
     int nbRegistry = 1024;
     int testscore = 0;
     bool isGameOver = false;
@@ -189,14 +200,13 @@ void Server::runGame(std::string const gamename)
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
         entityVector.push_back(staticEntity);
     }
-    //entityVector must be sent to clients
-
+    this->sendEnemies(entityVector);
+    std::cout << entityVector.size() << std::endl;
     system.initEnemy(registry);
-
 
     this->inGame = true;
 
-    while (1) {
+    for (;;) {
         registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
         system.attackSystem(registry);
         system.movementSystem(registry);

@@ -117,6 +117,23 @@ void Client::getNewMessage()
     );
 }
 
+std::vector<GameEngine::Entity> Client::receiveEnemies()
+{
+    std::vector<GameEngine::Entity> enemies;
+
+    socket_.async_receive_from(
+        asio::buffer(receiveBuffer_),
+        senderEndpoint_,
+        [this](const asio::error_code &error, std::size_t bytesTransferred) {
+            std::vector<GameEngine::Entity> enemies(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+            if (error) {
+                std::cerr << "Error receiving data: " << error.message() << std::endl;
+            }
+        }
+    );
+    return enemies;
+}
+
 //this is a temporary function, we will have to change it with the game code
 void Client::runGameTmp()
 {

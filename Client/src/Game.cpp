@@ -176,7 +176,11 @@ void Client::runGame(std::string const gamename)
     GameEngine::Entity gameOver = createGameOver(registry);
     GameEngine::Entity youWin = createYouWin(registry);
 
-    //entityVector must be sent to clients
+    std::vector<GameEngine::Entity> enemies = receiveEnemies();
+    for (std::size_t i = entityVector.size(); i < enemies.size(); i++)
+        entityVector.push_back(enemies[i]);
+    
+    std::cout << entityVector.size() << std::endl;
 
     system.initEnemy(registry);
 
