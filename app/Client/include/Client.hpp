@@ -14,7 +14,7 @@
 
 #include <asio.hpp>
 
-typedef struct {
+typedef struct player_s {
     std::size_t player_number;
     std::size_t pos_x;
     std::size_t pos_y;

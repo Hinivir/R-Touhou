@@ -56,7 +56,7 @@ void Server::handleConnect(
                     server_socket.send_to(asio::buffer(playerMessage), client_endpoint);
                     server_socket.send_to(asio::buffer(nbPlayer), client_endpoint);
                 } catch (std::exception const &e) {
-                    server_socket.send_to(asio::buffer(ERROR), client_endpoint);
+                    server_socket.send_to(asio::buffer(ERROR_MSG), client_endpoint);
                     std::cerr << "Error sending confirmation message to client " << client_endpoint.address() << ":"
                               << client_endpoint.port() << ": " << e.what() << std::endl;
                 }
