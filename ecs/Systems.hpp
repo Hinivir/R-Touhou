@@ -233,8 +233,7 @@ namespace GameEngine
                                                             static_cast<int>(spriteTextureSize.y)};
 
                         if (sprite.getTexture() == nullptr)
-                            continue; // goto drawSystemEndOfHasSprite; (removed because pointing at the end of a for()
-                                      // loop)
+                            continue;
                         sprite.setPosition(position.x, position.y);
                         if (hasColor)
                             sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
@@ -249,7 +248,6 @@ namespace GameEngine
                         textureRect = sprite.getTextureRect();
                         window.draw(sprite);
                     }
-                    // drawSystemEndOfHasSprite: (removed because at the end of a for() loop)
                 }
             } while (currentZIndex != lowestZIndex);
         }
