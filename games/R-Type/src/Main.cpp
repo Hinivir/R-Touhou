@@ -226,7 +226,7 @@ int main()
         system.controlSystem(registry);
 
         if (shootCoolDown == 7) {
-            system.attackSystem(registry, &entityVector);
+            system.attackSystem(registry, entityVector);
             shootCoolDown = 0;
         }
         if (enemyCoolDown == 50 && spawnEnemy) {
