@@ -59,6 +59,6 @@ class Client {
         void quitFunction(std::size_t player_number);
 
         void initGame(std::string const gamename);
-        void runGame(void);
+        void runGame(std::string const gamename);
 };
 #endif
