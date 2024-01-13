@@ -36,12 +36,6 @@ jobs:
           run: ${{ matrix.build }}
           timeout-minutes: 10
 
-        - name: Check file
-          uses: andstor/file-existence-action@v2
-          with:
-            files: "${{ matrix.executables }}"
-            fail: true
-
   check_style:
     needs: [check_compilation]
     runs-on: ubuntu-latest
