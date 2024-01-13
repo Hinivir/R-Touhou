@@ -8,11 +8,11 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-    #include <iostream>
-    #include <cstdlib>
-    #include <array>
+#include <iostream>
+#include <cstdlib>
+#include <array>
 
-    #include <asio.hpp>
+#include <asio.hpp>
 
 typedef struct {
     std::size_t player_number;
@@ -36,11 +36,7 @@ class Client {
     public:
         using KeyFunction = std::function<void(bool)>;
 
-        Client(
-            asio::io_context& ioContext,
-            const std::string& serverAddress,
-            const std::string& serverPort
-        );
+        Client(asio::io_context& ioContext, const std::string& serverAddress, const std::string& serverPort);
         ~Client();
         void sendMessage(const std::string& message);
         void getNewMessage();

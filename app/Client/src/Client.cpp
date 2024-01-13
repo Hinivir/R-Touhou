@@ -18,32 +18,16 @@
 #include <SFML/Graphics/Color.hpp>
 
 static const std::vector<sf::Color> colors = {
-    sf::Color::Red,
-    sf::Color::Green,
-    sf::Color::Blue,
-    sf::Color::Yellow,
-    sf::Color::Magenta,
-    sf::Color::Cyan
-};
-//remplacer le bool par le numero du player
-static const std::map<sf::Keyboard::Key,std::pair<std::string,std::function<void(Client &, std::size_t)>>> inputHandler = {
-    {sf::Keyboard::Z, {"UP", &Client::upFunction}},
-    {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
-    {sf::Keyboard::Q, {"LEFT", &Client::leftFunction}},
-    {sf::Keyboard::D, {"RIGHT", &Client::rightFunction}},
-    {sf::Keyboard::Space, {"ACTION", &Client::actionFunction}},
-    {sf::Keyboard::Escape, {"QUIT", &Client::quitFunction}}
-};
+    sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Magenta, sf::Color::Cyan};
+// remplacer le bool par le numero du player
+static const std::map<sf::Keyboard::Key, std::pair<std::string, std::function<void(Client &, std::size_t)>>>
+    inputHandler = {{sf::Keyboard::Z, {"UP", &Client::upFunction}}, {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
+        {sf::Keyboard::Q, {"LEFT", &Client::leftFunction}}, {sf::Keyboard::D, {"RIGHT", &Client::rightFunction}},
+        {sf::Keyboard::Space, {"ACTION", &Client::actionFunction}},
+        {sf::Keyboard::Escape, {"QUIT", &Client::quitFunction}}};
 
-Client::Client(
-    asio::io_context &ioContext,
-    const std::string &serverAddress,
-    const std::string &serverPort)
-    : ioContext_(ioContext),
-      socket_(
-          ioContext,
-          asio::ip::udp::endpoint(asio::ip::udp::v4(),
-                                  0))
+Client::Client(asio::io_context &ioContext, const std::string &serverAddress, const std::string &serverPort)
+    : ioContext_(ioContext), socket_(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0))
 {
     try {
         asio::ip::udp::resolver resolver(ioContext);
@@ -58,15 +42,11 @@ Client::~Client() {}
 
 void Client::sendMessage(const std::string &message)
 {
-    socket_.async_send_to(
-        asio::buffer(message),
-        serverEndpoint_,
-        [this](const asio::error_code &error, std::size_t) {
-            if (error) {
-                std::cerr << "Error sending data: " << error.message() << std::endl;
-            }
+    socket_.async_send_to(asio::buffer(message), serverEndpoint_, [this](const asio::error_code &error, std::size_t) {
+        if (error) {
+            std::cerr << "Error sending data: " << error.message() << std::endl;
         }
-    );
+    });
 }
 
 void Client::handleMessageInGame(const std::string &message)
@@ -74,7 +54,7 @@ void Client::handleMessageInGame(const std::string &message)
     std::size_t player_number = std::stoi(message.substr(0, 1));
     std::string action = message.substr(3, message.length());
     std::cout << action << " from " << player_number << std::endl;
-    for (auto const& [key, value] : inputHandler) {
+    for (auto const &[key, value] : inputHandler) {
         if (action == value.first) {
             value.second(*this, player_number);
         }
@@ -83,9 +63,7 @@ void Client::handleMessageInGame(const std::string &message)
 
 void Client::getNewMessage()
 {
-    socket_.async_receive_from(
-        asio::buffer(receiveBuffer_),
-        senderEndpoint_,
+    socket_.async_receive_from(asio::buffer(receiveBuffer_), senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
                 std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
@@ -95,26 +73,25 @@ void Client::getNewMessage()
             } else {
                 std::cerr << "Error receiving data: " << error.message() << std::endl;
             }
-        }
-    );
+        });
 }
 
-//this is a temporary function, we will have to change it with the game code
+// this is a temporary function, we will have to change it with the game code
 void Client::runGame()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "R-Type");
     std::size_t player_number = this->players.size();
 
-    //player
-    this->player.pos_x = 50;//
-    this->player.pos_y = this->player.player_number * 100 + 50;//
-    sf::RectangleShape player_shape(sf::Vector2f(50.f, 50.f));//
+    // player
+    this->player.pos_x = 50;                                    //
+    this->player.pos_y = this->player.player_number * 100 + 50; //
+    sf::RectangleShape player_shape(sf::Vector2f(50.f, 50.f));  //
     sf::Vector2i player_pos(this->player.pos_x, this->player.pos_y);
     player_shape.setPosition(player_pos.x, player_pos.y);
     std::size_t color_index = this->player.player_number - 1;
     player_shape.setFillColor(colors[this->player.player_number - 1]);
 
-    //loop on other players
+    // loop on other players
     std::vector<sf::RectangleShape> other_shape = {};
 
     for (auto p : this->players) {
@@ -132,7 +109,7 @@ void Client::runGame()
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::KeyPressed) {
-                for (auto const& [key, value] : inputHandler) {
+                for (auto const &[key, value] : inputHandler) {
                     if (event.key.code == key) {
                         value.second(*this, this->player.player_number);
                     }
@@ -142,13 +119,13 @@ void Client::runGame()
                 window.close();
         }
         player_shape.setPosition(this->player.pos_x, this->player.pos_y);
-        //loop on other players
+        // loop on other players
         for (std::size_t i = 0; i < player_number; i++) {
             other_shape[i].setPosition(this->players[i].pos_x, this->players[i].pos_y);
         }
         window.clear();
         window.draw(player_shape);
-        //loop on other players
+        // loop on other players
         for (auto shape : other_shape) {
             window.draw(shape);
         }

@@ -10,7 +10,6 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
-#include "Components/Window.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
@@ -227,7 +226,7 @@ int main()
         system.controlSystem(registry);
 
         if (shootCoolDown == 7) {
-            system.attackSystem(registry);
+            system.attackSystem(registry, &entityVector);
             shootCoolDown = 0;
         }
         if (enemyCoolDown == 50 && spawnEnemy) {

@@ -14,6 +14,6 @@ namespace GameEngine
 {
     using SpriteTextureRectValue = int;
     using SpriteTextureRect = GameEngine::RectBase<GameEngine::SpriteTextureRectValue, 'S'>;
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTOUHOU_SPRITE_TEXTURE_RECT_HPP
+#endif // L_TYPE_GAME_RTOUHOU_SPRITE_TEXTURE_RECT_HPP

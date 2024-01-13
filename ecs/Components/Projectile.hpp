@@ -10,8 +10,9 @@
 
 namespace GameEngine
 {
-    struct Projectile {
+    struct Projectile
+    {
     };
 } // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTOUHOU_PROJECTILE_HPP
+#endif // L_TYPE_GAME_RTOUHOU_PROJECTILE_HPP
