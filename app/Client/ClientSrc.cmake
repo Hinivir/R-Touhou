@@ -1,4 +1,4 @@
-set(SRC
+set(CLIENT_SRC
         ${CLIENT_FOLDER}/main.cpp
         ${CLIENT_FOLDER}/src/ActionFunction.cpp
         ${CLIENT_FOLDER}/src/ParseMessage.cpp

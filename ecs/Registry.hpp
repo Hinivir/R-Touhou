@@ -44,7 +44,7 @@ namespace GameEngine
         {
             auto typeIndex = std::type_index(typeid(Component));
             _container[typeIndex] = SparseArray<Component>();
-            return std::any_cast<SparseArray<Component>&>(_container[typeIndex]);
+            return std::any_cast<SparseArray<Component> &>(_container[typeIndex]);
         };
 
         /// @brief Get a component from the registry
@@ -54,7 +54,7 @@ namespace GameEngine
         SparseArray<Component> &getComponent()
         {
             auto typeIndex = std::type_index(typeid(Component));
-            return std::any_cast<SparseArray<Component>&>(_container[typeIndex]);
+            return std::any_cast<SparseArray<Component> &>(_container[typeIndex]);
         }
 
         /// @brief Get a component from the registry
@@ -64,7 +64,7 @@ namespace GameEngine
         const SparseArray<Component> &getComponent() const
         {
             auto typeIndex = std::type_index(typeid(Component));
-            return std::any_cast<const SparseArray<Component>&>(_container.at(typeIndex));
+            return std::any_cast<const SparseArray<Component> &>(_container.at(typeIndex));
         };
 
         /// @brief Spawn a new entity
@@ -148,7 +148,7 @@ namespace GameEngine
         /// @return A reference to the newly added component
         template <typename Component, typename... Params>
         typename SparseArray<Component>::ReferenceType emplaceComponent(const Entity &entity, Params &&...params)
-        { 
+        {
             return getComponent<Component>().emplaceAt(entity, params...);
         };
 

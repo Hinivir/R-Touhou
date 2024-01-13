@@ -28,10 +28,9 @@ FetchContent_MakeAvailable(asiocmake)
 
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-#include(app/Client/Client.cmake)
-#include(app/Server/Server.cmake)
+include(app/Client/Client.cmake)
+include(app/Server/Server.cmake)
 include(games/R-Type/R-Type.cmake)
-include(games/TestParallaxExample/Build.cmake)
 
 if (DEFINED INSTALL)
 
