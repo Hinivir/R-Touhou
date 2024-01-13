@@ -16,27 +16,31 @@
   - [Hitbox](#hitbox)
     - [Members](#members-3)
   - [Life](#life)
-  - [Path](#path)
-  - [Position](#position)
+  - [Outline](#outline)
     - [Members](#members-4)
     - [Associated Content](#associated-content-1)
+    - [Warning](#warning)
+  - [Path](#path)
+  - [Position](#position)
+    - [Members](#members-5)
+    - [Associated Content](#associated-content-2)
   - [Projectile](#projectile)
   - [Size](#size)
   - [Sprite](#sprite)
   - [SpriteTextureAnimation](#spritetextureanimation)
-    - [Members](#members-5)
-    - [Associated Content](#associated-content-2)
-  - [SpriteTextureRect](#spritetexturerect)
     - [Members](#members-6)
     - [Associated Content](#associated-content-3)
-  - [Text](#text)
-  - [Velocity](#velocity)
+  - [SpriteTextureRect](#spritetexturerect)
     - [Members](#members-7)
     - [Associated Content](#associated-content-4)
-  - [Window](#window)
-  - [ZIndex](#zindex)
+  - [Text](#text)
+  - [Velocity](#velocity)
     - [Members](#members-8)
     - [Associated Content](#associated-content-5)
+  - [Window](#window)
+  - [ZIndex](#zindex)
+    - [Members](#members-9)
+    - [Associated Content](#associated-content-6)
 
 # Components
 
@@ -104,6 +108,43 @@ Defines an entity's hitbox for collisions.
 |----|----|-----------|-------------|
 
 ## Life
+
+## Outline
+
+*From ecs/Components/Outline.hpp*
+
+Defines the outline when drawing an entity, including text.
+
+It manages this effect by drawing 8 additional copies of the entity.
+
+It uses `GameEngine::Color` from `ecs/Components/Color.hpp`.
+
+### Members
+
+|Name|Type|Description|Default Value|
+|----|----|-----------|-------------|
+|Thickness|OutlineThicknessValue|Size of the outline in pixels|0 (GAME_ENGINE_OUTLINE_THICKNESS_DEFAULT)|
+|Color|OutlineColorValue|Color of the |0, 0, 0, 255 [black] (GAME_ENGINE_OUTLINE_COLOR_DEFAULT)|
+
+### Associated Content
+
+```cpp
+using GameEngine::OutlineColorValue = GameEngine::Color;
+using GameEngine::OutlineThicknessValue = int;
+```
+```cpp
+#define GAME_ENGINE_OUTLINE_COLOR_DEFAULT GameEngine::Color{0, 0, 0, 255};
+#define GAME_ENGINE_OUTLINE_THICKNESS_DEFAULT 0
+```
+```cpp
+struct GameEngine::Color;
+```
+
+### Warning
+
+Due to how SFML works, white borders are not possible.
+
+A black outline will work perfectly, but a white border will have no effect on the color.
 
 ## Path
 
