@@ -8,7 +8,8 @@
 #ifndef PATH_HPP_
 #define PATH_HPP_
 
-namespace GameEngine {
+namespace GameEngine
+{
     struct Path
     {
         float startX;

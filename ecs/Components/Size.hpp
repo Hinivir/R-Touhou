@@ -10,10 +10,11 @@
 
 namespace GameEngine
 {
-    struct Size {
+    struct Size
+    {
         float width = 50.0f;
         float height = 50.0f;
     };
-}
+} // namespace GameEngine
 
-#endif //SIZE_HPP_
+#endif // SIZE_HPP_

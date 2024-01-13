@@ -1,4 +1,6 @@
-del /q build
+@echo off
+
+del /q build\CMakeCache.txt
 
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build .\build --config Release
