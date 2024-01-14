@@ -6,6 +6,7 @@
 */
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include "Registry.hpp"
 #include "Systems.hpp"
@@ -179,6 +180,13 @@ int main()
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
+    // music
+    sf::Music music;
+    if (!music.openFromFile("./resources/R-Touhou/sound/rType.ogg"))
+        return (-1);
+    music.play();
+    music.setLoop(true);
+
     window.setFramerateLimit(60);
 
     // both
@@ -284,6 +292,7 @@ int main()
             window.clear(sf::Color::Black);
             registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
+            music.stop();
         }
     }
     return 0;
