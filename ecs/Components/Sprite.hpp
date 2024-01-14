@@ -12,11 +12,12 @@
 
 namespace GameEngine
 {
-    struct Sprite {
+    struct Sprite
+    {
         std::string path;
         sf::Sprite sprite;
         sf::Texture texture;
     };
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTouhou_SPRITE_HPP
+#endif // L_TYPE_GAME_RTouhou_SPRITE_HPP

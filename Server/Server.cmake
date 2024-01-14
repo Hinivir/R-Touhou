@@ -13,10 +13,11 @@ set(INCLUDE ${CMAKE_SOURCE_DIR}/ecs ${SERVER_FOLDER}/include)
 set(SERVER_INCLUDE ${INCLUDE})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${SERVER_FOLDER})
+set(CMAKE_RELEASE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/${SERVER_FOLDER})
 
 include(${SERVER_FOLDER}/ServerSrc.cmake)
 
-add_executable(${SERVER_BINARY_NAME} ${SRC})
+add_executable(${SERVER_BINARY_NAME} ${SRC_SERVER})
 
 target_link_libraries(${SERVER_BINARY_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
 target_link_libraries(${SERVER_BINARY_NAME} PRIVATE asio)

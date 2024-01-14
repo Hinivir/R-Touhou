@@ -8,9 +8,9 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-    #include <iostream>
-    #include <cstdlib>
-    #include <array>
+#include <iostream>
+#include <cstdlib>
+#include <array>
 
     #include <asio.hpp>
     #include <SFML/Window/Keyboard.hpp>
@@ -48,13 +48,14 @@
         Component* component;
     };
 
-class Client {
-    private:
-        asio::io_context& ioContext_;
-        asio::ip::udp::socket socket_;
-        asio::ip::udp::endpoint serverEndpoint_;
-        asio::ip::udp::endpoint senderEndpoint_;
-        std::array<char, 1024> receiveBuffer_;
+class Client
+{
+  private:
+    asio::io_context &ioContext_;
+    asio::ip::udp::socket socket_;
+    asio::ip::udp::endpoint serverEndpoint_;
+    asio::ip::udp::endpoint senderEndpoint_;
+    std::array<char, 1024> receiveBuffer_;
 
         player_t player;
         std::vector <player_t> players = {};
@@ -69,18 +70,14 @@ class Client {
         bool startInit = false;
         std::size_t posNb = 0;
 
-        Client(
-            asio::io_context& ioContext,
-            const std::string& serverAddress,
-            const std::string& serverPort
-        );
-        ~Client();
-        void sendMessage(const std::string& message);
-        void getNewMessage();
-        void handleMessageInGame(const std::string& message);
-        void parseMessage(const std::string message);
-        void addUsersWhenConnected(const std::string& message);
-        void addNewUser(const std::string& message);
+    Client(asio::io_context &ioContext, const std::string &serverAddress, const std::string &serverPort);
+    ~Client();
+    void sendMessage(const std::string &message);
+    void getNewMessage();
+    void handleMessageInGame(const std::string &message);
+    void parseMessage(const std::string message);
+    void addUsersWhenConnected(const std::string &message);
+    void addNewUser(const std::string &message);
 
         void runGameTmp();
 

@@ -15,12 +15,13 @@
 namespace GameEngine
 {
     using ColorValue = unsigned char;
-    struct Color {
+    struct Color
+    {
         GameEngine::ColorValue r = GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE;
         GameEngine::ColorValue g = GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE;
         GameEngine::ColorValue b = GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE;
         GameEngine::ColorValue a = GAME_ENGINE_COLOR_VALUE_DEFAULT_VALUE;
     };
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTOUHOU_COLOR_HPP
+#endif // L_TYPE_GAME_RTOUHOU_COLOR_HPP

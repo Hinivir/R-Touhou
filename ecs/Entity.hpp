@@ -10,7 +10,8 @@
 
 #include <cstddef>
 
-namespace GameEngine {
+namespace GameEngine
+{
     class Registry;
 
     /// @brief Entity class used to represent an entity in the ECS
@@ -27,10 +28,10 @@ namespace GameEngine {
 
             /// @brief Overload to be able to use the Entity class as a std::size_t
             operator std::size_t() const { return _entity; };
-        private:
 
-            /// @brief Number of the entity
-            std::size_t _entity;
+      private:
+        /// @brief Number of the entity
+        std::size_t _entity;
     };
 } // namespace GameEngine
 
