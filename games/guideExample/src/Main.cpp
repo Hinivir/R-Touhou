@@ -17,9 +17,10 @@ namespace MyGame
         bool isAffectedByGravity = false;
         float weigth = 0;
     };
-}
+} // namespace MyGame
 
-void systemGravity(GameEngine::Registry &r) {
+void systemGravity(GameEngine::Registry &r)
+{
     EXTRACT_COMPONENT(GameEngine::Position, positions);
     EXTRACT_COMPONENT_CONST(MyGame::Gravity, gravities);
     for (std::size_t i = 0; i < positions.size(); ++i) {
@@ -56,7 +57,8 @@ int main(void)
     registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
     registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});
-    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(
+        entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
     // Main Loop
     while (window.isOpen()) {
         sf::Event event;
