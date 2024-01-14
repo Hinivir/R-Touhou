@@ -208,8 +208,15 @@ namespace GameEngine
                         text.text.setPosition(position.x, position.y);
                         text.text.setCharacterSize(text.fontSize);
                         if (hasOutline && outline.thickness > 0) {
-                            text.text.setFillColor(sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
-                            for (sf::Vector2f const coor: {sf::Vector2f(-outline.thickness, -outline.thickness), sf::Vector2f(-outline.thickness, 0), sf::Vector2f(-outline.thickness, outline.thickness), sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness), sf::Vector2f(outline.thickness, -outline.thickness), sf::Vector2f(outline.thickness, 0), sf::Vector2f(outline.thickness, outline.thickness)}) {
+                            text.text.setFillColor(
+                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
+                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
+                                     sf::Vector2f(-outline.thickness, 0),
+                                     sf::Vector2f(-outline.thickness, outline.thickness),
+                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
+                                     sf::Vector2f(outline.thickness, -outline.thickness),
+                                     sf::Vector2f(outline.thickness, 0),
+                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
                                 text.text.setPosition(position.x + coor.x, position.y + coor.y);
                                 window.draw(text.text);
                             }
@@ -546,7 +553,7 @@ namespace GameEngine
                         r.addComponent<GameEngine::Position>(
                             bullet, GameEngine::Position{
                                         position.value().x, position.value().y + sizePlayer.value().height / 2});
-                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{75.0f, 0.0f});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
                         r.addComponent<GameEngine::Sprite>(
