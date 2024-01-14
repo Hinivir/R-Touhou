@@ -16,6 +16,10 @@
 
 # Guides
 
+[🔧 **Components**](ecs/guides/COMPONENTS.md) - Learn how to make components with the creation of a MyGame::Gravity component
+
+[🔨 **Systems**](ecs/guides/SYSTEMS.md) - Learn how to make system with the creation of a systemGravity component
+
 # Documentation
 
 [🔨 **Systems**](ecs/SYSTEMS.md) - Know everything you have to know about monitoring your project's content
