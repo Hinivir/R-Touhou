@@ -12,6 +12,7 @@
     #include <vector>
     #include <asio.hpp>
     #include <map>
+    #include "Components/Components.hpp"
     #include <SFML/Window/Keyboard.hpp>
 
     #include "Entity.hpp"
@@ -92,6 +93,7 @@
             }
             void notifyGameReady(void);
             void sendEnemies(std::vector<GameEngine::Entity> &enemies);
+            void sendPositions(std::vector<GameEngine::Position> &positions);
 
             void runGame(std::string const gamename);
             void initGame(std::string const gamename);

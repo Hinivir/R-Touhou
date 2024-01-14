@@ -16,6 +16,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include <SFML/Graphics/Color.hpp>
+#include "SparseArray.hpp"
 
 static const std::vector<sf::Color> colors = {
     sf::Color::Red,
@@ -89,23 +90,16 @@ void Client::getNewMessage()
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
                 if (!this->hasPos && startInit && hasEnemy) {
-                    if (bytesTransferred == sizeof(server_message_t<GameEngine::Position>)) {
-                        std::cout << "Received Position data" << std::endl;
-                        GameEngine::Position receivedPosition;
-                        std::memcpy(&receivedPosition, receiveBuffer_.data(), sizeof(GameEngine::Position));
-                        allPos.push_back(receivedPosition);
-                    } else {
-                        std::cerr << "Error receiving Position data: Invalid size" << std::endl;
-                    }
+                    std::cout << "get received Position data" << std::endl;
+                    std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+                    allPos = Serialization::deserialize<std::vector<GameEngine::Position>>(serializedData);
                 } else if (!this->hasEnemy && startInit) {
                     std::cout << "get received Enemies data" << std::endl;
-//                    std::size_t bytesTransferred = socket_.receive_from(asio::buffer(receiveBuffer_), serverEndpoint_);
                     std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                     enemies = Serialization::deserialize<std::vector<GameEngine::Entity>>(serializedData);
                     this->hasEnemy = true;
                 } else if (this->inGame) {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                    //this->handleMessageInGame(message);
                     this->parseMessage(message);
                 } else {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);

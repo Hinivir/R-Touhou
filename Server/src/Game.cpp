@@ -154,7 +154,23 @@ void Server::sendEnemies(std::vector<GameEngine::Entity> &enemies)
             server_socket.send_to(
                 asio::buffer(serializedData.data(), serializedData.size()),
                 client);
-            std::cout << "Sent enemies data to client " << client.address() << ":" << client.port() << std::endl;
+        } catch (std::exception const &e) {
+            std::cerr << "Error sending structure to client "
+                      << client.address() << ":" << client.port() << ": "
+                      << e.what() << std::endl;
+        }
+    }
+}
+
+void Server::sendPositions(std::vector<GameEngine::Position> &positions)
+{
+    for (const auto &client : connectedClients) {
+        try {
+            std::vector<char> serializedData
+                = Serialization::serialize(positions);
+            server_socket.send_to(
+                asio::buffer(serializedData.data(), serializedData.size()),
+                client);
         } catch (std::exception const &e) {
             std::cerr << "Error sending structure to client "
                       << client.address() << ":" << client.port() << ": "
@@ -209,17 +225,15 @@ void Server::runGame(std::string const gamename)
     this->sendEnemies(entityVector);
     std::cout << "Game is running" << std::endl;
     std::cout << entityVector.size() << std::endl;
-/*
-    system.initEnemy(registry);
-    for (std::size_t i = 0; i < registry.getComponent<GameEngine::Position>().size(); ++i) {
-        GameEngine::Position &pos = registry.getComponent<GameEngine::Position>()[i].value();
-        server_message_t<GameEngine::Position> message = {i, &pos};
-        this->broadcastStructure(message, sizeof(server_message_t<GameEngine::Position>), this->initClients[i]);
-    }
 
-    this->inGame = true;
-*/
+    std::vector<GameEngine::Position> positionsToSend = {};
+    system.initEnemy(registry);
+    for (auto &positions: registry.getComponent<GameEngine::Position>())
+        positionsToSend.push_back(positions.value());
+    sendPositions(positionsToSend);
 /*
+    this->inGame = true;
+
     for (;;) {
         registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
         system.attackSystem(registry);

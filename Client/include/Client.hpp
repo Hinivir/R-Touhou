@@ -63,7 +63,7 @@ class Client {
 
     public:
         using KeyFunction = std::function<void(bool)>;
-        std::vector<GameEngine::Position> allPos = {};
+        std::vector<GameEngine::Position> allPos;
         bool inGame = false;
         bool hasEnemy = false;
         bool startInit = false;

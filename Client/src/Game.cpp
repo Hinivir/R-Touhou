@@ -178,17 +178,21 @@ void Client::runGame(std::string const gamename)
     while (!hasEnemy) { }
 
     std::cout << "enemies size: " << enemies.size() << std::endl;
+    posNb = enemies.size();
 
-    for (std::size_t i = 0; i < enemies.size(); i++)
-        entityVector.push_back(enemies[i]);
-
-    std::cout << "enneies size: " << enemies.size() << std::endl;
-    std::cout << "entity size: " << entityVector.size() << std::endl;
-    std::cout << "x = " << registry.getComponent<GameEngine::Position>()[entityVector[0]].value().x << std::endl;
-    posNb = entityVector.size();
-
-    while (allPos.size() != posNb) {
+    while (allPos.size() < posNb) {
     }
+    std::cout << "allPos size: " << allPos.size() << std::endl;
+
+    for (int i = 0; i < posNb; i++) {
+        std::cout << "it was here" << std::endl;
+        GameEngine::Entity enemy = spawnEnemyEntity(registry);
+        std::cout << "it was here" << std::endl;
+        registry.addComponent<GameEngine::Position>(enemy, GameEngine::Position{allPos[i].x, allPos[i].y});
+        std::cout << "it was here" << std::endl;
+        entityVector.push_back(enemy);
+    }
+    std::cout << "it was pushed" << std::endl;
     //receive
 
 //    system.initEnemy(registry);
