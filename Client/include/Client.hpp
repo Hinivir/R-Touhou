@@ -81,7 +81,6 @@ class Client {
         void parseMessage(const std::string message);
         void addUsersWhenConnected(const std::string& message);
         void addNewUser(const std::string& message);
-        std::vector<GameEngine::Entity> receiveEnemies();
 
         void runGameTmp();
 

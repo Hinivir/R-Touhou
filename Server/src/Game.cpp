@@ -148,50 +148,19 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
 void Server::sendEnemies(std::vector<GameEngine::Entity> &enemies)
 {
     for (const auto &client : connectedClients) {
-        if (std::find(initClients.begin(), initClients.end(), client)
-            != initClients.end())
-            continue;
         try {
             std::vector<char> serializedData
                 = Serialization::serialize(enemies);
             server_socket.send_to(
                 asio::buffer(serializedData.data(), serializedData.size()),
                 client);
+            std::cout << "Sent enemies data to client " << client.address() << ":" << client.port() << std::endl;
         } catch (std::exception const &e) {
             std::cerr << "Error sending structure to client "
                       << client.address() << ":" << client.port() << ": "
                       << e.what() << std::endl;
         }
     }
-}
-
-void Server::initGame(std::string const gamename)
-{
-    int nbRegistry = 1024;
-    int testscore = 0;
-    bool isGameOver = false;
-    std::vector<GameEngine::Entity> entityVector;
-
-    GameEngine::Registry registry(nbRegistry);
-    GameEngine::System system;
-
-    for (int i = 0; i <= this->initClients.size(); ++i) {
-        GameEngine::Entity movableEntity = spawnMovableEntity(registry);
-        registry.getComponent<GameEngine::Position>()[movableEntity].value().y += 50;
-    }
-
-    for (int i = 0; i < std::rand() % 31; ++i) {
-        GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
-        entityVector.push_back(staticEntity);
-    }
-    system.initEnemy(registry);
-    this->sendEnemies(entityVector);
-    for (std::size_t i = 0; i < registry.getComponent<GameEngine::Position>().size(); ++i) {
-        GameEngine::Position &pos = registry.getComponent<GameEngine::Position>()[i].value();
-        server_message_t<GameEngine::Position> message = {i, &pos};
-        this->broadcastStructure(message, sizeof(server_message_t<GameEngine::Position>), this->initClients[i]);
-    }
-    this->inGame = true;
 }
 
 void Server::runGame(std::string const gamename)

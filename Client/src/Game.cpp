@@ -175,9 +175,9 @@ void Client::runGame(std::string const gamename)
     GameEngine::Entity youWin = createYouWin(registry);
     std::vector<GameEngine::Entity> entityVector = {};
 
-    std::cout << entityVector.size() << std::endl;
-
     while (!hasEnemy) { }
+
+    std::cout << "enemies size: " << enemies.size() << std::endl;
 
     for (std::size_t i = 0; i < enemies.size(); i++)
         entityVector.push_back(enemies[i]);
