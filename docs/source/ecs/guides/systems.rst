@@ -141,6 +141,7 @@ With a main that should look like this:
         // Initialisation
         int nbRegistry = 1024;
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+        window.setFramerateLimit(60);
         GameEngine::Registry registry(nbRegistry);
         GameEngine::System system;
         // Registering components for system.spriteSystem and system.drawSystem
