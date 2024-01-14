@@ -1,6 +1,6 @@
 # LTYPE - ECS - GUIDE - COMPONENTS
 
-[Go back to ECS](../ECS.md)
+[Go back to ECS](../../ECS.md)
 
 # Table of Contents
 - [LTYPE - ECS - GUIDE - COMPONENTS](#ltype---ecs---guide---components)

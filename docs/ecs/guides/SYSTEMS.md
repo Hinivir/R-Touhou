@@ -1,6 +1,6 @@
 # LTYPE - ECS - GUIDE - SYSTEMS
 
-[Go back to ECS](../ECS.md)
+[Go back to ECS](../../ECS.md)
 
 # Table of Contents
 - [LTYPE - ECS - GUIDE - SYSTEMS](#ltype---ecs---guide---systems)
