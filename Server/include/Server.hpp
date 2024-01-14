@@ -81,7 +81,21 @@
             void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void acceptClients(void);
             void broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender);
-            void broadcastStructure(const client_message_t& info, size_t size, const udp::endpoint& sender);
+            void broadcastStructureClient(client_message_t& info, size_t size, const udp::endpoint& sender);
+            template <typename T>
+            void broadcastStructure(server_message_t<T>& info, size_t size, const udp::endpoint& sender) {
+                std::vector<char> serializedData = Serialization::serialize(info);
+
+                for (const auto& client : connectedClients) {
+                    if (client != sender) {
+                        try {
+                            server_socket.send_to(asio::buffer(serializedData), client);
+                        } catch (const std::exception& e) {
+                            std::cerr << "Error broadcasting structure to client: " << e.what() << std::endl;
+                        }
+                    }
+                }
+            }
             void notifyGameReady(void);
             void sendEnemies(std::vector<GameEngine::Entity> &enemies);
 

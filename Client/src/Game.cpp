@@ -178,16 +178,19 @@ void Client::runGame(std::string const gamename)
 
     std::cout << "entity size: " << entityVector.size() << std::endl;
 
-    while (!isReady) {}
+    while (!hasEnemy) {}
 
     for (std::size_t i = entityVector.size(); i < enemies.size(); i++)
         entityVector.push_back(enemies[i]);
 
     std::cout << "entity size: " << entityVector.size() << std::endl;
-    std::cout << entityVector[0] << std::endl;
-    std::cout << entityVector[1] << std::endl;
+    std::cout << "x = " << registry.getComponent<GameEngine::Position>()[entityVector[0]].value().x << std::endl;
+    posNb = entityVector.size();
 
-    system.initEnemy(registry);
+    while (allPos.size() != posNb) {}
+    //receive
+
+//    system.initEnemy(registry);
     /*
     while (window.isOpen()) {
         sf::Event event;

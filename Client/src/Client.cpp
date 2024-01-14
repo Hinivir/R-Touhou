@@ -101,11 +101,22 @@ void Client::getNewMessage()
         senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
-                if (!this->isReady) {
+                if (!this->hasPos) {
+                    if (bytesTransferred == sizeof(GameEngine::Position)) {
+                        GameEngine::Position receivedPosition;
+                        std::memcpy(&receivedPosition, receiveBuffer_.data(), sizeof(GameEngine::Position));
+
+                        // Now you can use the receivedPosition as needed
+
+                        // Set this->hasPos to true, assuming the position has been received
+                        allPos.push_back(receivedPosition);
+                    } else {
+                        std::cerr << "Error receiving Position data: Invalid size" << std::endl;
+                    }
+                } else if (!this->hasEnemy) {
                     this->enemies = this->receiveEnemies();
-                    this->isReady = true;
-                }
-                if (this->inGame) {
+                    this->hasEnemy = true;
+                } else if (this->inGame) {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                     //this->handleMessageInGame(message);
                     this->parseMessage(message);
