@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        run: ${{ matrix.build }} ${{ github.ref }}
+        run: ${{ matrix.build }} ${{ github.ref_name }}
         timeout-minutes: 10
 
       - name: Upload artifacts
