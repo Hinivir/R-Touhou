@@ -1,0 +1,111 @@
+name: 📦 Release
+
+on:
+  repository_dispatch:
+  push:
+    tags:
+      - v*
+
+permissions:
+    contents: write
+    checks: write
+
+jobs:
+  build_artifacts:
+    if: success()
+    strategy:
+      max-parallel: 2
+      matrix:
+        os : [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            container: hinivir/r-touhou
+            build: ./package.sh
+            executables: app/Client/L-Type-Client, app/Server/L-Type-Server
+          - os: windows-latest
+            build:  cmd /c package.bat
+            executables: app/Client/Release/L-Type-Client.exe, app/Server/Release/L-Type-Server.exe
+
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    name: Build artifacts
+    steps:
+      - name: Checkout file
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: ${{ matrix.build }} ${{ github.ref_name }}
+        timeout-minutes: 10
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-artifacts
+          path: artifacts/
+
+  create_release:
+    needs: [build_artifacts]
+    if: success()
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  add_release_artifacts:
+    needs: [create_release]
+    if: success()
+    strategy:
+      max-parallel: 2
+      matrix:
+        os : [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            arch: Linux
+            install_extension: sh
+            install_mime: text/plain
+            container: hinivir/r-touhou
+          - os: windows-latest
+            arch: Windows
+            install_extension: exe
+            install_mime: application/vnd.microsoft.portable-executable
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    steps:
+      - name: Checkout file
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.os }}-artifacts
+      - name: Upload release asset zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: L-Type-${{ github.ref_name }}-${{ matrix.arch }}.zip
+          asset_name: L-Type-${{ github.ref_name }}-${{ matrix.arch }}.zip
+          asset_content_type: application/zip
+      - name: Upload release asset install
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: L-Type-${{ github.ref_name }}-${{ matrix.arch }}.${{ matrix.install_extension }}
+          asset_name: L-Type-${{ github.ref_name }}-${{ matrix.arch }}.${{ matrix.install_extension }}
+          asset_content_type: ${{ matrix.install_mime }}
