@@ -149,6 +149,7 @@ With a main that should look like this:
         registry.registerComponent<GameEngine::Drawable>();
         registry.registerComponent<GameEngine::Outline>();
         registry.registerComponent<GameEngine::Position>();
+        registry.registerComponent<GameEngine::Size>();
         registry.registerComponent<GameEngine::Sprite>();
         registry.registerComponent<GameEngine::SpriteTextureAnimation>();
         registry.registerComponent<GameEngine::SpriteTextureRect>();
