@@ -41,7 +41,8 @@
 #define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
 
 #define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) auto &VARIABLE = REGISTRY.getComponent<COMPONENT>()
-#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY) auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
+#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY)                                                    \
+    auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
 
 #define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
     bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
