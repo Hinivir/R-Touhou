@@ -19,7 +19,7 @@ jobs:
           python-version: 3.11
       - name: Installing the Documentation requirements
         run: |
-          pip3 install .[docs]
+          pip3 install sphinx
       - name: Running the Sphinx to gh-pages Action
         uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.1.0
         with:

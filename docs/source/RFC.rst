@@ -59,7 +59,7 @@ This is the response that the server can send to the client:
 Send data using a structure (sending in bytes) and serialize it.
 When receiving data, deserialize it and use the structure to get the data.
 
-1. References
+4. References
 -------------
 
 - `RFC 959 - File Transfer Protocol (FTP) <https://www.ietf.org/rfc/rfc959.txt>`_ for the official FTP specification.
