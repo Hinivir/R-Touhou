@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Client documentation &#8212; R-Touhou  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Server Documentation" href="server.html" />
+    <link rel="prev" title="ECS - Macros Documenation" href="ecs/documentation/macros.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="client-documentation">
+<span id="client-doc"></span><h1>Client documentation<a class="headerlink" href="#client-documentation" title="Link to this heading">¶</a></h1>
+<p>Here is the documentation of the client.</p>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#how-to-run-a-client">How to run a client</a></p></li>
+<li><p><a class="reference internal" href="#explaining-the-code">Explaining the code</a></p></li>
+</ol>
+</section>
+<section id="how-to-run-a-client">
+<h2>How to run a client<a class="headerlink" href="#how-to-run-a-client" title="Link to this heading">¶</a></h2>
+<p>Before trying to connect a client, you must run a server. See the <a class="reference internal" href="#client-documentation">Client documentation</a>.</p>
+<p>The binary of the client can be found in <code class="docutils literal notranslate"><span class="pre">/app/Client/</span></code>.
+You can launch a client by running this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./L-Type-Client<span class="w"> </span><span class="o">[</span>ip<span class="o">]</span><span class="w"> </span><span class="o">[</span>port<span class="o">]</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">ip</span></code> is the ip where the server is running, and <code class="docutils literal notranslate"><span class="pre">port</span></code> is the port where the server runs.
+You can connect as many clients as you want.</p>
+</section>
+<section id="explaining-the-code">
+<h2>Explaining the code<a class="headerlink" href="#explaining-the-code" title="Link to this heading">¶</a></h2>
+<p>All prototypes of the Client functions are regrouped in a <code class="docutils literal notranslate"><span class="pre">Client</span></code> class. See <code class="docutils literal notranslate"><span class="pre">/app/Client/include/Client.hpp</span></code>.</p>
+<p>Here are basic explanations of how the client works.</p>
+<section id="client-connection">
+<h3>Client connection<a class="headerlink" href="#client-connection" title="Link to this heading">¶</a></h3>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">asio</span></code> library for our clients and server. It allows us to use the udp protocol instead of tcp, which allows us to send more packages but they are more sensitive.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Client</span><span class="p">(</span>
+<span class="w">     </span><span class="n">asio</span><span class="o">::</span><span class="n">io_context</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ioContext</span><span class="p">,</span>
+<span class="w">     </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serverAddress</span><span class="p">,</span>
+<span class="w">     </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">serverPort</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ioContext</span></code> provides the Core I/O functionality for asynchronous I/O objects</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">serverAddress</span></code> is the ip address given as argument when executing the program</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">serverPort</span></code> is the server port given as argument when executing the program</p></li>
+</ul>
+<p>When exiting the program, the client will disconnect with the destructor <code class="docutils literal notranslate"><span class="pre">~Client()</span></code>.</p>
+</section>
+<section id="send-and-receive-messages">
+<h3>Send and receive messages<a class="headerlink" href="#send-and-receive-messages" title="Link to this heading">¶</a></h3>
+<p>The client is able to receive and send messages asynchronously. To do that, a thread will be running to handle new messages, while the main program sends them.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">sendMessage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">getNewMessage</span><span class="p">();</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">handleMessageInGame</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">ParseMessage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sendMessage</span></code>: takes the message as an argument and send it to the server</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getNewMessage</span></code>: receive new messages from server</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handleMessageInGame</span></code>: takes the received message if we are in a game, and will handle inputs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ParseMessage</span></code>: takes the received message, will setup the game, create place for new users</p></li>
+</ul>
+</section>
+<section id="in-game-functions">
+<h3>In-game functions<a class="headerlink" href="#in-game-functions" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">runGame</span><span class="p">();</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">checkCollision</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">newPosX</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">newPosY</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">otherPosX</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">otherPosY</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">upFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">downFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">leftFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">rightFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">actionFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">quitFunction</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">isReceived</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">R-Touhou</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ecs.html">ECS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Client documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-run-a-client">How to run a client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#explaining-the-code">Explaining the code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#client-connection">Client connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#send-and-receive-messages">Send and receive messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#in-game-functions">In-game functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ecs/documentation/macros.html" title="previous chapter">ECS - Macros Documenation</a></li>
+      <li>Next: <a href="server.html" title="next chapter">Server Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Viktor Bruggeman, Cyprien Nguyen-Van-Vien, Damien Benais-Captal, Pierre-Louis Leroy, Virgile Berrier.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/client.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

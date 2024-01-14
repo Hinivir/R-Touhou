@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Registry Class &#8212; R-Touhou  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="registry-class">
+<span id="id1"></span><h1>Registry Class<a class="headerlink" href="#registry-class" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class in the R-Touhou_Bootstrap project serves as a central hub for managing and storing components in an Entity-Component-System (ECS) architecture. It allows the registration of different components, entity creation, component addition/removal, and entity deletion.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class is a fundamental part of ECS systems, enabling the organization and manipulation of game entities and their associated components.</p>
+</section>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><span class="xref std std-ref">registry_how_to_use</span></p></li>
+<li><p><span class="xref std std-ref">registry_explanation</span></p></li>
+</ol>
+</section>
+<section id="how-to-use-the-registry-class">
+<h2>How to Use the Registry Class<a class="headerlink" href="#how-to-use-the-registry-class" title="Link to this heading">¶</a></h2>
+<p>Before using the <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class, ensure that you have a basic understanding of ECS and the components used in the R-Touhou_Bootstrap project.</p>
+<ol class="arabic simple">
+<li><p>Instantiate the <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class with the desired maximum number of entities.</p></li>
+<li><p>Register components using the <code class="docutils literal notranslate"><span class="pre">registerComponent</span></code> method.</p></li>
+<li><p>Spawn entities using the <code class="docutils literal notranslate"><span class="pre">spawnEntity</span></code> method.</p></li>
+<li><p>Add, remove, or modify components for entities as needed.</p></li>
+</ol>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="nf">registry</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w"> </span><span class="c1">// Maximum 100 entities</span>
+<span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">positions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Position</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">velocities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Velocity</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">drawables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Drawable</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="n">GameEngine</span><span class="o">::</span><span class="n">Entity</span><span class="w"> </span><span class="n">entity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">spawnEntity</span><span class="p">();</span>
+<span class="n">positions</span><span class="p">.</span><span class="n">emplaceAt</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="n">velocities</span><span class="p">.</span><span class="n">emplaceAt</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">drawables</span><span class="p">.</span><span class="n">emplaceAt</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;example_sprite.png&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="explanation-of-the-registry-class">
+<h2>Explanation of the Registry Class<a class="headerlink" href="#explanation-of-the-registry-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class consists of the following components:</p>
+<ol class="arabic">
+<li><p><strong>Constructor</strong></p>
+<p>The constructor initializes a <code class="docutils literal notranslate"><span class="pre">Registry</span></code> instance with the specified maximum number of entities.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">explicit</span><span class="w"> </span><span class="n">Registry</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">maxEntities</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Register Component Method</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">registerComponent</span></code> method registers a new component to the registry.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Component</span><span class="o">&gt;</span>
+<span class="n">SparseArray</span><span class="o">&lt;</span><span class="n">Component</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">registerComponent</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Get Component Method</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">getComponent</span></code> method retrieves a reference to the <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> of a specified component.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Component</span><span class="o">&gt;</span>
+<span class="n">SparseArray</span><span class="o">&lt;</span><span class="n">Component</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getComponent</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Note: There are multiple implementations of this method in the source code.</p>
+</li>
+<li><p><strong>Spawn Entity Methods</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spawnEntity()</span></code>: Spawns a new entity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spawnEntity(const</span> <span class="pre">std::size_t</span> <span class="pre">&amp;index)</span></code>: Spawns a new entity with a specific index.</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Entity</span><span class="w"> </span><span class="nf">spawnEntity</span><span class="p">();</span>
+<span class="n">Entity</span><span class="w"> </span><span class="nf">spawnEntity</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Kill Entity Method</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">killEntity</span></code> method marks an entity for removal.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">killEntity</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entity</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Add Component Methods</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">addComponent</span></code>: Adds a component to an entity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emplaceComponent</span></code>: Adds a component to an entity with additional parameters.</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Component</span><span class="o">&gt;</span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">SparseArray</span><span class="o">&lt;</span><span class="n">Component</span><span class="o">&gt;::</span><span class="n">ReferenceType</span><span class="w"> </span><span class="n">addComponent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">Component</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">component</span><span class="p">);</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Component</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Params</span><span class="o">&gt;</span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">SparseArray</span><span class="o">&lt;</span><span class="n">Component</span><span class="o">&gt;::</span><span class="n">ReferenceType</span><span class="w"> </span><span class="n">emplaceComponent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entity</span><span class="p">,</span><span class="w"> </span><span class="n">Params</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="n">params</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Remove Component Method</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">removeComponent</span></code> method removes a component from an entity.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Component</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">removeComponent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entity</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="private-members">
+<h2>Private Members<a class="headerlink" href="#private-members" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_container</span></code>: Unordered map containing all the components.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_deleters</span></code>: Vector containing all the deleters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_systems</span></code>: Vector containing all the systems.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_emptyIndexes</span></code>: Vector containing all the empty indexes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_maxEntities</span></code>: Maximum number of entities.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_numEntities</span></code>: Number of entities.</p></li>
+</ul>
+<p>Note: This documentation provides an overview of the <code class="docutils literal notranslate"><span class="pre">Registry</span></code> class and its usage within the R-Touhou_Bootstrap project. For detailed implementation details and usage examples, refer to the corresponding source code.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">R-Touhou</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ecs.html">ECS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Viktor Bruggeman, Cyprien Nguyen-Van-Vien, Damien Benais-Captal, Pierre-Louis Leroy, Virgile Berrier.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/registry.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

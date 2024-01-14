@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ECS &#8212; R-Touhou  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ECS - Components Guide" href="ecs/guides/components.html" />
+    <link rel="prev" title="Welcome to R-Touhou’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="ecs">
+<span id="ecs-doc"></span><h1>ECS<a class="headerlink" href="#ecs" title="Link to this heading">¶</a></h1>
+<p>Welcome to the ECS documentation. Here you’ll find everything that you need for creating your own game!</p>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#guides">Guides</a></p></li>
+<li><p><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a></p></li>
+<li><p><a class="reference internal" href="#questions">Questions</a></p></li>
+</ol>
+</section>
+<section id="guides">
+<h2>Guides<a class="headerlink" href="#guides" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ecs/guides/components.html">ECS - Components Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/components.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/components.html#creating-the-header-file">Creating the header file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/components.html#register-component">Register Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/components.html#add-the-component-to-an-entity">Add the component to an entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/components.html#adding-the-system">Adding the system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ecs/guides/systems.html">ECS - Systems Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#declaring-a-system">Declaring a system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#extracting-data-from-the-registry">Extracting data from the registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#looping-through-our-entities">Looping through our entities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#result">Result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#calling-the-system">Calling the system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/guides/systems.html#expendaing-with-mygame-gravity">Expendaing with MyGame::Gravity</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="detailed-documentation">
+<h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ecs/documentation/components.html">ECS - Macros Documenation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#color">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#controllable">Controllable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#drawable">Drawable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#hitbox">Hitbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#life">Life</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#outline">Outline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#path">Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#position">Position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#projectile">Projectile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#size">Size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#sprite">Sprite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#spritetextureanimation">SpriteTextureAnimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#spritetexturerect">SpriteTextureRect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#text">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#velocity">Velocity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#window">Window</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#zindex">ZIndex</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ecs/documentation/systems.html">ECS - Systems Documenation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-attacksystem">GameEngine::System.attackSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-collisionsystem">GameEngine::System.collisionSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-controlsystem">GameEngine::System.controlSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-deleteentitiessystem">GameEngine::System.deleteEntitiesSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-drawsystem">GameEngine::System.drawSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-initenemy">GameEngine::System.initEnemy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-movementsystem">GameEngine::System.movementSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-spritesystem">GameEngine::System.spriteSystem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ecs/documentation/macros.html">ECS - Macros Documenation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#game-engine-for-each">GAME_ENGINE_FOR_EACH ⚠️</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="questions">
+<h2>Questions<a class="headerlink" href="#questions" title="Link to this heading">¶</a></h2>
+<section id="how-do-i-import-ltype-s-ecs">
+<h3>How do I import LType’s ECS?<a class="headerlink" href="#how-do-i-import-ltype-s-ecs" title="Link to this heading">¶</a></h3>
+<p>All the code that you’ll need is inside headers. (.hpp files)</p>
+<p>You just have to import the headers that you need in your files.</p>
+<p>For example, if you have the following code:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;SFML/Graphics.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="c1">// Initialisation</span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">nbRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span>
+<span class="w">   </span><span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="w"> </span><span class="n">window</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">VideoMode</span><span class="p">(</span><span class="n">WINDOW_WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">WINDOW_HEIGHT</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;ECS&quot;</span><span class="p">);</span>
+<span class="w">   </span><span class="n">window</span><span class="p">.</span><span class="n">setFramerateLimit</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
+<span class="w">   </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="n">registry</span><span class="p">(</span><span class="n">nbRegistry</span><span class="p">);</span>
+<span class="w">   </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="w"> </span><span class="n">system</span><span class="p">;</span>
+<span class="w">   </span><span class="c1">// Registering components for system.spriteSystem and system.drawSystem</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Controllable</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Drawable</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Outline</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Position</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Size</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Sprite</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">SpriteTextureAnimation</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">SpriteTextureRect</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Text</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">ZIndex</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">   </span><span class="c1">// Main Loop</span>
+<span class="w">   </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">isOpen</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="w"> </span><span class="n">event</span><span class="p">;</span>
+<span class="w">         </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">pollEvent</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="o">::</span><span class="n">Closed</span><span class="p">)</span>
+<span class="w">               </span><span class="n">window</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="w">         </span><span class="c1">// Initializing sprite textures</span>
+<span class="w">         </span><span class="n">system</span><span class="p">.</span><span class="n">spriteSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+<span class="w">         </span><span class="c1">// Drawing entities on screen</span>
+<span class="w">         </span><span class="n">system</span><span class="p">.</span><span class="n">drawSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">);</span>
+<span class="w">         </span><span class="c1">// Displaying SFML window, then clearing it</span>
+<span class="w">         </span><span class="n">window</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
+<span class="w">         </span><span class="n">window</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You’ll just need to import the following headers at the start of your code:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Registry.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems.hpp&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="do-i-need-to-register-my-components-before-using-them">
+<h3>Do I need to register my components before using them?<a class="headerlink" href="#do-i-need-to-register-my-components-before-using-them" title="Link to this heading">¶</a></h3>
+<p>Yes, you’ll need to register your components before using them. Otherwise, the ECS can’t store your data.</p>
+</section>
+<section id="what-is-the-sf-namespace">
+<h3>What is the <strong>sf</strong> namespace<a class="headerlink" href="#what-is-the-sf-namespace" title="Link to this heading">¶</a></h3>
+<p>The <strong>sf</strong> namespace is used by the multimedia library called [SFML](<a class="reference external" href="https://www.sfml-dev.org">https://www.sfml-dev.org</a>).</p>
+<p>This ECS uses SFML for everything related to graphics.</p>
+<p>Code from SFML does <strong>NOT</strong> come from this ECS.</p>
+</section>
+<section id="can-i-register-multiple-components-in-one-line">
+<h3>Can I register multiple components in one line?<a class="headerlink" href="#can-i-register-multiple-components-in-one-line" title="Link to this heading">¶</a></h3>
+<p>Technically no, but sort of. The only way to register multiple components in one line should be something like:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">();</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Drawable</span><span class="o">&gt;</span><span class="p">();</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Sprite</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>But it’s not really pretty and readable, is it?</p>
+<p>If you really want to define multiple components like this, you can still use the <cite>GAME_ENGINE_FOR_EACH</cite> macro in the following way:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Macros/ForEach.hpp&quot;</span>
+<span class="cp">#define REGISTER_COMPONENT(COMPONENT) registry.registerComponent&lt;COMPONENT&gt;();</span>
+<span class="n">GAME_ENGINE_FOR_EACH</span><span class="p">(</span><span class="n">REGISTER_COMPONENT</span><span class="p">,</span><span class="w"> </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Color</span><span class="p">,</span><span class="w"> </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Drawable</span><span class="p">,</span><span class="w"> </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Sprite</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Warning! As seeen in <a class="reference internal" href="ecs/documentation/macros.html#ecs-documentation-macros"><span class="std std-ref">ECS - Macros Documenation</span></a>, the <cite>GAME_ENGINE_FOR_EACH</cite> macro may <strong>not</strong> work on <strong>Windows</strong> devices!</p>
+</section>
+<section id="do-you-like-ice-cream">
+<h3>Do you like ice cream?<a class="headerlink" href="#do-you-like-ice-cream" title="Link to this heading">¶</a></h3>
+<p>Yes I do.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">R-Touhou</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ECS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#guides">Guides</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ecs/guides/components.html">ECS - Components Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ecs/guides/systems.html">ECS - Systems Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ecs/documentation/components.html">ECS - Macros Documenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ecs/documentation/systems.html">ECS - Systems Documenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ecs/documentation/macros.html">ECS - Macros Documenation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#questions">Questions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-do-i-import-ltype-s-ecs">How do I import LType’s ECS?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#do-i-need-to-register-my-components-before-using-them">Do I need to register my components before using them?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-the-sf-namespace">What is the <strong>sf</strong> namespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#can-i-register-multiple-components-in-one-line">Can I register multiple components in one line?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#do-you-like-ice-cream">Do you like ice cream?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to R-Touhou’s documentation!</a></li>
+      <li>Next: <a href="ecs/guides/components.html" title="next chapter">ECS - Components Guide</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Viktor Bruggeman, Cyprien Nguyen-Van-Vien, Damien Benais-Captal, Pierre-Louis Leroy, Virgile Berrier.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/ecs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

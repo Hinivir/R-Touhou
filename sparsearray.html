@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SparseArray Class &#8212; R-Touhou  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sparsearray-class">
+<span id="sparse-array-class"></span><h1>SparseArray Class<a class="headerlink" href="#sparsearray-class" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> class in the R-Touhou_Bootstrap project is designed to represent an array that can have empty slots. It is a templated class, allowing storage of components of any type.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> class can be used to manage arrays with potential empty slots, and it provides functionalities for inserting, erasing, and retrieving values. The class is particularly useful in ECS (Entity-Component-System) architectures.</p>
+</section>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><span class="xref std std-ref">sparse_array_how_to_use</span></p></li>
+<li><p><span class="xref std std-ref">sparse_array_explanation</span></p></li>
+</ol>
+</section>
+<section id="how-to-use-the-sparsearray-class">
+<h2>How to Use the SparseArray Class<a class="headerlink" href="#how-to-use-the-sparsearray-class" title="Link to this heading">¶</a></h2>
+<p>Before using the <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> class, ensure that you have a basic understanding of the ECS architecture and its components.</p>
+<ol class="arabic simple">
+<li><p>Instantiate the <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> class with the desired component type.</p></li>
+<li><p>Use the provided methods to manipulate the array, such as insertion, erasure, and retrieval.</p></li>
+</ol>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseArray</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseIntArray</span><span class="p">;</span>
+<span class="n">sparseIntArray</span><span class="p">.</span><span class="n">insertAt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="explanation-of-the-sparsearray-class">
+<h2>Explanation of the SparseArray Class<a class="headerlink" href="#explanation-of-the-sparsearray-class" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> class consists of the following components:</p>
+<ol class="arabic">
+<li><p><strong>Type Definitions</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ValueType</span></code>: Type of the value stored in the array (<code class="docutils literal notranslate"><span class="pre">std::optional&lt;Component&gt;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ReferenceType</span></code>: Type of the reference to the value stored in the array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConstReferenceType</span></code>: Type of the const reference to the value stored in the array.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ContainerType</span></code>: Type of the container used to store the values (<code class="docutils literal notranslate"><span class="pre">std::vector&lt;ValueType&gt;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SizeType</span></code>: Type of the size of the array (<code class="docutils literal notranslate"><span class="pre">typename</span> <span class="pre">ContainerType::size_type</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Iterator</span></code>: Type of the iterator of the array (<code class="docutils literal notranslate"><span class="pre">typename</span> <span class="pre">ContainerType::iterator</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConstIterator</span></code>: Type of the const iterator of the array (<code class="docutils literal notranslate"><span class="pre">typename</span> <span class="pre">ContainerType::const_iterator</span></code>).</p></li>
+</ul>
+</li>
+<li><p><strong>Default Constructor</strong></p>
+<p>The default constructor initializes an empty <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseArray</span><span class="p">(){};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Copy Constructor</strong></p>
+<p>The copy constructor creates a new <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> by copying the content of another <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseArray</span><span class="p">(</span><span class="n">SparseArray</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sparseArray</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_data</span><span class="p">(</span><span class="n">sparseArray</span><span class="p">.</span><span class="n">_data</span><span class="p">){};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Destructor</strong></p>
+<p>The default destructor cleans up resources associated with the <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">SparseArray</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Copy Assignment Operator</strong></p>
+<p>The copy assignment operator assigns the content of another <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> to the current one.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseArray</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">SparseArray</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">_data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Move Assignment Operator</strong></p>
+<p>The move assignment operator assigns the content of another <code class="docutils literal notranslate"><span class="pre">SparseArray</span></code> through a move operation.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseArray</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">SparseArray</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">_data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Overload for the [] Operator</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">operator[]</span></code> overloads allow accessing values at specific indices in the array.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">ReferenceType</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="n">SizeType</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span><span class="w"> </span><span class="p">};</span>
+<span class="n">ConstReferenceType</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="n">SizeType</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Iterators</strong></p>
+<p>The class provides methods to obtain iterators for traversing the array.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Iterator</span><span class="w"> </span><span class="nf">begin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+<span class="n">ConstIterator</span><span class="w"> </span><span class="nf">begin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+<span class="n">ConstIterator</span><span class="w"> </span><span class="nf">cbegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">cbegin</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+<span class="n">Iterator</span><span class="w"> </span><span class="nf">end</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+<span class="n">ConstIterator</span><span class="w"> </span><span class="nf">end</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+<span class="n">ConstIterator</span><span class="w"> </span><span class="nf">cend</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">cend</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Size Method</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">size()</span></code> method returns the size of the array.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SizeType</span><span class="w"> </span><span class="nf">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_data</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Insertion Methods</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">insertAt(SizeType</span> <span class="pre">pos,</span> <span class="pre">Component</span> <span class="pre">const</span> <span class="pre">&amp;comp)</span></code>: Inserts a copy of the given value at the specified position.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">insertAt(SizeType</span> <span class="pre">pos,</span> <span class="pre">Component</span> <span class="pre">&amp;&amp;comp)</span></code>: Inserts the component at the specified position.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emplaceAt(SizeType</span> <span class="pre">pos)</span></code>: Creates the component at the specified position.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emplaceAt(SizeType</span> <span class="pre">pos,</span> <span class="pre">Params</span> <span class="pre">&amp;&amp;...params)</span></code>: Creates the component at the specified position with additional parameters.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">ReferenceType</span><span class="w"> </span><span class="nf">insertAt</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">Component</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comp</span><span class="p">);</span>
+<span class="n">ReferenceType</span><span class="w"> </span><span class="nf">insertAt</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">Component</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">comp</span><span class="p">);</span>
+<span class="n">ReferenceType</span><span class="w"> </span><span class="nf">emplaceAt</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
+<span class="n">ReferenceType</span><span class="w"> </span><span class="nf">emplaceAt</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">Params</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="n">params</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="11">
+<li><p><strong>Erasure Method</strong></p></li>
+</ol>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">erase(SizeType</span> <span class="pre">pos)</span></code> method erases the value at the specified position.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">erase</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="12">
+<li><p><strong>Index Retrieval Method</strong></p></li>
+</ol>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">getIndex(ValueType</span> <span class="pre">const</span> <span class="pre">&amp;val)</span></code> method returns the index of the given value.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getIndex</span><span class="p">(</span><span class="n">ValueType</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="13">
+<li><p><strong>Resize Method</strong></p></li>
+</ol>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">resize(SizeType</span> <span class="pre">&amp;size)</span></code> method resizes the array.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">resize</span><span class="p">(</span><span class="n">SizeType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="private-member">
+<h2>Private Member<a class="headerlink" href="#private-member" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">_data</span></code>: Container used to store the values.</p>
+<blockquote>
+<div><p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">ContainerType</span><span class="w"> </span><span class="n">_data</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">R-Touhou</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ecs.html">ECS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Viktor Bruggeman, Cyprien Nguyen-Van-Vien, Damien Benais-Captal, Pierre-Louis Leroy, Virgile Berrier.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/sparsearray.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

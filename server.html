@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Server Documentation &#8212; R-Touhou  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Client documentation" href="client.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="server-documentation">
+<h1>Server Documentation<a class="headerlink" href="#server-documentation" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="server-hpp">
+<h2>Server.hpp<a class="headerlink" href="#server-hpp" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef SERVER_HPP</span>
+<span class="w">    </span><span class="cp">#define SERVER_HPP</span>
+
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;asio.hpp&gt;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">udp</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Server</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="o">:</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">isChatLocked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// A boolean to know if the chat is locked</span>
+<span class="w">        </span><span class="n">asio</span><span class="o">::</span><span class="n">io_service</span><span class="w"> </span><span class="n">io_service</span><span class="p">;</span><span class="w"> </span><span class="c1">//</span>
+<span class="w">        </span><span class="n">udp</span><span class="o">::</span><span class="n">socket</span><span class="w"> </span><span class="n">server_socket</span><span class="p">;</span><span class="w"> </span><span class="c1">// The socket for the server to be able to communicate</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">;</span><span class="w"> </span><span class="c1">// The vector of the endpoint of the client</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">readyClients</span><span class="p">;</span><span class="w"> </span><span class="c1">// The vector of the endpoint of the client that are ready</span>
+<span class="w">        </span><span class="c1">// The confirmation message and the error message</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">confirmationMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;101: You are connected!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">errorMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;102: Error sending confirmation message to client!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">        </span><span class="n">Server</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">port</span><span class="p">);</span><span class="w"> </span><span class="c1">// The constructor of the server with ip and port</span>
+<span class="w">        </span><span class="o">~</span><span class="n">Server</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span><span class="w"> </span><span class="c1">// The destructor of the class</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">closeServer</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span><span class="w"> </span><span class="c1">// A function to close the Server</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">startServer</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span><span class="w"> </span><span class="c1">// A function to start the Server</span>
+<span class="w">        </span><span class="c1">// The function to connect a client to the server, it take the endpoint of the client, a buffer and the size of the buffer</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">connectClient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">acceptClients</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span><span class="w"> </span><span class="c1">// The function to accept client</span>
+<span class="w">        </span><span class="c1">// The function to broadcast a message to the other client</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">broadcastMessage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sender</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">notifyGameReady</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span><span class="w"> </span><span class="c1">// The function to notify the client that the game is ready</span>
+<span class="p">};</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>The hpp file for the server, with the class, and the function need for the server.</p>
+</section>
+<section id="server-cpp-include">
+<h2>Server.cpp : Include<a class="headerlink" href="#server-cpp-include" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;thread&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;asio.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;../include/Server.hpp&quot;</span>
+</pre></div>
+</div>
+<p>The include for the file, we need iostream to write to std::cout, asio for the communication with udp and the include of the server hpp file</p>
+</section>
+<section id="server-cpp-server-server">
+<h2>Server.cpp : Server::Server<a class="headerlink" href="#server-cpp-server-server" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Server</span><span class="o">::</span><span class="n">Server</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">port</span><span class="p">)</span>
+<span class="o">:</span><span class="w"> </span><span class="n">server_socket</span><span class="p">(</span><span class="n">io_service</span><span class="p">,</span><span class="w"> </span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="p">(</span><span class="n">udp</span><span class="o">::</span><span class="n">v4</span><span class="p">(),</span><span class="w"> </span><span class="n">port</span><span class="p">))</span><span class="w"> </span><span class="c1">// the init of the server socket</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">server_socket</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"> </span><span class="c1">// close the socket</span>
+<span class="w">        </span><span class="n">server_socket</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">udp</span><span class="o">::</span><span class="n">v4</span><span class="p">());</span><span class="w"> </span><span class="c1">// open the socket with udp v4</span>
+<span class="w">        </span><span class="n">server_socket</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="p">(</span><span class="n">udp</span><span class="o">::</span><span class="n">v4</span><span class="p">(),</span><span class="w"> </span><span class="n">port</span><span class="p">));</span><span class="w"> </span><span class="c1">// bind the endpoint to the port</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// catch any error</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ERROR&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// write the error to the error output</span>
+<span class="w">        </span><span class="k">throw</span><span class="p">;</span><span class="w"> </span><span class="c1">// throw the code</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The server constructor</p>
+</section>
+<section id="id1">
+<h2>Server.cpp : Server::~Server<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Server</span><span class="o">::~</span><span class="n">Server</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">closeServer</span><span class="p">();</span><span class="w"> </span><span class="c1">// Call the function to close the server</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The server destructor</p>
+</section>
+<section id="server-cpp-server-closeserver">
+<h2>Server.cpp : Server::closeServer<a class="headerlink" href="#server-cpp-server-closeserver" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::closeServer</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">server_socket</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"> </span><span class="c1">// close the socket of the server</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The close server method</p>
+</section>
+<section id="server-cpp-server-startserver">
+<h2>Server.cpp : Server::startServer<a class="headerlink" href="#server-cpp-server-startserver" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::startServer</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Server started&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// write to cout that the server start</span>
+<span class="w">    </span><span class="n">acceptClients</span><span class="p">();</span><span class="w"> </span><span class="c1">// call the accept client method</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The start server method</p>
+</section>
+<section id="server-cpp-server-notifygameready">
+<h2>Server.cpp : Server::notifyGameReady<a class="headerlink" href="#server-cpp-server-notifygameready" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::notifyGameReady</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// set string to send to client</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">gameReadyMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Game is ready! Let the fun begin!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// send message to all clients</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">server_socket</span><span class="p">.</span><span class="n">send_to</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">gameReadyMessage</span><span class="p">),</span><span class="w"> </span><span class="n">client</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// catch any error</span>
+<span class="w">            </span><span class="c1">// write the error to the error output</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error sending game ready message to client &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="n">address</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The notify game ready method</p>
+</section>
+<section id="server-cpp-server-connectclient">
+<h2>Server.cpp : Server::connectClient<a class="headerlink" href="#server-cpp-server-connectclient" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::connectClient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// set the string to the message received</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// if the message is connect</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;connect</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// write to cout that the client is connected</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Client connected: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">address</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// push back the client endpoint in the vector of the connected client</span>
+<span class="w">        </span><span class="n">connectedClients</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// send the confirmation message to the client</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">confirmationMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;101:You are connected!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// try to send the confirmation message to the client</span>
+<span class="w">            </span><span class="n">server_socket</span><span class="p">.</span><span class="n">send_to</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">confirmationMessage</span><span class="p">),</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// catch any error</span>
+<span class="w">            </span><span class="c1">// send the error message to the client</span>
+<span class="w">            </span><span class="n">server_socket</span><span class="p">.</span><span class="n">send_to</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="s">&quot;102:Error Connection!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// write the error to the error output</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error sending confirmation message to client &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">address</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// if the message is ready</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;ready</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// write to cout that the client is ready</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Client is ready: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">address</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// push back the client endpoint in the vector of the ready client</span>
+<span class="w">        </span><span class="n">readyClients</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// if the number of ready client is the same as the number of connected client</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">readyClients</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// write to cout that all the client are ready</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;All clients are ready. Starting the game!&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// set the chat to locked</span>
+<span class="w">            </span><span class="n">isChatLocked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// call the notify game ready method</span>
+<span class="w">            </span><span class="n">notifyGameReady</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// if any other message</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="c1">// call the broadcast message method</span>
+<span class="w">        </span><span class="n">broadcastMessage</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">,</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// find if the client is in the vector of the connected client</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">find</span><span class="p">(</span><span class="n">connectedClients</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+<span class="w">        </span><span class="c1">// push back the client endpoint in the vector of the connected client</span>
+<span class="w">        </span><span class="n">connectedClients</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The connect client method</p>
+</section>
+<section id="server-cpp-server-acceptclients">
+<h2>Server.cpp : Server::acceptClients<a class="headerlink" href="#server-cpp-server-acceptclients" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::broadcastMessage</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">asio</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sender</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">);</span><span class="w"> </span><span class="c1">// the message received from the client</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">connectedClients</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// for each client in the vector of the connected client</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">client</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">sender</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// if the client is not the sender</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;connect&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// if the message is not connect</span>
+<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// try to send the message to the client</span>
+<span class="w">                    </span><span class="n">server_socket</span><span class="p">.</span><span class="n">send_to</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">message</span><span class="p">),</span><span class="w"> </span><span class="n">client</span><span class="p">);</span><span class="w"> </span><span class="c1">// send the message to the client</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// catch any error</span>
+<span class="w">                    </span><span class="c1">// write the error to the error output</span>
+<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error sending message to client &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="n">address</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="n">port</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The broadcast message method</p>
+</section>
+<section id="id2">
+<h2>Server.cpp : Server::acceptClients<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Server::acceptClients</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Waiting for clients...&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// write to cout that the server is waiting for client</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// while the server is running</span>
+<span class="w">            </span><span class="n">udp</span><span class="o">::</span><span class="n">endpoint</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">;</span><span class="w"> </span><span class="c1">// the endpoint of the client</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="mi">2048</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buffer</span><span class="p">;</span><span class="w"> </span><span class="c1">// the buffer of the message</span>
+<span class="w">            </span><span class="c1">// the size of the message received</span>
+<span class="w">            </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytes_received</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">server_socket</span><span class="p">.</span><span class="n">receive_from</span><span class="p">(</span><span class="n">asio</span><span class="o">::</span><span class="n">buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">),</span><span class="w"> </span><span class="n">client_endpoint</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bytes_received</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">// if the message received is more than 0</span>
+<span class="w">                </span><span class="n">connectClient</span><span class="p">(</span><span class="n">client_endpoint</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">bytes_received</span><span class="p">);</span><span class="w"> </span><span class="c1">// call the connect client method</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="c1">// write to cerr that the server received 0 bytes from the client</span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error: Received 0 bytes from client.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// catch any error</span>
+<span class="w">        </span><span class="c1">// write the error to the error output</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error in acceptClients: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The accept client method</p>
+</section>
+<section id="main-cpp-include">
+<h2>main.cpp : include<a class="headerlink" href="#main-cpp-include" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;include/Server.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sstream&gt;</span>
+</pre></div>
+</div>
+<p>The include for the file, the include of the server hpp file and the sstream for the stringstream</p>
+</section>
+<section id="main-cpp-handleerror">
+<h2>main.cpp : handleError<a class="headerlink" href="#main-cpp-handleerror" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// if the number of argument is not 3</span>
+<span class="w">        </span><span class="c1">// write to cerr that the number of argument is invalid</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ERROR: invalid number of arguments&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// return true because there is an error</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="c1">// the stringstream of the argument 2</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">port</span><span class="p">;</span><span class="w"> </span><span class="c1">// the port</span>
+<span class="w">    </span><span class="n">ss</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">port</span><span class="p">;</span><span class="w"> </span><span class="c1">// put the argument 2 in the port</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ss</span><span class="p">.</span><span class="n">fail</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// if the stringstream fail</span>
+<span class="w">        </span><span class="c1">// write to cerr that the port is invalid</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ERROR: invalid port </span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// return true because there is an error</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// return false because there is no error</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The handle error method</p>
+</section>
+<section id="main-cpp-get-port">
+<h2>main.cpp : get_port<a class="headerlink" href="#main-cpp-get-port" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="nf">get_port</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">portString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">portString</span><span class="p">);</span><span class="w"> </span><span class="c1">// the stringstream of the port string</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">port</span><span class="p">;</span><span class="w"> </span><span class="c1">// the port</span>
+<span class="w">    </span><span class="n">ss</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">port</span><span class="p">;</span><span class="w"> </span><span class="c1">// put the port string in the port</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">port</span><span class="p">;</span><span class="w"> </span><span class="c1">// return the port</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The get port method</p>
+</section>
+<section id="main-cpp-main">
+<h2>main.cpp : main<a class="headerlink" href="#main-cpp-main" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handle_error</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">))</span><span class="w"> </span><span class="c1">// if there is an error</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">84</span><span class="p">;</span><span class="w"> </span><span class="c1">// return 84</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_port</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="c1">// get the port</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c1">// get the ip</span>
+<span class="w">    </span><span class="n">Server</span><span class="w"> </span><span class="n">server</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">);</span><span class="w"> </span><span class="c1">// create the server</span>
+<span class="w">    </span><span class="n">server</span><span class="p">.</span><span class="n">startServer</span><span class="p">();</span><span class="w"> </span><span class="c1">// start the server</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// return 0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The main method</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">R-Touhou</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ecs.html">ECS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#server-hpp">Server.hpp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-include">Server.cpp : Include</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-server">Server.cpp : Server::Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Server.cpp : Server::~Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-closeserver">Server.cpp : Server::closeServer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-startserver">Server.cpp : Server::startServer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-notifygameready">Server.cpp : Server::notifyGameReady</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-connectclient">Server.cpp : Server::connectClient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-cpp-server-acceptclients">Server.cpp : Server::acceptClients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Server.cpp : Server::acceptClients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-cpp-include">main.cpp : include</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-cpp-handleerror">main.cpp : handleError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-cpp-get-port">main.cpp : get_port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-cpp-main">main.cpp : main</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="client.html" title="previous chapter">Client documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2023, Viktor Bruggeman, Cyprien Nguyen-Van-Vien, Damien Benais-Captal, Pierre-Louis Leroy, Virgile Berrier.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
