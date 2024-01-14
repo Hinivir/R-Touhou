@@ -13,6 +13,7 @@ Welcome to R-Touhou's documentation!
    ecs
    client
    server
+   RFC
 
 Indices and tables
 ==================
