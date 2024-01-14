@@ -70,11 +70,11 @@ Since we want more that just gravity, we'll add other components.
 
     registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});
-    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Ground.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
 
 Of course, `GameEngine::Drawable`, `GameEngine::Position` and `GameEngine::Sprite` will need to be registered with `registry.registerComponent`.
 
-You can change the sprite by replacing `./resources/R-Touhou/graphics/Ground.png`.
+You can change the sprite by replacing `./resources/R-Touhou/graphics/Fish.png`.
 
 Adding the system
 -----------------

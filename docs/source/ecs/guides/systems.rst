@@ -161,7 +161,7 @@ With a main that should look like this:
         registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
         registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
         registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});
-        registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Ground.png", sf::Sprite(), sf::Texture()});
+        registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
         // Main Loop
         while (window.isOpen()) {
             sf::Event event;
