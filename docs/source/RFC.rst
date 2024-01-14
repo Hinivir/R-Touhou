@@ -70,5 +70,7 @@ When receiving data, deserialize it and use the structure to get the data.
 For inquiries or further information, please contact the protocol author:
 
 **Drindael**
+
 **cyprien.nguyen-van-vien@epitech.eu**
+
 **Epitech**
