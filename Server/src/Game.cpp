@@ -147,25 +147,21 @@ bool restartGame(GameEngine::Registry &registry, sf::RenderWindow &window, bool 
 
 void Server::sendEnemies(std::vector<GameEngine::Entity> &enemies)
 {
-    while (1) {
-        for (const auto &client : connectedClients) {
-            if (std::find(initClients.begin(), initClients.end(), client)
-                != initClients.end())
-                continue;
-            try {
-                std::vector<char> serializedData
-                    = Serialization::serialize(enemies);
-                server_socket.send_to(
-                    asio::buffer(serializedData.data(), serializedData.size()),
-                    client);
-            } catch (std::exception const &e) {
-                std::cerr << "Error sending structure to client "
-                          << client.address() << ":" << client.port() << ": "
-                          << e.what() << std::endl;
-            }
+    for (const auto &client : connectedClients) {
+        if (std::find(initClients.begin(), initClients.end(), client)
+            != initClients.end())
+            continue;
+        try {
+            std::vector<char> serializedData
+                = Serialization::serialize(enemies);
+            server_socket.send_to(
+                asio::buffer(serializedData.data(), serializedData.size()),
+                client);
+        } catch (std::exception const &e) {
+            std::cerr << "Error sending structure to client "
+                      << client.address() << ":" << client.port() << ": "
+                      << e.what() << std::endl;
         }
-        if (initClients.size() == connectedClients.size())
-            break;
     }
 }
 
@@ -242,7 +238,9 @@ void Server::runGame(std::string const gamename)
         entityVector.push_back(staticEntity);
     }
     this->sendEnemies(entityVector);
+    std::cout << "Game is running" << std::endl;
     std::cout << entityVector.size() << std::endl;
+/*
     system.initEnemy(registry);
     for (std::size_t i = 0; i < registry.getComponent<GameEngine::Position>().size(); ++i) {
         GameEngine::Position &pos = registry.getComponent<GameEngine::Position>()[i].value();
@@ -251,6 +249,7 @@ void Server::runGame(std::string const gamename)
     }
 
     this->inGame = true;
+*/
 /*
     for (;;) {
         registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));

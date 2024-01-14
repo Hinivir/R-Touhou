@@ -18,6 +18,23 @@
     #include "Components/Components.hpp"
     #include "Entity.hpp"
 
+        namespace Serialization {
+        template <typename T>
+        std::vector<char> serialize(const T& data) {
+            const char* rawData = reinterpret_cast<const char*>(&data);
+            return std::vector<char>(rawData, rawData + sizeof(T));
+        }
+
+        template <typename T>
+        T deserialize(const std::vector<char>& data) {
+                if (data.size() != sizeof(T))
+                    throw std::runtime_error("Deserialize error: Data size mismatch");
+                T result;
+                std::memcpy(&result, data.data(), sizeof(T));
+                return result;
+            }
+    };
+
     struct player_t {
         std::size_t player_number;
         std::size_t pos_x;

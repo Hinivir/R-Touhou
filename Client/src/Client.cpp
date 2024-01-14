@@ -88,7 +88,7 @@ void Client::getNewMessage()
         senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
-                if (!this->hasPos && startInit) {
+                if (!this->hasPos && startInit && hasEnemy) {
                     if (bytesTransferred == sizeof(server_message_t<GameEngine::Position>)) {
                         std::cout << "Received Position data" << std::endl;
                         GameEngine::Position receivedPosition;
@@ -97,7 +97,8 @@ void Client::getNewMessage()
                     } else {
                         std::cerr << "Error receiving Position data: Invalid size" << std::endl;
                     }
-                } else if (!this->hasEnemy) {
+                } else if (!this->hasEnemy && startInit) {
+                    std::cout << "Received Enemies data" << std::endl;
                     this->enemies = this->receiveEnemies();
                     this->hasEnemy = true;
                 } else if (this->inGame) {
@@ -124,9 +125,10 @@ std::vector<GameEngine::Entity> Client::receiveEnemies()
     try {
         asio::ip::udp::endpoint senderEndpoint;
         std::size_t bytesTransferred = socket_.receive_from(asio::buffer(receiveBuffer_), senderEndpoint);
-
-        enemies = std::vector<GameEngine::Entity>(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-
+//            std::vector<char> serializedData
+//                = Serialization::serialize(enemies);
+        std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
+        enemies = Serialization::deserialize<std::vector<GameEngine::Entity>>(serializedData);
     } catch (const asio::system_error& e) {
         std::cerr << "Error receiving data: " << e.what() << std::endl;
     }

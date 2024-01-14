@@ -140,8 +140,6 @@ void Client::runGame(std::string const gamename)
     int nbRegistry = 1024;
     int testscore = 0;
     bool isGameOver = false;
-    std::vector<GameEngine::Entity> entityVector;
-
     startInit = true;
 
 //    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), gamename);
@@ -175,16 +173,16 @@ void Client::runGame(std::string const gamename)
     GameEngine::Entity score = createScore(registry);
     GameEngine::Entity gameOver = createGameOver(registry);
     GameEngine::Entity youWin = createYouWin(registry);
+    std::vector<GameEngine::Entity> entityVector = {};
 
     std::cout << entityVector.size() << std::endl;
 
-    std::cout << "entity size: " << entityVector.size() << std::endl;
+    while (!hasEnemy) { }
 
-    while (!hasEnemy) {}
-
-    for (std::size_t i = entityVector.size(); i < enemies.size(); i++)
+    for (std::size_t i = 0; i < enemies.size(); i++)
         entityVector.push_back(enemies[i]);
 
+    std::cout << "enneies size: " << enemies.size() << std::endl;
     std::cout << "entity size: " << entityVector.size() << std::endl;
     std::cout << "x = " << registry.getComponent<GameEngine::Position>()[entityVector[0]].value().x << std::endl;
     posNb = entityVector.size();

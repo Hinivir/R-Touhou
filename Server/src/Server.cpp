@@ -53,7 +53,7 @@ void Server::handleGameInit(const udp::endpoint& client_endpoint, const std::arr
         std::cout << "All clients are ready. Starting the game!" << std::endl;
         isChatLocked = true;
         notifyGameReady();
-        runGame("R-Type");
+//        runGame("R-Type");
     }
 }
 
@@ -127,6 +127,7 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
         std::cout << "All clients are ready. Starting the game!" << std::endl;
         isChatLocked = true;
         notifyGameReady();
+        runGame("R-Type");
     }
 }
 
