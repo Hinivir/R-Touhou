@@ -185,13 +185,8 @@ void Client::runGame(std::string const gamename)
     std::cout << "allPos size: " << allPos.size() << std::endl;
     std::size_t nb_entity = enemies.size() + allPos.size();
 
-    std::cout << "it was here" << std::endl;
-    std::cout << "it was here" << std::endl;
-    std::cout << "it was here" << std::endl;
-    std::cout << "it was pushed" << std::endl;
+    std::cout << allPos[0].value().x << std::endl;
     //receive
-
-//    system.initEnemy(registry);
     /*
     while (window.isOpen()) {
         sf::Event event;
