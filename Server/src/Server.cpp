@@ -8,7 +8,6 @@
 #include <iostream>
 #include <asio.hpp>
 #include "../include/Server.hpp"
-#include "Game.hpp"
 
 Server::Server(const std::string& ip, int const port)
     : server_socket(io_service, udp::endpoint(udp::v4(), port))
@@ -125,8 +124,9 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
     std::cout << "Client is ready: " << client_endpoint.address() << ":" << client_endpoint.port() << std::endl;
     readyClients.push_back(client_endpoint);
     if (readyClients.size() == connectedClients.size()) {
-        std::cout << "All clients are ready. Starting to init the game!" << std::endl;
-
+        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        isChatLocked = true;
+        notifyGameReady();
     }
 }
 

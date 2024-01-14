@@ -142,14 +142,12 @@ void Client::runGame(std::string const gamename)
     bool isGameOver = false;
     std::vector<GameEngine::Entity> entityVector;
 
-    //client
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), gamename);
+//    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), gamename);
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
-    window.setFramerateLimit(60);
+//    window.setFramerateLimit(60);
 
-    //both
     GAME_ENGINE_FOR_EACH(REGISTER_COMPONENT
         ,GameEngine::Color
         ,GameEngine::Controllable
@@ -177,16 +175,20 @@ void Client::runGame(std::string const gamename)
     GameEngine::Entity youWin = createYouWin(registry);
 
     std::cout << entityVector.size() << std::endl;
-    std::vector<GameEngine::Entity> enemies = receiveEnemies();
+
+    std::cout << "entity size: " << entityVector.size() << std::endl;
+
+    while (!isReady) {}
+
     for (std::size_t i = entityVector.size(); i < enemies.size(); i++)
         entityVector.push_back(enemies[i]);
 
-    std::cout << entityVector.size() << std::endl;
+    std::cout << "entity size: " << entityVector.size() << std::endl;
     std::cout << entityVector[0] << std::endl;
     std::cout << entityVector[1] << std::endl;
 
     system.initEnemy(registry);
-
+    /*
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -205,7 +207,6 @@ void Client::runGame(std::string const gamename)
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();
-        /*i don't know for the two ifs*/
         if (testscore == 100) {
             for (const auto& entity : entityVector)
                 registry.garbageEntities.push_back(entity);
@@ -228,4 +229,5 @@ void Client::runGame(std::string const gamename)
             isGameOver = true;
         }
     }
+    */
 }

@@ -46,10 +46,12 @@ class Client {
 
         player_t player;
         std::vector <player_t> players = {};
+        std::vector<GameEngine::Entity> enemies = {};
 
     public:
         using KeyFunction = std::function<void(bool)>;
         bool inGame = false;
+        bool isReady = false;
 
         Client(
             asio::io_context& ioContext,

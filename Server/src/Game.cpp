@@ -245,7 +245,7 @@ void Server::runGame(std::string const gamename)
     system.initEnemy(registry);
 
     this->inGame = true;
-
+/*
     for (;;) {
         registry.getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(testscore));
         system.attackSystem(registry);
@@ -272,5 +272,5 @@ void Server::runGame(std::string const gamename)
             registry.getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
         }
-    }
+    }*/
 }

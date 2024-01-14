@@ -101,6 +101,10 @@ void Client::getNewMessage()
         senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
+                if (!this->isReady) {
+                    this->enemies = this->receiveEnemies();
+                    this->isReady = true;
+                }
                 if (this->inGame) {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                     //this->handleMessageInGame(message);
