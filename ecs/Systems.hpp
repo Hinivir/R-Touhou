@@ -9,7 +9,22 @@
 #define SYSTEM_H_
 
 #include "Registry.hpp"
-#include "Components/Components.hpp"
+#include "Components/Color.hpp"
+#include "Components/Controllable.hpp"
+#include "Components/Drawable.hpp"
+#include "Components/Hitbox.hpp"
+#include "Components/Life.hpp"
+#include "Components/Outline.Hpp"
+#include "Components/Position.hpp"
+#include "Components/Size.hpp"
+#include "Components/Sprite.hpp"
+#include "Components/SpriteTextureAnimation.hpp"
+#include "Components/SpriteTextureRect.hpp"
+#include "Components/Velocity.hpp"
+#include "Components/ZIndex.hpp"
+#include "Components/Projectile.hpp"
+#include "Components/Path.hpp"
+#include "Components/Text.hpp"
 
 #include <list>
 #include <SFML/Graphics.hpp>
@@ -18,33 +33,31 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <vector>
 
 #define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
 
 #define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
 #define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
 
-#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
-#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS) \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID); auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+#define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) auto &VARIABLE = REGISTRY.getComponent<COMPONENT>()
+#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY)                                                    \
+    auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
 
-bool isColliding(
-    std::size_t x1,
-    std::size_t y1,
-    std::size_t x2,
-    std::size_t y2,
-    std::size_t width1,
-    std::size_t height1,
-    std::size_t width2,
-    std::size_t height2
-) {
-    return (
-        x1 < x2 + width2 &&
-        x1 + width1 > x2 &&
-        y1 < y2 + height2 &&
-        y1 + height1 > y2
-    );
+#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
+    auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                        \
+    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
+    auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
+
+bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width1,
+    std::size_t height1, std::size_t width2, std::size_t height2)
+{
+    return (x1 < x2 + width2 && x1 + width1 > x2 && y1 < y2 + height2 && y1 + height1 > y2);
 }
 
 namespace GameEngine
@@ -56,7 +69,8 @@ namespace GameEngine
         System() = default;
         ~System() = default;
 
-        void loggingSystem(GameEngine::Registry &r) {
+        void loggingSystem(GameEngine::Registry &r)
+        {
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
 
@@ -71,9 +85,8 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = hasVelocity ? velocityComponent.value() : GameEngine::Velocity();
 
                 if (hasPosition && hasVelocity) {
-                    std ::cerr << i << ": Position = { " << position.x << ", " << position.y
-                               << " } , Velocity = { " << velocity.x << ", " << velocity.y << " }"
-                               << std ::endl;
+                    std ::cerr << i << ": Position = { " << position.x << ", " << position.y << " } , Velocity = { "
+                               << velocity.x << ", " << velocity.y << " }" << std ::endl;
                 }
             }
         }
@@ -90,10 +103,11 @@ namespace GameEngine
                     continue;
                 // Controllable - Continues if controllable is undefined or no controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
-                if (!hasControllable || !controllable.value().isControllable) continue;
+                if (!hasControllable || !controllable.value().isControllable)
+                    continue;
                 // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
-                //if (!hasPosition) continue;
+                // if (!hasPosition) continue;
                 GameEngine::Position &position = positionComponent.value();
                 // Velocity
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
@@ -132,22 +146,24 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureAnimation, spriteTextureAnimations);
             EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureRect, spriteTextureRects);
             EXTRACT_COMPONENT(GameEngine::Text, texts);
+            EXTRACT_COMPONENT_CONST(GameEngine::Outline, outlines);
             GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
             GameEngine::ZIndexValue currentZIndex;
 
             do {
                 currentZIndex = lowestZIndex;
-                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i)
-                {
+                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i) {
                     if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                         continue;
                     // Drawable - Continues if drawable is undefined or not visible
                     FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || !drawable.value().isVisible) continue ;
+                    if (!hasDrawable || !drawable.value().isVisible)
+                        continue;
 
                     // ZIndex - Continues if (zIndex != currentZIndex)
                     FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);
-                    GameEngine::ZIndexValue const zIndex = hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
+                    GameEngine::ZIndexValue const zIndex =
+                        hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
                     if (zIndex < currentZIndex)
                         continue;
                     if (zIndex != currentZIndex) {
@@ -159,24 +175,31 @@ namespace GameEngine
                     // Color
                     FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
                     GameEngine::Color const color = hasColor ? colorComponent.value() : GameEngine::Color();
+                    // Outline
+                    FROM_COMPONENT_TO_VARIABLE_CONST(outlines, i, outlineComponent, hasOutline);
+                    GameEngine::Outline const &outline = hasOutline ? outlineComponent.value() : GameEngine::Outline();
                     // Position
                     FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
-                    GameEngine::Position const position = hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
+                    GameEngine::Position const position =
+                        hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
                     // Sprite
                     FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
                     // SpriteTextureAnimation
-                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
-                    GameEngine::SpriteTextureAnimation const spriteTextureAnimation = hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value() : GameEngine::SpriteTextureAnimation();
+                    FROM_COMPONENT_TO_VARIABLE_CONST(
+                        spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
+                    GameEngine::SpriteTextureAnimation const spriteTextureAnimation =
+                        hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value()
+                                                  : GameEngine::SpriteTextureAnimation();
                     // SpriteTextureRects
-                    FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
-                    GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
+                    FROM_COMPONENT_TO_VARIABLE_CONST(
+                        spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
+                    GameEngine::SpriteTextureRect const spriteTextureRect =
+                        hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
                     // Text
                     FROM_COMPONENT_TO_VARIABLE(texts, i, textComponent, hasText);
 
                     if (hasText) {
                         GameEngine::Text &text = textComponent.value();
-                        if (hasColor)
-                            text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
                         if (!text.isLoaded) {
                             if (text.font.loadFromFile(text.fontPath))
                                 text.text.setFont(text.font);
@@ -188,26 +211,52 @@ namespace GameEngine
                         text.text.setString(text.string);
                         text.text.setPosition(position.x, position.y);
                         text.text.setCharacterSize(text.fontSize);
+                        if (hasOutline && outline.thickness > 0) {
+                            text.text.setFillColor(
+                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
+                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
+                                     sf::Vector2f(-outline.thickness, 0),
+                                     sf::Vector2f(-outline.thickness, outline.thickness),
+                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
+                                     sf::Vector2f(outline.thickness, -outline.thickness),
+                                     sf::Vector2f(outline.thickness, 0),
+                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
+                                text.text.setPosition(position.x + coor.x, position.y + coor.y);
+                                window.draw(text.text);
+                            }
+                        }
+                        text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+                        text.text.setPosition(position.x, position.y);
                         window.draw(text.text);
                     }
-                    drawSystemEndOfHasText:
+                drawSystemEndOfHasText:
                     if (hasSprite) {
                         // Sprite
                         sf::Sprite &sprite = spriteComponent.value().sprite;
 
                         // SpriteTextureAnimation
-                        FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
-                        GameEngine::SpriteTextureAnimation const spriteTextureAnimation = hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value() : GameEngine::SpriteTextureAnimation();
+                        FROM_COMPONENT_TO_VARIABLE_CONST(
+                            spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
+                        GameEngine::SpriteTextureAnimation const spriteTextureAnimation =
+                            hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value()
+                                                      : GameEngine::SpriteTextureAnimation();
 
                         // SpriteTextureRects
-                        FROM_COMPONENT_TO_VARIABLE_CONST(spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
-                        GameEngine::SpriteTextureRect const spriteTextureRect = hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
+                        FROM_COMPONENT_TO_VARIABLE_CONST(
+                            spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
+                        GameEngine::SpriteTextureRect const spriteTextureRect =
+                            hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
 
                         //
                         sf::Vector2u const &spriteTextureSize = spriteComponent.value().texture.getSize();
-                        sf::IntRect textureRect = hasSpriteTextureRect ? sf::IntRect{spriteTextureRect.left, spriteTextureRect.top, spriteTextureRect.width, spriteTextureRect.height} : sf::IntRect{0, 0, static_cast<int>(spriteTextureSize.x), static_cast<int>(spriteTextureSize.y)};
+                        sf::IntRect textureRect = hasSpriteTextureRect
+                                                      ? sf::IntRect{spriteTextureRect.left, spriteTextureRect.top,
+                                                            spriteTextureRect.width, spriteTextureRect.height}
+                                                      : sf::IntRect{0, 0, static_cast<int>(spriteTextureSize.x),
+                                                            static_cast<int>(spriteTextureSize.y)};
 
-                        if (sprite.getTexture() == nullptr) continue; //goto drawSystemEndOfHasSprite; (removed because pointing at the end of a for() loop)
+                        if (sprite.getTexture() == nullptr)
+                            continue;
                         sprite.setPosition(position.x, position.y);
                         if (hasColor)
                             sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
@@ -220,9 +269,24 @@ namespace GameEngine
                         if (hasSpriteTextureRect || hasSpriteTextureAnimation)
                             sprite.setTextureRect(textureRect);
                         textureRect = sprite.getTextureRect();
+                        if (hasOutline && outline.thickness > 0) {
+                            sprite.setColor(
+                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
+                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
+                                     sf::Vector2f(-outline.thickness, 0),
+                                     sf::Vector2f(-outline.thickness, outline.thickness),
+                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
+                                     sf::Vector2f(outline.thickness, -outline.thickness),
+                                     sf::Vector2f(outline.thickness, 0),
+                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
+                                sprite.setPosition(position.x + coor.x, position.y + coor.y);
+                                window.draw(sprite);
+                            }
+                        }
+                        sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
+                        sprite.setPosition(position.x, position.y);
                         window.draw(sprite);
                     }
-                    //drawSystemEndOfHasSprite: (removed because at the end of a for() loop)
                 }
             } while (currentZIndex != lowestZIndex);
         }
@@ -244,6 +308,8 @@ namespace GameEngine
                 if (!hasPosition)
                     continue;
                 GameEngine::Position &position = positionComponent.value();
+                if (position.x != 30.0f && position.y != 30.0f)
+                    continue;
 
                 // Controllable - Continues if controllable is defined and controllable
                 FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
@@ -263,12 +329,17 @@ namespace GameEngine
                 FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize)
 
                 FROM_COMPONENT_TO_VARIABLE(projectiles, i, projectileComponent, hasProjectile);
-                if (hasProjectile) continue;
+                if (hasProjectile)
+                    continue;
 
                 GameEngine::Path &path = pathComponent.value();
                 GameEngine::Size const &size = sizeComponent.value();
                 position.x = rand() % 1080 + 1920;
-                position.y = rand() % 1000;
+                position.y = rand() % 1000 - 50;
+                if (position.y < 50)
+                    position.y = 50;
+                if (position.y > 1030)
+                    position.y = 1030;
                 path.startX = position.x;
                 path.startY = position.y;
                 path.endY = -100 + size.width;
@@ -282,6 +353,7 @@ namespace GameEngine
             EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Path, paths);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
 
             for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
                 FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velociyComponent, hasVelocity);
@@ -292,46 +364,27 @@ namespace GameEngine
                 GameEngine::Controllable const &controllable = controllableComponent.value();
                 FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
                 FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
-                if (!hasPath) continue;
-                GameEngine::Path const &path = pathComponent.value();
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize);
 
-                if (
-                    hasVelocity && hasPosition && !hasControllable && !hasProjectile) {
-                    position.x -= 10;
-                } else if (
-                    hasVelocity && hasPosition && hasPath &&
-                    (!hasControllable || !controllable.isControllable) && !hasProjectile) {
-                        position.x -= velocity.x;
-                        position.y -= velocity.y;
-                } else if (
-                    hasVelocity && hasPosition && hasPath
-                    && !hasControllable && hasProjectile) {
-                        position.x += velocity.x;
-                        position.y += velocity.y;
+                if (hasVelocity && hasPosition && hasPath && (!hasControllable || !controllable.isControllable) &&
+                    !hasProjectile) {
+                    position.x -= velocity.x;
+                    position.y -= velocity.y;
+                } else if (hasVelocity && hasPosition && hasPath && !hasControllable && hasProjectile) {
+                    position.x += velocity.x;
+                    position.y += velocity.y;
+                } else if (hasVelocity && hasPosition && !hasPath && !hasControllable && !hasProjectile &&
+                           sizeComponent.value().width == 1920 && sizeComponent.value().height == 1080) {
+                    if (position.x < -1920) {
+                        position.x = 1920;
+                    }
+                    position.x -= velocity.x;
+                    position.x -= velocity.x;
+                    position.y += rand() & 1 ? velocity.y : -velocity.y;
+                    position.x -= velocity.x;
+                    position.y += rand() & 1 ? velocity.y : -velocity.y;
                 }
             }
-        }
-
-        // Wait new system movement Viktor
-        void backgroundParallax(GameEngine::Registry &r)
-        {
-            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
-            EXTRACT_COMPONENT(GameEngine::Position, positions);
-            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
-
-            //for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-            FROM_COMPONENT_TO_VARIABLE_CONST(velocities, 0, velocityComponent, hasVelocity);
-            GameEngine::Velocity const &velocity = velocityComponent.value();
-            FROM_COMPONENT_TO_VARIABLE(positions, 0, positionComponent, hasPosition);
-            GameEngine::Position &position = positionComponent.value();
-            FROM_COMPONENT_TO_VARIABLE_CONST(controllables, 0, controllableComponent, hasControllable);
-            GameEngine::Controllable const &controllable = controllableComponent.value();
-
-            if (hasVelocity && hasPosition && !hasControllable) {
-                position.x -= velocity.x;
-                position.y += rand() & 1 ? velocity.y : -velocity.y;
-            }
-            //}
         }
 
         void spriteSystem(GameEngine::Registry &r)
@@ -344,10 +397,12 @@ namespace GameEngine
                     continue;
                 // Sprite - Continues if sprite is undefined or if it has no path
                 FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
-                if (!hasSprite) continue;
+                if (!hasSprite)
+                    continue;
                 GameEngine::Sprite &sprite = spriteComponent.value();
                 std::string const &path = sprite.path;
-                if (path == "") continue;
+                if (path == "")
+                    continue;
 
                 sprite.texture.loadFromFile(sprite.path);
                 sprite.sprite.setTexture(sprite.texture);
@@ -355,7 +410,8 @@ namespace GameEngine
                 // Size
                 FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, size, hasSize);
                 if (hasSize)
-                    sprite.sprite.setScale(size.value().width / sprite.texture.getSize().x, size.value().height / sprite.texture.getSize().y);
+                    sprite.sprite.setScale(size.value().width / sprite.texture.getSize().x,
+                        size.value().height / sprite.texture.getSize().y);
             }
         }
 
@@ -463,12 +519,13 @@ namespace GameEngine
                             }
                         }
                         if (hasProjectile && hasProjectilePosition && hasProjectileSize && hasProjectileHitbox) {
-                            if (isColliding(enemyPosition.value().x, enemyPosition.value().y, projectilePosition.value().x,
-                                    projectilePosition.value().y, enemySize.value().width, enemySize.value().height,
-                                    projectileSize.value().width, projectileSize.value().height)) {
+                            if (isColliding(enemyPosition.value().x, enemyPosition.value().y,
+                                    projectilePosition.value().x, projectilePosition.value().y, enemySize.value().width,
+                                    enemySize.value().height, projectileSize.value().width,
+                                    projectileSize.value().height)) {
                                 r.garbageEntities.push_back(std::size_t(enemyID));
                                 r.garbageEntities.push_back(std::size_t(j));
-                                score += 10;
+                                score += 5;
                                 break;
                             }
                         }
@@ -477,7 +534,8 @@ namespace GameEngine
             }
         }
 
-        void attackSystem(GameEngine::Registry &r) {
+        void attackSystem(GameEngine::Registry &r, std::vector<GameEngine::Entity> &entityVector)
+        {
             auto &positions = r.getComponent<GameEngine::Position>();
             auto &controllables = r.getComponent<GameEngine::Controllable>();
             EXTRACT_COMPONENT(GameEngine::Size, sizes);
@@ -487,28 +545,35 @@ namespace GameEngine
                 if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
                     continue;
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, _hasPosition);
-                GameEngine::Position &position = positionComponent.value();
+                auto position = positions[i];
                 FROM_COMPONENT_TO_VARIABLE(controllables, i, control, _hasControllable);
                 FROM_COMPONENT_TO_VARIABLE(sizes, i, size, _hasSize)
+                auto sizePlayer = sizes[i];
 
                 if (_hasPosition && _hasControllable && control.value().isControllable) {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSpacePressedUnpressed) {
                         GameEngine::Entity bullet = r.spawnEntity();
-                        r.addComponent<GameEngine::Position>(bullet, GameEngine::Position{position.x + size.value().height, position.y + size.value().width / 2});
-                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{100.0f, 0.0f});
                         r.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+                        r.addComponent<GameEngine::Position>(
+                            bullet, GameEngine::Position{
+                                        position.value().x, position.value().y + sizePlayer.value().height / 2});
+                        r.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
                         r.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
                         r.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-                        r.addComponent<GameEngine::Sprite>(bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",sf::Sprite(),sf::Texture()});
-                        r.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                        r.addComponent<GameEngine::Sprite>(
+                            bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                                        sf::Sprite(), sf::Texture()});
+                        r.addComponent<GameEngine::ZIndex>(
+                            bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
                         r.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
-                        r.addComponent<GameEngine::Path>(bullet, GameEngine::Path{position.x + size.value().height, position.y + size.value().width / 2, 1920 + 50, 1080 + 50});
+                        r.addComponent<GameEngine::Path>(
+                            bullet, GameEngine::Path{position.value().x, position.value().y, 1920 + 50, 1080 + 50});
+                        entityVector.push_back(bullet);
                     }
                 }
                 isSpacePressedUnpressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
             }
         }
-
 
         void deleteEntitiesSystem(GameEngine::Registry &r)
         {
@@ -523,14 +588,16 @@ namespace GameEngine
                 if (_hasPosition && _hasPath) {
                     if (_hasProjectile) {
                         if (pos.value().x >= path.value().endX || pos.value().y >= path.value().endY) {
-                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) !=
+                                r.garbageEntities.end())
                                 continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
                         }
                     } else {
                         if (pos.value().x <= path.value().endX || pos.value().y <= path.value().endY) {
-                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) !=
+                                r.garbageEntities.end())
                                 continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
@@ -540,6 +607,6 @@ namespace GameEngine
             }
         }
     };
-}
+} // namespace GameEngine
 
 #endif

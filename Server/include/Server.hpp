@@ -6,7 +6,7 @@
 */
 
 #ifndef SERVER_HPP
-    #define SERVER_HPP
+#define SERVER_HPP
 
     #include <iostream>
     #include <vector>
@@ -18,13 +18,13 @@
 
     #include "Entity.hpp"
 
-    #define CONNECTED "101: You are connected!\n"
-    #define DISCONNECTED "103: You are disconnected!\n"
-    #define ERROR "102: Error sending confirmation message to client!\n"
-    #define READY "104: You are ready!\n"
-    #define SERVER_FULL "105: Server is full!\n"
-    using asio::ip::udp;
+#define CONNECTED "101: You are connected!\n"
+#define DISCONNECTED "103: You are disconnected!\n"
+#define ERROR_MSG "102: Error sending confirmation message to client!\n"
+#define READY "104: You are ready!\n"
+#define SERVER_FULL "105: Server is full!\n"
 
+using asio::ip::udp;
 
     namespace Serialization {
     template <typename T>
@@ -99,4 +99,5 @@
             void runGame(std::string const gamename);
             void initGame(std::string const gamename);
     };
+
 #endif

@@ -2,35 +2,51 @@
   
 The repository for the R-Type project.  
   
+<div id="pictureRType" style="display: flex;">  
+  <img src="docs/readmePicture/pictureRType.jpg" alt="picture R-TYpe" width="300" height="150" style="margin-right: 50px;">  
+  <img src="docs/readmePicture/pictureEpitech.png" alt="picture Epitech" width="150" height="150" style="margin-right: 50px;">  
+</div>  
+
 ---  
   
 ## Table of contents  
   
-[1. The purpose of the project](#titre1)<br />  
-[A) The subjects of the project 📄](#titre11)<br />  
-[B) Rules for conventional commit messages 📄](#titre12)<br />  
-  
-[2. How to use R-Type](#titre2)<br />  
-  
-[3. People on the project](#titre3)<br />  
+[The purpose of the project 👽](#purpose_project)<br />
+[The subjects of the project 📄](#subject_project)<br />
+[Rules for conventional commit messages ➕](#conventionnal_commit)<br />
+[Requirements 🔧](#requirements)<br />
+[How to use R-Type 👨‍💻](#use_R-Type)<br />
+[Contributors 👋](#contributors)<br />
+[License 🔑](#license)<br />
   
 ---  
   
-## <a id="titre1"></a>1. The purpose of the project  
+## <a id="purpose_project"></a> The purpose of the project 👽  
   
 The purpose of the project is to implement a multithreaded server and a graphical client for a well-known legacy video game **called R-Type**, using a game engine of your own design.  
   
-### <a id="titre11"></a>A) The subjects of the project 📄  
+### <a id="subject_project"></a> The subjects of the project 📄  
   
 [R-Type - A game engine that roars!](https://intra.epitech.eu/module/2023/B-CPP-500/PAR-5-2/acti-622530/project/file/B-CPP-500_rtype.pdf)  
   
-### <a id="titre12"></a>B) Rules for conventional commit messages 📄  
+### <a id="conventionnal_commit"></a> Rules for conventional commit messages ➕  
   
 [The document rules for conventional commit messages](docs/COMMITS.md)  
+
+If you would like to contribute to the project, see [CONTRIBUTING.md](CONTRIBUTING.md)  
   
 ---  
   
-## <a id="titre2"></a>2. How to use R-Type  
+## <a id="requirements"></a> Requirements 🔧  
+  
+* The minimum cmake version required is 3.5.X  
+
+You can use this setup command:
+```
+apt install -y zip curl unzip pip python3.11-venv libudev-dev libgl-dev libgl1-mesa-dev libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev libxau-dev libxaw7-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxfixes-dev libxi-dev libxinerama-dev libxkbfile-dev libxmuu-dev libxrandr-dev libxres-dev libxss-dev libxtst-dev libxv-dev libxvmc-dev libxxf86vm-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev libxcb-dri3-dev libxcb-cursor-dev libxcb-util-dev libxcb-util0-dev libopenal-dev libvorbis-dev libflac-dev
+```
+
+## <a id="use_R-Type"></a> How to use R-Type 👨‍💻  
   
 ### Build and setup
 
@@ -68,7 +84,7 @@ You can connect as many clients as you want.
 
 ---  
   
-## <a id="titre3"></a>3. Contributors  
+## <a id="contributors"></a> Contributors 👋  
   
 | [<img src="https://github.com/Drindael.png?size=85" width=85><br><sub>Cyprien Nguyen-Van-Vien</sub>](https://github.com/Drindael) | [<img src="https://github.com/damienBC.png?size=85" width=85><br><sub>Damien Benais-Captal</sub>](https://github.com/damienBC) | [<img src="https://github.com/Pierrelouisleroy.png?size=85" width=85><br><sub>Pierre-Louis Leroy</sub>](https://github.com/Pierrelouisleroy) | [<img src="https://github.com/Hinivir.png?size=85" width=85><br><sub>Viktor Bruggeman</sub>](https://github.com/Hinivir) | [<img src="https://github.com/Lipatant.png?size=85" width=85><br><sub>Virgile Berrier</sub>](https://github.com/Lipatant)  
 | :--: | :--: | :--: | :--: | :--: |  
@@ -78,3 +94,9 @@ damien.benais-captal@epitech.eu
 pierre-louis.leroy@epitech.eu    
 viktor.bruggeman@epitech.eu    
 virgile.berrier@epitech.eu    
+
+---  
+  
+## <a id="license"></a> License 🔑  
+
+You can have a look at the [MIT license](LICENSE.md) of the project.

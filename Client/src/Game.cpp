@@ -9,7 +9,6 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
-#include "Components/Window.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 

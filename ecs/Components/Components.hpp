@@ -23,5 +23,4 @@
 #include "Components/Projectile.hpp"
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
-#include "Components/Window.hpp"
 #endif //COMPONENTS_HPP

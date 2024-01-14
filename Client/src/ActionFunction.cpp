@@ -9,11 +9,12 @@
 
 static std::size_t SPEED = 5;
 
-void Client::upFunction(std::size_t player_number) {
+void Client::upFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {
-        for (auto &p: this->players) {
+        for (auto &p : this->players) {
             if (p.player_number == player_number) {
                 std::cout << p.pos_y << std::endl;
                 p.pos_y -= SPEED;
@@ -27,11 +28,12 @@ void Client::upFunction(std::size_t player_number) {
     }
 }
 
-void Client::downFunction(std::size_t player_number) {
+void Client::downFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {
-        for (auto &p: this->players) {
+        for (auto &p : this->players) {
             if (p.player_number == player_number) {
                 p.pos_y += SPEED;
                 break;
@@ -43,11 +45,12 @@ void Client::downFunction(std::size_t player_number) {
     }
 }
 
-void Client::leftFunction(std::size_t player_number) {
+void Client::leftFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {
-        for (auto &p: this->players) {
+        for (auto &p : this->players) {
             if (p.player_number == player_number) {
                 p.pos_x -= SPEED;
                 break;
@@ -59,11 +62,12 @@ void Client::leftFunction(std::size_t player_number) {
     }
 }
 
-void Client::rightFunction(std::size_t player_number) {
+void Client::rightFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {
-        for (auto &p: this->players) {
+        for (auto &p : this->players) {
             std::cout << p.player_number << std::endl;
             if (p.player_number == player_number) {
                 p.pos_x += SPEED;
@@ -76,7 +80,8 @@ void Client::rightFunction(std::size_t player_number) {
     }
 }
 
-void Client::actionFunction(std::size_t player_number) {
+void Client::actionFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {
@@ -86,7 +91,8 @@ void Client::actionFunction(std::size_t player_number) {
     }
 }
 
-void Client::quitFunction(std::size_t player_number) {
+void Client::quitFunction(std::size_t player_number)
+{
     bool isReceived = player_number != this->player.player_number;
 
     if (isReceived) {

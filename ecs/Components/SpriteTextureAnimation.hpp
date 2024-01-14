@@ -15,7 +15,8 @@ namespace GameEngine
 {
     using SpriteTextureAnimationSlicingValue = int;
     /// @brief Defines which frame a SpriteTextureAnimation should use
-    using SpriteTextureAnimationSlicing = GameEngine::Position2BaseDefault1<GameEngine::SpriteTextureAnimationSlicingValue, 's'>;
+    using SpriteTextureAnimationSlicing =
+        GameEngine::Position2BaseDefault1<GameEngine::SpriteTextureAnimationSlicingValue, 's'>;
 
     using SpriteTextureAnimationFrameValue = int;
     /// @brief Defines how a SpriteTextureAnimation should slice a texture
@@ -23,7 +24,8 @@ namespace GameEngine
 
     /// @brief Defines the slicing of a sprite's texture for animating
     /// @note When combined with SpriteTextureRect, the slicing is applied AFTER the texture rect
-    struct SpriteTextureAnimation {
+    struct SpriteTextureAnimation
+    {
         /// @brief Defines how the texture is sliced
         /// @example A slicing of {2, 2} will result in 4 different frames
         GameEngine::SpriteTextureAnimationSlicing slicing;
