@@ -36,7 +36,7 @@ Here, we chose to represent if our entity is affected by gravity with a bool and
 
 # Register Component
 
-Hope in your main and add the following line of code before declaring all your entities:
+Hop in your main and add the following line of code before declaring all your entities:
 
 ```cpp
 registry.registerComponent<MyGame::Gravity>();
