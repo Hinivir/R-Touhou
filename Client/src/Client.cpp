@@ -92,7 +92,10 @@ void Client::getNewMessage()
                 if (!this->hasPos && startInit && hasEnemy) {
                     std::cout << "get received Position data" << std::endl;
                     std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                    allPos = Serialization::deserialize<std::vector<GameEngine::Position>>(serializedData);
+                    std::cout << "serializedData size: " << serializedData.size() << std::endl;
+                    /////segfault here
+                    allPos = Serialization::deserialize<SparseArray<GameEngine::Position>>(serializedData);
+                    std::cout << "allPos size: " << allPos.size() << std::endl;
                 } else if (!this->hasEnemy && startInit) {
                     std::cout << "get received Enemies data" << std::endl;
                     std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
