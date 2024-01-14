@@ -9,5 +9,7 @@ cmake --build .\build --config Release
 
 cd build
 cpack --config CPackConfig.cmake -C Release
-move "L-Type-0.1.1-win64.zip" "..\artifacts\L-Type-$verison-Windows.zip"
-move "L-Type-0.1.1-win64.exe" "..\artifacts\L-Type-$verison-Windows.exe"
+cd ..
+mkdir artifacts
+move "build\L-Type-0.1.1-win64.zip" "artifacts\L-Type-$verison-Windows.zip"
+move "build\L-Type-0.1.1-win64.exe" "artifacts\L-Type-$verison-Windows.exe"
