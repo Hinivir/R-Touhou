@@ -25,7 +25,6 @@
 #include "Components/Projectile.hpp"
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
-#include "Components/Sound.hpp"
 
 #include <list>
 #include <SFML/Graphics.hpp>
