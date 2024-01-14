@@ -43,10 +43,9 @@ GameEngine::Entity createBackground(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Size>(background, GameEngine::Size{WINDOW_WIDTH, WINDOW_HEIGHT});
     registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Velocity>(background, GameEngine::Velocity{2.0f, 0.0f});
-    registry.addComponent<GameEngine::Sprite>(background,
-        GameEngine::Sprite{"./resources/Zelda/graphics/BackgroundZelda.jpg", sf::Sprite(), sf::Texture()});
-    registry.addComponent<GameEngine::ZIndex>(
-        background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    registry.addComponent<GameEngine::Sprite>(
+        background, GameEngine::Sprite{"./resources/Zelda/graphics/BackgroundZelda.jpg", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
     registry.addComponent<GameEngine::Color>(background, GameEngine::Color{50, 50, 50});
 
     return (background);
