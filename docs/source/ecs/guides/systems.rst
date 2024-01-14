@@ -156,7 +156,7 @@ With a main that should look like this:
         registry.registerComponent<GameEngine::ZIndex>();
         registry.registerComponent<MyGame::Gravity>();
         // Test Entity
-        GameEngine::Entity entity = registry.spawnEntity()
+        GameEngine::Entity entity = registry.spawnEntity();
         registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
         registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
         registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});

@@ -61,7 +61,7 @@ After that, we just need to register the components that we need for it.
 
 .. code:: cpp
 
-    GameEngine::Entity entity = registry.spawnEntity()
+    GameEngine::Entity entity = registry.spawnEntity();
     registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
 
 Since we want more that just gravity, we'll add other components.
