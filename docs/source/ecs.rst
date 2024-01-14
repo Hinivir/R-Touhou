@@ -49,22 +49,37 @@ For example, if you have the following code:
    #include <iostream>
    int main(void)
    {
-       int nbRegistry = 1024;
-       bool isGameOver = false;
-       sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
-       GameEngine::Registry registry(nbRegistry);
-       GameEngine::System system;
-       registry.registerComponent<GameEngine::Drawable>();
-       while (window.isOpen()) {
-           sf::Event event;
-           while (window.pollEvent(event))
+      // Initialisation
+      int nbRegistry = 1024;
+      sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+      GameEngine::Registry registry(nbRegistry);
+      GameEngine::System system;
+      // Registering components for system.spriteSystem and system.drawSystem
+      registry.registerComponent<GameEngine::Color>();
+      registry.registerComponent<GameEngine::Controllable>();
+      registry.registerComponent<GameEngine::Drawable>();
+      registry.registerComponent<GameEngine::Outline>();
+      registry.registerComponent<GameEngine::Position>();
+      registry.registerComponent<GameEngine::Sprite>();
+      registry.registerComponent<GameEngine::SpriteTextureAnimation>();
+      registry.registerComponent<GameEngine::SpriteTextureRect>();
+      registry.registerComponent<GameEngine::Text>();
+      registry.registerComponent<GameEngine::ZIndex>();
+      // Main Loop
+      while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event))
                if (event.type == sf::Event::Closed)
-                   window.close();
-           system.drawSystem(registry, window);
-           window.display();
-           window.clear();
-       }
-       return 0;
+                  window.close();
+            // Initializing sprite textures
+            system.spriteSystem(registry);
+            // Drawing entities on screen
+            system.drawSystem(registry, window);
+            // Displaying SFML window, then clearing it
+            window.display();
+            window.clear();
+      }
+      return 0;
    }
 
 You'll just need to import the following headers at the start of your code:
@@ -73,7 +88,6 @@ You'll just need to import the following headers at the start of your code:
 
    #include "Registry.hpp"
    #include "Systems.hpp"
-   #include "Components/Window.hpp"
 
 Do I need to register my components before using them?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

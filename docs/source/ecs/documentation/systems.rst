@@ -85,7 +85,7 @@ Arguments:
     GameEngine::Registry &r
     sf::RenderWindow &window
 
-Requires GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable, GameEngine::Outline, GameEngine::Position, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect, GameEngine::Text and GameEngine.ZIndex.
+Requires GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable, GameEngine::Outline, GameEngine::Position, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect, GameEngine::Text and GameEngine::ZIndex.
 
 GameEngine::System.initEnemy
 -----------------
