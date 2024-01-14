@@ -52,6 +52,7 @@ For example, if you have the following code:
       // Initialisation
       int nbRegistry = 1024;
       sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+      window.setFramerateLimit(60);
       GameEngine::Registry registry(nbRegistry);
       GameEngine::System system;
       // Registering components for system.spriteSystem and system.drawSystem
@@ -60,6 +61,7 @@ For example, if you have the following code:
       registry.registerComponent<GameEngine::Drawable>();
       registry.registerComponent<GameEngine::Outline>();
       registry.registerComponent<GameEngine::Position>();
+      registry.registerComponent<GameEngine::Size>();
       registry.registerComponent<GameEngine::Sprite>();
       registry.registerComponent<GameEngine::SpriteTextureAnimation>();
       registry.registerComponent<GameEngine::SpriteTextureRect>();
@@ -112,7 +114,7 @@ Technically no, but sort of. The only way to register multiple components in one
 
    registry.registerComponent<GameEngine::Color>(); registry.registerComponent<GameEngine::Drawable>(); registry.registerComponent<GameEngine::Sprite>();
 
-But it's not really pretty and readable, isn't it?
+But it's not really pretty and readable, is it?
 
 If you really want to define multiple components like this, you can still use the `GAME_ENGINE_FOR_EACH` macro in the following way:
 

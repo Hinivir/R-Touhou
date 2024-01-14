@@ -12,6 +12,8 @@
 #include <cstddef>
 #include <functional>
 #include <typeindex>
+#include <stdexcept>
+#include <algorithm>
 #include <unordered_map>
 #include "SparseArray.hpp"
 #include "Entity.hpp"

@@ -141,6 +141,7 @@ With a main that should look like this:
         // Initialisation
         int nbRegistry = 1024;
         sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+        window.setFramerateLimit(60);
         GameEngine::Registry registry(nbRegistry);
         GameEngine::System system;
         // Registering components for system.spriteSystem and system.drawSystem
@@ -149,6 +150,7 @@ With a main that should look like this:
         registry.registerComponent<GameEngine::Drawable>();
         registry.registerComponent<GameEngine::Outline>();
         registry.registerComponent<GameEngine::Position>();
+        registry.registerComponent<GameEngine::Size>();
         registry.registerComponent<GameEngine::Sprite>();
         registry.registerComponent<GameEngine::SpriteTextureAnimation>();
         registry.registerComponent<GameEngine::SpriteTextureRect>();
@@ -156,11 +158,11 @@ With a main that should look like this:
         registry.registerComponent<GameEngine::ZIndex>();
         registry.registerComponent<MyGame::Gravity>();
         // Test Entity
-        GameEngine::Entity entity = registry.spawnEntity()
+        GameEngine::Entity entity = registry.spawnEntity();
         registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
         registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
         registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});
-        registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Ground.png", sf::Sprite(), sf::Texture()});
+        registry.addComponent<GameEngine::Sprite>(entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
         // Main Loop
         while (window.isOpen()) {
             sf::Event event;
