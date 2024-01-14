@@ -25,11 +25,6 @@
         bool isConnected = false;
     };
 
-    struct client_message_t {
-        std::size_t player_number;
-        sf::Keyboard key;
-    };
-
     template <typename Component>
     struct server_message_t {
         std::size_t component_number;
@@ -54,6 +49,7 @@ class Client {
         std::vector<GameEngine::Position> allPos = {};
         bool inGame = false;
         bool hasEnemy = false;
+        bool startInit = false;
         std::size_t posNb = 0;
 
         Client(
@@ -63,7 +59,6 @@ class Client {
         );
         ~Client();
         void sendMessage(const std::string& message);
-        void sendMessage(const client_message_t& message);
         void getNewMessage();
         void handleMessageInGame(const std::string& message);
         void parseMessage(const std::string message);

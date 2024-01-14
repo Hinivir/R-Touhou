@@ -33,18 +33,13 @@
 
     template <typename T>
     T deserialize(const std::vector<char>& data) {
-        if (data.size() != sizeof(T))
-            throw std::runtime_error("Deserialize error: Data size mismatch");
-        T result;
-        std::memcpy(&result, data.data(), sizeof(T));
-        return result;
+            if (data.size() != sizeof(T))
+                throw std::runtime_error("Deserialize error: Data size mismatch");
+            T result;
+            std::memcpy(&result, data.data(), sizeof(T));
+            return result;
+        }
     }
-}
-
-    struct client_message_t {
-        std::size_t player_number;
-        sf::Keyboard key;
-    };
 
     template <typename Component>
     struct server_message_t {
@@ -81,7 +76,6 @@
             void connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received);
             void acceptClients(void);
             void broadcastMessage(const std::string& message, size_t messageSize, const udp::endpoint& sender);
-            void broadcastStructureClient(client_message_t& info, size_t size, const udp::endpoint& sender);
             template <typename T>
             void broadcastStructure(server_message_t<T>& info, size_t size, const udp::endpoint& sender) {
                 std::vector<char> serializedData = Serialization::serialize(info);

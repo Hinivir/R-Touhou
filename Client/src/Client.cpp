@@ -69,19 +69,6 @@ void Client::sendMessage(const std::string &message)
     );
 }
 
-void Client::sendMessage(const client_message_t &message)
-{
-    socket_.async_send_to(
-        asio::buffer(&message, sizeof(message)),
-        serverEndpoint_,
-        [this](const asio::error_code &error, std::size_t) {
-            if (error) {
-                std::cerr << "Error sending data: " << error.message() << std::endl;
-            }
-        }
-    );
-}
-
 void Client::handleMessageInGame(const std::string &message)
 {
     std::size_t player_number = std::stoi(message.substr(0, 1));
@@ -101,14 +88,11 @@ void Client::getNewMessage()
         senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
-                if (!this->hasPos) {
-                    if (bytesTransferred == sizeof(GameEngine::Position)) {
+                if (!this->hasPos && startInit) {
+                    if (bytesTransferred == sizeof(server_message_t<GameEngine::Position>)) {
+                        std::cout << "Received Position data" << std::endl;
                         GameEngine::Position receivedPosition;
                         std::memcpy(&receivedPosition, receiveBuffer_.data(), sizeof(GameEngine::Position));
-
-                        // Now you can use the receivedPosition as needed
-
-                        // Set this->hasPos to true, assuming the position has been received
                         allPos.push_back(receivedPosition);
                     } else {
                         std::cerr << "Error receiving Position data: Invalid size" << std::endl;

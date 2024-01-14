@@ -142,6 +142,8 @@ void Client::runGame(std::string const gamename)
     bool isGameOver = false;
     std::vector<GameEngine::Entity> entityVector;
 
+    startInit = true;
+
 //    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), gamename);
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
@@ -187,7 +189,8 @@ void Client::runGame(std::string const gamename)
     std::cout << "x = " << registry.getComponent<GameEngine::Position>()[entityVector[0]].value().x << std::endl;
     posNb = entityVector.size();
 
-    while (allPos.size() != posNb) {}
+    while (allPos.size() != posNb) {
+    }
     //receive
 
 //    system.initEnemy(registry);

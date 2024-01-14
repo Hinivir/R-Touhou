@@ -132,19 +132,12 @@ void Server::handleReady(const udp::endpoint& client_endpoint, const std::array<
 
 void Server::connectClient(const udp::endpoint& client_endpoint, const std::array<char, 2048>& buffer, size_t bytes_received)
 {
-    if (bytes_received >= sizeof(client_message_t)) {
-        client_message_t playerInfo = Serialization::deserialize<client_message_t>(
-            std::vector<char>(buffer.begin(), buffer.begin() + sizeof(client_message_t))
-        );
-        broadcastStructureClient(playerInfo, sizeof(client_message_t), client_endpoint);
-    } else {
-        std::string message(buffer.data(), bytes_received);
-        auto it = serverCommandHandler.find(message);
-        if (it != serverCommandHandler.end())
-            it->second(*this, client_endpoint, buffer, bytes_received);
-        else
-            broadcastMessage(buffer.data(), bytes_received, client_endpoint);
-    }
+    std::string message(buffer.data(), bytes_received);
+    auto it = serverCommandHandler.find(message);
+    if (it != serverCommandHandler.end())
+        it->second(*this, client_endpoint, buffer, bytes_received);
+    else
+        broadcastMessage(buffer.data(), bytes_received, client_endpoint);
 }
 
 void Server::notifyGameReady()

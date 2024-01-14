@@ -241,10 +241,14 @@ void Server::runGame(std::string const gamename)
         GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
         entityVector.push_back(staticEntity);
     }
-    std::cout << "size of entityVector: " << entityVector.size() << std::endl;
     this->sendEnemies(entityVector);
     std::cout << entityVector.size() << std::endl;
     system.initEnemy(registry);
+    for (std::size_t i = 0; i < registry.getComponent<GameEngine::Position>().size(); ++i) {
+        GameEngine::Position &pos = registry.getComponent<GameEngine::Position>()[i].value();
+        server_message_t<GameEngine::Position> message = {i, &pos};
+        this->broadcastStructure(message, sizeof(server_message_t<GameEngine::Position>), this->initClients[i]);
+    }
 
     this->inGame = true;
 /*
