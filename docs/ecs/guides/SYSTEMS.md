@@ -93,7 +93,7 @@ Hop back in your main and add `systemGravity(registry);` before calling `system.
 
 # Expendaing with MyGame::Gravity
 
-In [**Guide - Components**](ecs/guides/COMPONENTS.md), we made a new component called `MyGame::Gravity`, let's use it.
+In [**Guide - Components**](COMPONENTS.md), we made a new component called `MyGame::Gravity`, let's use it.
 
 ## Extract
 

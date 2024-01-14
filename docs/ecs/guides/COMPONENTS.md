@@ -71,4 +71,4 @@ You can change the sprite by replacing `./resources/R-Touhou/graphics/Ground.png
 
 # Adding the system
 
-Since we want `MyGame::Gravity` to do something, we'll need to add a gravity system: [**Guide - Systems**](ecs/guides/SYSTEMS.md)
+Since we want `MyGame::Gravity` to do something, we'll need to add a gravity system: [**Guide - Systems**](SYSTEMS.md)
