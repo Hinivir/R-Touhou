@@ -10,6 +10,6 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=O
 cd build
 cpack --config CPackConfig.cmake
 cd -
-mkdir artifact
-mv build/L-Type-0.1.1-Linux.sh artifact/L-Type-$version-Linux.sh
-mv build/L-Type-0.1.1-Linux.zip artifact/L-Type-$version-Linux.zip
+mkdir artifacts
+mv build/L-Type-0.1.1-Linux.sh artifacts/L-Type-$version-Linux.sh
+mv build/L-Type-0.1.1-Linux.zip artifacts/L-Type-$version-Linux.zip
