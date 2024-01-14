@@ -179,18 +179,14 @@ void Client::runGame(std::string const gamename)
     std::cout << "enemies size: " << enemies.size() << std::endl;
     posNb = enemies.size();
 
-    while (allPos.size() < posNb) {
+    while (allPos.size() < 6) {
     }
     std::cout << "allPos size: " << allPos.size() << std::endl;
+    std::size_t nb_entity = enemies.size() + allPos.size();
 
-    for (int i = 0; i < posNb; i++) {
-        std::cout << "it was here" << std::endl;
-        GameEngine::Entity enemy = spawnEnemyEntity(registry);
-        std::cout << "it was here" << std::endl;
-        registry.addComponent<GameEngine::Position>(enemy, GameEngine::Position{allPos[i].x, allPos[i].y});
-        std::cout << "it was here" << std::endl;
-        entityVector.push_back(enemy);
-    }
+    std::cout << "it was here" << std::endl;
+    std::cout << "it was here" << std::endl;
+    std::cout << "it was here" << std::endl;
     std::cout << "it was pushed" << std::endl;
     //receive
 

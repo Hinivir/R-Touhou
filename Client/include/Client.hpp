@@ -14,6 +14,7 @@
 
     #include <asio.hpp>
     #include <SFML/Window/Keyboard.hpp>
+    #include "SparseArray.hpp"
 
     #include "Components/Components.hpp"
     #include "Entity.hpp"
@@ -64,7 +65,7 @@ class Client
 
     public:
         using KeyFunction = std::function<void(bool)>;
-        std::vector<GameEngine::Position> allPos;
+        SparseArray<GameEngine::Position> allPos;
         bool inGame = false;
         bool hasEnemy = false;
         bool startInit = false;

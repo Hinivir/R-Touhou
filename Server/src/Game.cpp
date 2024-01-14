@@ -161,7 +161,7 @@ void Server::sendEnemies(std::vector<GameEngine::Entity> &enemies)
     }
 }
 
-void Server::sendPositions(std::vector<GameEngine::Position> &positions)
+void Server::sendPositions(SparseArray<GameEngine::Position> &positions)
 {
     for (const auto &client : connectedClients) {
         try {
@@ -227,9 +227,8 @@ void Server::runGame(std::string const gamename)
 
     std::vector<GameEngine::Position> positionsToSend = {};
     system.initEnemy(registry);
-    for (auto &positions: registry.getComponent<GameEngine::Position>())
-        positionsToSend.push_back(positions.value());
-    sendPositions(positionsToSend);
+    SparseArray<GameEngine::Position> &positions = registry.getComponent<GameEngine::Position>();
+    sendPositions(positions);
 /*
     this->inGame = true;
 

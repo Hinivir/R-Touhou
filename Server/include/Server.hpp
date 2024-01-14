@@ -14,6 +14,7 @@
     #include <map>
     #include "Components/Components.hpp"
     #include <SFML/Window/Keyboard.hpp>
+    #include <SparseArray.hpp>
 
     #include "Entity.hpp"
 
@@ -93,7 +94,7 @@ using asio::ip::udp;
             }
             void notifyGameReady(void);
             void sendEnemies(std::vector<GameEngine::Entity> &enemies);
-            void sendPositions(std::vector<GameEngine::Position> &positions);
+            void sendPositions(SparseArray<GameEngine::Position> &positions);
 
             void runGame(std::string const gamename);
             void initGame(std::string const gamename);
