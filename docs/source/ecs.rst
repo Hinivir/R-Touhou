@@ -114,7 +114,7 @@ Technically no, but sort of. The only way to register multiple components in one
 
    registry.registerComponent<GameEngine::Color>(); registry.registerComponent<GameEngine::Drawable>(); registry.registerComponent<GameEngine::Sprite>();
 
-But it's not really pretty and readable, isn't it?
+But it's not really pretty and readable, is it?
 
 If you really want to define multiple components like this, you can still use the `GAME_ENGINE_FOR_EACH` macro in the following way:
 
