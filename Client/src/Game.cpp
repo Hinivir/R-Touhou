@@ -143,7 +143,7 @@ void Client::runGame(std::string const gamename)
     std::vector<GameEngine::Entity> entityVector;
 
     //client
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), gamename);
     GameEngine::Registry registry(nbRegistry);
     GameEngine::System system;
 
@@ -176,11 +176,14 @@ void Client::runGame(std::string const gamename)
     GameEngine::Entity gameOver = createGameOver(registry);
     GameEngine::Entity youWin = createYouWin(registry);
 
+    std::cout << entityVector.size() << std::endl;
     std::vector<GameEngine::Entity> enemies = receiveEnemies();
     for (std::size_t i = entityVector.size(); i < enemies.size(); i++)
         entityVector.push_back(enemies[i]);
-    
+
     std::cout << entityVector.size() << std::endl;
+    std::cout << entityVector[0] << std::endl;
+    std::cout << entityVector[1] << std::endl;
 
     system.initEnemy(registry);
 

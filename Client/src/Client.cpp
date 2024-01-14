@@ -120,7 +120,6 @@ void Client::getNewMessage()
 
 std::vector<GameEngine::Entity> Client::receiveEnemies()
 {
-    std::cout << "in receiveEnemies" << std::endl;
     std::vector<GameEngine::Entity> enemies;
 
     try {
@@ -129,12 +128,11 @@ std::vector<GameEngine::Entity> Client::receiveEnemies()
 
         enemies = std::vector<GameEngine::Entity>(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
 
-        std::cout << "enemies received" << std::endl;
-        std::cout << enemies.size() << std::endl;
-
     } catch (const asio::system_error& e) {
         std::cerr << "Error receiving data: " << e.what() << std::endl;
     }
+    if (!enemies.empty())
+        socket_.send_to(asio::buffer("game init\n"), senderEndpoint_);
 
     return enemies;
 }

@@ -86,5 +86,6 @@
             void sendEnemies(std::vector<GameEngine::Entity> &enemies);
 
             void runGame(std::string const gamename);
+            void initGame(std::string const gamename);
     };
 #endif
