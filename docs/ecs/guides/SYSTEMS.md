@@ -11,6 +11,12 @@
     - [Note](#note-1)
 - [Looping through our entities](#looping-through-our-entities)
     - [Note](#note-2)
+- [Result](#result)
+- [Calling the system](#calling-the-system)
+- [Expendaing with MyGame::Gravity](#expendaing-with-mygamegravity)
+  - [Extract](#extract)
+  - [Loop](#loop)
+  - [Result](#result-1)
 
 # Declaring a system
 
@@ -59,18 +65,57 @@ Here, we are declaring 2 variables :
 - `position` being a `std::optional` containing (if possible) our GameEngine::Position.
 - `hasPosition` being a `bool` containing if we have or not a position at `i` in positions.
 
-Putting everything together, we have:
-
-```cpp
-for (std::size_t i = 0; i < positions.size(); ++i) {
-    FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
-    if (hasPosition)
-        position.value().y -= 2;
-}
-```
-
 ### Note
 
 We can also use `FROM_COMPONENT_TO_VARIABLE_CONST` for a const alternative of `FROM_COMPONENT_TO_VARIABLE`.
 
 If we just want to extract `hasPosition`, we can also use `bool const hasPosition = DO_COMPONENT_CONTAINS_AT(positions, i)`.
+
+
+# Result
+
+Putting everything together, we have:
+
+```cpp
+void systemGravity(GameEngine::Registry &r) {
+    EXTRACT_COMPONENT(GameEngine::Position, positions);
+    for (std::size_t i = 0; i < positions.size(); ++i) {
+        FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
+        if (hasPosition)
+            position.value().y -= 2;
+    }
+}
+```
+
+# Calling the system
+
+Hop back in your main and add `systemGravity(registry);` before calling `system.drawSystem(registry, window);`.
+
+# Expendaing with MyGame::Gravity
+
+In [**Guide - Components**](ecs/guides/COMPONENTS.md), we made a new component called `MyGame::Gravity`, let's use it.
+
+## Extract
+
+We'll extract our component as we did for `GameEngine::Position`, but this time as a const: `EXTRACT_COMPONENT_CONST(MyGame::Gravity, gravities)`
+
+## Loop
+
+Extracting the entity data from our component list should be (almost) the same: `FROM_COMPONENT_TO_VARIABLE_CONST(gravities, i, gravity, hasGravity)`
+
+## Result
+
+Putting everything together, we have:
+
+```cpp
+void systemGravity(GameEngine::Registry &r) {
+    EXTRACT_COMPONENT(GameEngine::Position, positions);
+    EXTRACT_COMPONENT_CONST(MyGame::Gravity, gravities);
+    for (std::size_t i = 0; i < positions.size(); ++i) {
+        FROM_COMPONENT_TO_VARIABLE(positions, i, position, hasPosition);
+        FROM_COMPONENT_TO_VARIABLE_CONST(gravities, i, gravity, hasGravity);
+        if (hasPosition && hasGravity && gravity.value().isAffectedByGravity)
+            position.value().y -= gravity.value().weigth;
+    }
+}
+```
