@@ -12,6 +12,12 @@
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 
+void Client::runGame(std::string const gamename)
+{
+    std::cout << "game has started" << std::endl;
+}
+
+/*
 GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();
@@ -134,6 +140,7 @@ GameEngine::Entity createYouWin(GameEngine::Registry &registry)
     return youWin;
 }
 
+
 void Client::runGame(std::string const gamename)
 {
     int nbRegistry = 1024;
@@ -179,14 +186,15 @@ void Client::runGame(std::string const gamename)
     std::cout << "enemies size: " << enemies.size() << std::endl;
     posNb = enemies.size();
 
-    while (allPos.size() < 6) {
+    while (!hasPos) {
     }
+    std::cout << "haspos" << std::endl;
     std::cout << "allPos size: " << allPos.size() << std::endl;
     std::size_t nb_entity = enemies.size() + allPos.size();
 
     std::cout << allPos[0].value().x << std::endl;
+    std::cout << "game has started" << std::endl;
     //receive
-    /*
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -227,5 +235,5 @@ void Client::runGame(std::string const gamename)
             isGameOver = true;
         }
     }
-    */
 }
+*/

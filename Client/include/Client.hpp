@@ -51,34 +51,33 @@
 
 class Client
 {
-  private:
-    asio::io_context &ioContext_;
-    asio::ip::udp::socket socket_;
-    asio::ip::udp::endpoint serverEndpoint_;
-    asio::ip::udp::endpoint senderEndpoint_;
-    std::array<char, 1024> receiveBuffer_;
+    private:
+        asio::io_context &ioContext_;
+        asio::ip::udp::socket socket_;
+        asio::ip::udp::endpoint serverEndpoint_;
+        asio::ip::udp::endpoint senderEndpoint_;
+        std::array<char, 1024> receiveBuffer_;
 
         player_t player;
         std::vector <player_t> players = {};
-        std::vector<GameEngine::Entity> enemies = {};
         bool hasPos = false;
 
     public:
         using KeyFunction = std::function<void(bool)>;
-        SparseArray<GameEngine::Position> allPos;
         bool inGame = false;
         bool hasEnemy = false;
         bool startInit = false;
         std::size_t posNb = 0;
 
-    Client(asio::io_context &ioContext, const std::string &serverAddress, const std::string &serverPort);
-    ~Client();
-    void sendMessage(const std::string &message);
-    void getNewMessage();
-    void handleMessageInGame(const std::string &message);
-    void parseMessage(const std::string message);
-    void addUsersWhenConnected(const std::string &message);
-    void addNewUser(const std::string &message);
+        Client(asio::io_context &ioContext, const std::string &serverAddress, const std::string &serverPort);
+        ~Client();
+        void sendMessage(const std::string &message);
+        void getNewMessage();
+        void handleMessageInGame(const std::string &message);
+        void initEntitiesPos(std::vector<char> serializedData);
+        void parseMessage(const std::string message);
+        void addUsersWhenConnected(const std::string &message);
+        void addNewUser(const std::string &message);
 
         void runGameTmp();
 
@@ -89,7 +88,6 @@ class Client
         void actionFunction(std::size_t player_number);
         void quitFunction(std::size_t player_number);
 
-        void initGame(std::string const gamename);
         void runGame(std::string const gamename);
 };
 #endif

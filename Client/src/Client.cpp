@@ -67,21 +67,7 @@ void Client::getNewMessage()
     socket_.async_receive_from(asio::buffer(receiveBuffer_), senderEndpoint_,
         [this](const asio::error_code &error, std::size_t bytesTransferred) {
             if (!error) {
-                if (!this->hasPos && startInit && hasEnemy) {
-                    std::cout << "get received Position data" << std::endl;
-                    std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                    std::cout << "serializedData size: " << serializedData.size() << std::endl;
-                    /////segfault here
-                    const SparseArray<GameEngine::Position> a = Serialization::deserialize<SparseArray<GameEngine::Position>>(serializedData);
-                    std::cout << "a size: " << a.size() << std::endl;
-                    allPos = a;
-                    std::cout << "allPos size: " << allPos.size() << std::endl;
-                } else if (!this->hasEnemy && startInit) {
-                    std::cout << "get received Enemies data" << std::endl;
-                    std::vector<char> serializedData(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
-                    enemies = Serialization::deserialize<std::vector<GameEngine::Entity>>(serializedData);
-                    this->hasEnemy = true;
-                } else if (this->inGame) {
+                if (this->inGame) {
                     std::string message(receiveBuffer_.begin(), receiveBuffer_.begin() + bytesTransferred);
                     this->parseMessage(message);
                 } else {
