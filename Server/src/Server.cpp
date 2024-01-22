@@ -59,7 +59,7 @@ void Server::verifConnected()
     }
 }
 
-void Server::receiveMessage()
+void Server::manageMessage()
 {
     size_t bytes_received = socket.receive_from(asio::buffer(buffer), _endpoint);
     std::string message(buffer.data(), bytes_received);
@@ -76,7 +76,7 @@ void Server::acceptClients()
     std::cout << "Waiting for clients..." << std::endl;
     try {
         while (1) {
-            receiveMessage();
+            manageMessage();
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
