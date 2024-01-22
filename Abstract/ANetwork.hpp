@@ -16,7 +16,12 @@
 template <typename senderMessage>
 struct inGame_message {
     std::size_t index;
-    senderMessage &message;
+    senderMessage message;
+};
+
+struct outGame_message {
+    asio::ip::udp::endpoint senderEndpoint;
+    std::string &message;
 };
 
 class ANetwork {
@@ -26,6 +31,7 @@ class ANetwork {
         std::string port;
         asio::io_context ioContext;
         asio::ip::udp::socket socket;
+        asio::ip::udp::endpoint senderEndpoint;
 
     public:
         ANetwork(const std::string ip, const std::string port): ioContext(), socket(ioContext) {
@@ -48,7 +54,7 @@ class ANetwork {
             }
         }
 
-        std::string receiveMessage(asio::ip::udp::endpoint &senderEndpoint, bool async) {
+        outGame_message receiveMessage(asio::ip::udp::endpoint &senderEndpoint, bool async) {
             if (async) {
                 socket.async_receive_from(asio::buffer(asio::buffer(buffer)), senderEndpoint,
                     [](const asio::error_code &error, std::size_t bytes_transferred) {
@@ -61,7 +67,10 @@ class ANetwork {
             } else {
                 socket.receive_from(asio::buffer(buffer), senderEndpoint);
             }
-            return std::string(buffer.data());
+            std::cout << "From " << senderEndpoint.address().to_string() << ": " << buffer.data() << std::endl;
+            outGame_message res = {senderEndpoint, *(new std::string(buffer.data()))};
+            buffer.fill(0);
+            return res;
         }
 };
 #endif
