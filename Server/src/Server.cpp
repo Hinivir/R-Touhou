@@ -31,9 +31,13 @@ const std::map<std::string, std::function<void(Server&, const asio::ip::udp::end
 };
 
 void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
+    std::stringstream ss;
+
     for (const auto& client : clients)
-        if (client != sender)
-            sendMessage(message, client, false);
+        if (client != sender) {
+            ss << playerNumberMap.at(sender);
+            sendMessage("Player " + ss.str() + ": " + message,  client, false);
+        }
 }
 
 void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
