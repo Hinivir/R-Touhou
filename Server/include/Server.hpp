@@ -22,7 +22,6 @@ class Server: protected ANetwork
         std::size_t _port;
         std::size_t maxPlayers = 4;
         std::size_t  playerNumber = 0;
-        asio::ip::udp::socket socket;
         asio::ip::udp::endpoint _endpoint;
         std::vector<asio::ip::udp::endpoint> clients;
         std::map<asio::ip::udp::endpoint, int> playerNumberMap;
