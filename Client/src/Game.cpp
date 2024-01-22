@@ -11,13 +11,13 @@
 #include "Macros/ForEach.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
-
+/*
 void Client::runGame(std::string const gamename)
 {
     std::cout << "game has started" << std::endl;
 }
 
-/*
+
 GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();

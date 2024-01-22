@@ -6,7 +6,7 @@
 */
 
 #include "../include/Client.hpp"
-
+/*
 static std::size_t SPEED = 5;
 
 void Client::upFunction(std::size_t player_number)
@@ -101,3 +101,4 @@ void Client::quitFunction(std::size_t player_number)
         std::cout << "QUIT" << std::endl;
     }
 }
+*/

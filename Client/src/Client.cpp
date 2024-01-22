@@ -18,28 +18,25 @@
 #include <SFML/Graphics/Color.hpp>
 #include "SparseArray.hpp"
 
-static const std::vector<sf::Color> colors = {
-    sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Magenta, sf::Color::Cyan};
-// remplacer le bool par le numero du player
-static const std::map<sf::Keyboard::Key, std::pair<std::string, std::function<void(Client &, std::size_t)>>>
-    inputHandler = {{sf::Keyboard::Z, {"UP", &Client::upFunction}}, {sf::Keyboard::S, {"DOWN", &Client::downFunction}},
-        {sf::Keyboard::Q, {"LEFT", &Client::leftFunction}}, {sf::Keyboard::D, {"RIGHT", &Client::rightFunction}},
-        {sf::Keyboard::Space, {"ACTION", &Client::actionFunction}},
-        {sf::Keyboard::Escape, {"QUIT", &Client::quitFunction}}};
 
-Client::Client(asio::io_context &ioContext, const std::string &serverAddress, const std::string &serverPort)
-    : ioContext_(ioContext), socket_(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), 0))
+
+Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork(ip, port), ioContext(), socket(ioContext)
 {
     try {
-        asio::ip::udp::resolver resolver(ioContext);
-        serverEndpoint_ = *resolver.resolve(asio::ip::udp::v4(), serverAddress, serverPort).begin();
+        this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(ip), std::stoi(port));
+        this->socket.open(asio::ip::udp::v4());
+        std::cout << "connected to server " << ip << ":" << port << std::endl;
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
-        exit(84);
     }
 }
 
-Client::~Client() {}
+Client::~Client()
+{
+    this->socket.close();
+}
+
+/*
 
 void Client::sendMessage(const std::string &message)
 {
@@ -138,3 +135,4 @@ void Client::runGameTmp()
         window.display();
     }
 }
+*/

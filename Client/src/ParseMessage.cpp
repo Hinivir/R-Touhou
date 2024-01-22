@@ -8,7 +8,7 @@
 #include "../include/Client.hpp"
 
 static std::size_t SPEED = 5;
-
+/*
 static const std::string CONNECTED = "101: You are connected!"; //
 static const std::string DISCONNECTED = "103: You are disconnected!";
 static const std::string RUN_GAME = "104: You are ready!"; //
@@ -63,3 +63,4 @@ void Client::addNewUser(const std::string &message)
     player_t player = {player_number, pos_x, pos_y, true};
     this->players.push_back(player);
 }
+*/

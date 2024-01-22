@@ -28,8 +28,10 @@ class ANetwork {
         //endpoint pour client
 
     public:
-        ANetwork(const std::string ip, const std::string port);
-        ~ANetwork();
+        ANetwork(const std::string ip, const std::string port) {
+            this->ip = ip;
+            this->port = port;
+        }
 
         void sendMessageString(const std::string &message, asio::ip::udp::endpoint &endpoint);//override
 
