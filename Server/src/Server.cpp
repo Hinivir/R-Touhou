@@ -30,6 +30,12 @@ const std::map<std::string, std::function<void(Server&, const asio::ip::udp::end
     {"connect\n", &Server::handleConnect}
 };
 
+void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
+    for (const auto& client : clients)
+        if (client != sender)
+            sendMessage(message, client, false);
+}
+
 void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
 {
     std::string message(buffer.data(), size);
@@ -62,7 +68,7 @@ void Server::receiveMessage()
     if (it != commandHandler.end())
         it->second(*this, _endpoint, buffer, bytes_received);
     else
-        sendMessage("Unknown command\n", _endpoint, false);
+        sendMessageToAllClients(message, _endpoint);
 }
 
 void Server::acceptClients()

@@ -34,6 +34,7 @@ class Server: protected ANetwork
         void verifConnected();
         void receiveMessage();
         void handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size);
+        void sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender);
 };
 
 #endif //R_TYPE_SERVER_HPP
