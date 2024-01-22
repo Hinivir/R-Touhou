@@ -8,37 +8,22 @@
 #include "include/Server.hpp"
 #include <sstream>
 
-static bool handle_error(int const argc, char const *const *const argv)
+bool handleError(const int argc, const char **argv)
 {
     if (argc != 3) {
-        std::cerr << "ERROR: invalid number of arguments" << std::endl;
-        return true;
+        std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
+        return (false);
     }
-    std::stringstream ss(argv[2]);
-    std::size_t port;
-    ss >> port;
-    if (ss.fail()) {
-        std::cerr << "ERROR: invalid port \"" << argv[2] << "\"" << std::endl;
-        return true;
-    }
-    return false;
+    return (true);
 }
 
-static std::size_t get_port(char const *const portString)
+int main(const int argc, const char **argv)
 {
-    std::stringstream ss(portString);
-    std::size_t port;
-    ss >> port;
-    return port;
-}
+    std::string ip;
+    std::string port;
 
-int main(int const argc, char const *const *const argv)
-{
-    if (handle_error(argc, argv))
-        return 84;
-    std::size_t const port = get_port(argv[2]);
-    std::string const ip = argv[1];
+    handleError(argc, argv);
+    ip = argv[1];
+    port = argv[2];
     Server server(ip, port);
-    server.startServer();
-    return 0;
 }
