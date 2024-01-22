@@ -23,8 +23,6 @@
 class Client: protected ANetwork
 {
     private:
-        asio::io_context ioContext;
-        asio::ip::udp::socket socket;
         asio::ip::udp::endpoint senderEndpoint;
         asio::ip::udp::endpoint serverEndpoint;
 

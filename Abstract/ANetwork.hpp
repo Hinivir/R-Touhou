@@ -24,23 +24,13 @@ class ANetwork {
         std::array<char, 2048> buffer;
         std::string ip;
         std::string port;
-        //vector pour server
-        //endpoint pour client
+        asio::io_context ioContext;
+        asio::ip::udp::socket socket;
 
     public:
-        ANetwork(const std::string ip, const std::string port) {
+        ANetwork(const std::string ip, const std::string port): ioContext(), socket(ioContext) {
             this->ip = ip;
             this->port = port;
         }
-
-        void sendMessageString(const std::string &message, asio::ip::udp::endpoint &endpoint);//override
-
-        template<typename T>
-        void sendMessageStruct(const T &message, asio::ip::udp::endpoint &endpoint);//override
-
-        std::string receiveMessageString();//override
-
-        template<typename Component>
-        Component receiveMessageStruct();//override
 };
 #endif

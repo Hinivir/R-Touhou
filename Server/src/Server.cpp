@@ -8,7 +8,7 @@
 #include "../include/Server.hpp"
 
 Server::Server(const std::string &ip, const std::string &port) :
-    ANetwork::ANetwork(ip, port) ,socket(io_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), std::stoi(port)))
+    ANetwork::ANetwork(ip, port) ,socket(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), std::stoi(port)))
 {
     _port = std::stoi(port);
 

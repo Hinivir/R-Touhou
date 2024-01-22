@@ -15,8 +15,6 @@
 class Server: protected ANetwork
 {
     private:
-        asio::io_context io_context;
-        std::string _ip;
         std::size_t _port;
         asio::ip::udp::socket socket;
 

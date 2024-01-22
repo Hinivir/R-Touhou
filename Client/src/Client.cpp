@@ -20,12 +20,12 @@
 
 
 
-Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork(ip, port), ioContext(), socket(ioContext)
+Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork(ip, port)
 {
     try {
         this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(ip), std::stoi(port));
         this->socket.open(asio::ip::udp::v4());
-        std::cout << "connected to server " << ip << ":" << port << std::endl;
+        this->socket.send_to(asio::buffer("Hello"), this->serverEndpoint);
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
