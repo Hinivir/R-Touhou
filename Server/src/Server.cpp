@@ -38,16 +38,17 @@ void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::a
         verifConnected();
 }
 
-#include <algorithm>
-
 void Server::verifConnected()
 {
+    std::stringstream ss;
+
     if (std::find(clients.begin(), clients.end(), _endpoint) == clients.end()) {
         if (clients.size() < maxPlayers) {
             playerNumber++;
             playerNumberMap[_endpoint] = playerNumber;
             std::cout << "Client connected: " << _endpoint << " - Assigned Player " << playerNumber << std::endl;
-            sendMessage(std::to_string(playerNumber), _endpoint, false);
+            ss << playerNumber;
+            sendMessage(ss.str(), _endpoint, false);
             clients.push_back(_endpoint);
         }
     }
