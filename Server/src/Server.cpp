@@ -51,8 +51,9 @@ void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::a
 void Server::handleReady(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
 {
     std::string message(buffer.data(), size);
+    std::cout << message << std::endl;
     if (message == "ready\n")
-        sendMessage(READY, endpoint, false);
+        sendMessage(READY, senderEndpoint, false);
 }
 
 void Server::verifConnected()

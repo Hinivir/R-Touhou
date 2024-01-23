@@ -30,8 +30,7 @@ int main(int const argc, char const *const *const argv)
     for (;;) {
         std::string message;
         std::getline(std::cin, message);
-        if (message == "quit")
-            break;
+        message += "\n";
         new_client.sendMessage(message, new_client.serverEndpoint, true);
     }
     io_context.stop();
