@@ -24,7 +24,7 @@ namespace GameEngine {
 
 namespace System {
 
-void draw(GameEngine::Registry &r, sf::RenderWindow &window)
+void draw(GameEngine::Registry &REGISTRY_DEFAULT_NAME, sf::RenderWindow &window)
 {
     EXTRACT_COMPONENT_CONST(GameEngine::Drawable, drawables);
     EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);

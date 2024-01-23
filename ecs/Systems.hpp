@@ -26,6 +26,8 @@
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
 
+#include "Macros/Systems.hpp"
+
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -34,22 +36,6 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <vector>
-
-#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
-
-#define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
-#define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
-
-#define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) auto &VARIABLE = REGISTRY.getComponent<COMPONENT>()
-#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY)                                                    \
-    auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
-
-#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
-    auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
-#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                        \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
-    auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -69,7 +55,7 @@ namespace GameEngine
         SystemGroup() = default;
         ~SystemGroup() = default;
 
-        void loggingSystem(GameEngine::Registry &r)
+        void loggingSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
@@ -91,7 +77,7 @@ namespace GameEngine
             }
         }
 
-        void controlSystem(GameEngine::Registry &r)
+        void controlSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -136,7 +122,7 @@ namespace GameEngine
             }
         }
 
-        void initEnemy(GameEngine::Registry &r)
+        void initEnemy(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
@@ -191,7 +177,7 @@ namespace GameEngine
             }
         }
 
-        void movementSystem(GameEngine::Registry &r)
+        void movementSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -232,7 +218,7 @@ namespace GameEngine
             }
         }
 
-        void collisionSystem(GameEngine::Registry &r, int &score)
+        void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
@@ -351,7 +337,7 @@ namespace GameEngine
             }
         }
 
-        void attackSystem(GameEngine::Registry &r, std::vector<GameEngine::Entity> &entityVector)
+        void attackSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<GameEngine::Entity> &entityVector)
         {
             auto &positions = r.getComponent<GameEngine::Position>();
             auto &controllables = r.getComponent<GameEngine::Controllable>();
@@ -392,7 +378,7 @@ namespace GameEngine
             }
         }
 
-        void deleteEntitiesSystem(GameEngine::Registry &r)
+        void deleteEntitiesSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             auto &positions = r.getComponent<Position>();
             auto &paths = r.getComponent<Path>();

@@ -16,7 +16,7 @@ namespace GameEngine {
 
 namespace System {
 
-void sprite(GameEngine::Registry &r)
+void sprite(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
 {
     EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
     EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
