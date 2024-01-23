@@ -57,6 +57,7 @@ void Server::verifConnected()
             playerNumberMap[_endpoint] = playerNumber;
             std::cout << "Client connected: " << _endpoint << " - Assigned Player " << playerNumber << std::endl;
             ss << playerNumber;
+            sendMessage(CONNECTED, _endpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", _endpoint, false);
             clients.push_back(_endpoint);
         }
@@ -75,7 +76,7 @@ void Server::manageMessage()
         sendMessageToAllClients(message, _endpoint);
 }
 
-void Server::acceptClients()
+void Server::manageServer()
 {
     std::cout << "Waiting for clients..." << std::endl;
     try {

@@ -16,6 +16,12 @@
 #include <asio.hpp>
 #include "../../Abstract/ANetwork.hpp"
 
+#define CONNECTED "101: You are connected!\n"
+#define DISCONNECTED "103: You are disconnected!\n"
+#define ERROR_MSG "102: Error sending confirmation message to client!\n"
+#define READY "104: You are ready!\n"
+#define SERVER_FULL "105: Server is full!\n"
+
 class Server: protected ANetwork
 {
     private:
@@ -30,7 +36,7 @@ class Server: protected ANetwork
         static const std::map<std::string, std::function<void(Server&, const asio::ip::udp::endpoint&, const std::array<char, 2048>&, size_t)>> commandHandler;
         Server(const std::string &ip, const std::string &port);
         ~Server();
-        void acceptClients();
+        void manageServer();
         void verifConnected();
         void manageMessage();
         void handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size);

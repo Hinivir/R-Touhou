@@ -26,5 +26,6 @@ int main(const int argc, const char **argv)
     ip = argv[1];
     port = argv[2];
     Server server(ip, port);
-    server.acceptClients();
+    server.manageServer();
 }
+
