@@ -7,6 +7,8 @@
 
 #include "Registry.hpp"
 #include "Systems.hpp"
+#include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -38,7 +40,7 @@ int main(void)
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
     window.setFramerateLimit(60);
     GameEngine::Registry registry(nbRegistry);
-    GameEngine::System system;
+    GameEngine::SystemGroup system;
     // Registering components for system.spriteSystem and system.drawSystem
     registry.registerComponent<GameEngine::Color>();
     registry.registerComponent<GameEngine::Controllable>();
@@ -66,11 +68,11 @@ int main(void)
             if (event.type == sf::Event::Closed)
                 window.close();
         // Initializing sprite textures
-        system.spriteSystem(registry);
+        GameEngine::System::sprite(registry);
         // Our gravity system
         systemGravity(registry);
         // Drawing entities on screen
-        system.drawSystem(registry, window);
+        GameEngine::System::draw(registry, window);
         // Displaying SFML window, then clearing it
         window.display();
         window.clear();
