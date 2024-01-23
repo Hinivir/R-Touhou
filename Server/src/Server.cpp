@@ -5,7 +5,7 @@
 ** Server.cpp
 */
 
-#include "../include/Server.hpp"
+#include "Server.hpp"
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
@@ -75,14 +75,32 @@ void Server::verifConnected()
 
 void Server::manageMessage()
 {
-    receiveMessage(false);
-    std::string message(buffer.data(), bytesReceived);
+    this->receiveMessage(false);
+    std::string message;
 
-    auto it = commandHandler.find(message);
-    if (it != commandHandler.end())
-        it->second(*this, senderEndpoint, buffer, bytesReceived);
-    else
+    //auto it = commandHandler.find(this->getBuffer().data());
+    if (!handleCommand(this->getBuffer(), bytesReceived)) {
+        message = std::string(this->getBuffer().begin(), this->getBuffer().begin() + bytesReceived);
         sendMessageToAllClients(message, senderEndpoint);
+    }
+}
+
+std::map<std::string, std::string> CommandMap = {
+    {"connect\n", "Client connected"},
+    {"ready\n", "Client ready"}
+};
+
+
+bool Server::handleCommand(std::array<char, 2048> buffer, size_t size)
+{
+    std::cout << "Command received: " << buffer.data() << std::endl;
+    for (std::size_t i = 0; i < CommandMap.size(); i++) {
+        if (CommandMap.find(buffer.data()) != CommandMap.end()) {//strcmp
+            std::cout << "Command found: " << CommandMap[buffer.data()] << std::endl;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Server::manageServer()
