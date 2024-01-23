@@ -29,6 +29,7 @@ class ANetwork {
         std::array<char, 2048> buffer;
         std::string ip;
         std::string port;
+        std::size_t bytesReceived;
         asio::io_context ioContext;
         asio::ip::udp::socket socket;
         asio::ip::udp::endpoint senderEndpoint;
@@ -69,7 +70,7 @@ class ANetwork {
                     }
                 );
             } else {
-                socket.receive_from(asio::buffer(buffer), senderEndpoint);
+                bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
                 std::string message = std::string(buffer.begin(), buffer.end());
                 std::cout << message << std::endl;
             }
