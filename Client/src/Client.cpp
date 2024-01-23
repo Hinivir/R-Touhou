@@ -25,7 +25,7 @@ Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork
     try {
         this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::make_address_v4(ip), std::stoi(port));
         this->socket.open(asio::ip::udp::v4());
-        this->sendMessage("Connect\n", this->serverEndpoint, true);
+        this->sendMessage("connect\n", this->serverEndpoint, false);
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

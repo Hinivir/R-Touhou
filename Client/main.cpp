@@ -25,6 +25,7 @@ int main(int const argc, char const *const *const argv)
     }
     asio::io_context ioContext;
     Client new_client(argv[1], argv[2]);
+    new_client.receiveMessage(true);
 
     /*
     new_client.getNewMessage();

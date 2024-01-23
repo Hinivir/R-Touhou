@@ -54,23 +54,26 @@ class ANetwork {
             }
         }
 
-        outGame_message receiveMessage(asio::ip::udp::endpoint &senderEndpoint, bool async) {
+        void receiveMessage(bool async) {
+            buffer.fill(0);
             if (async) {
                 socket.async_receive_from(asio::buffer(asio::buffer(buffer)), senderEndpoint,
-                    [](const asio::error_code &error, std::size_t bytes_transferred) {
+                    [this](const asio::error_code &error, std::size_t bytes_transferred) {
                         if (error) {
                             std::cerr << "ERROR: " << error.message() << std::endl;
                             return;
                         }
+                        std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
+                        std::cout << "From " << senderEndpoint.address().to_string() << ": " << message << std::endl;
+
                     }
                 );
             } else {
                 socket.receive_from(asio::buffer(buffer), senderEndpoint);
+                std::string message = std::string(buffer.begin(), buffer.end());
+                std::cout << "From " << senderEndpoint.address().to_string() << ": " << message << std::endl;
+//                return *(new outGame_message{senderEndpoint, message});
             }
-            std::cout << "From " << senderEndpoint.address().to_string() << ": " << buffer.data() << std::endl;
-            outGame_message res = {senderEndpoint, *(new std::string(buffer.data()))};
-            buffer.fill(0);
-            return res;
         }
 };
 #endif

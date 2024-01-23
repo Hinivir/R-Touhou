@@ -20,7 +20,7 @@
     #include "Entity.hpp"
     #include "ANetwork.hpp"
 
-class Client: protected ANetwork
+class Client: public ANetwork
 {
     private:
         asio::ip::udp::endpoint senderEndpoint;
