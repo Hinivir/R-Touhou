@@ -55,15 +55,14 @@ class ANetwork {
         }
 
         void receiveMessage(bool async) {
-            std::cout << "coucou" << std::endl;
             buffer.fill(0);
             if (async) {
-                socket.async_receive_from(asio::buffer(asio::buffer(buffer)), senderEndpoint,
+                socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
                     [this](const asio::error_code &error, std::size_t bytes_transferred) {
                         if (!error) {
                             std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
-                            std::cout << "From " << senderEndpoint.address().to_string() << ": " << message << std::endl;
-                            receiveMessage(false);
+                            std::cout << message << std::endl;
+                            receiveMessage(true);
                         } else {
                             std::cerr << "ERROR: " << error.message() << std::endl;
                         }
@@ -72,7 +71,7 @@ class ANetwork {
             } else {
                 socket.receive_from(asio::buffer(buffer), senderEndpoint);
                 std::string message = std::string(buffer.begin(), buffer.end());
-                std::cout << "From " << senderEndpoint.address().to_string() << ": " << message << std::endl;
+                std::cout << message << std::endl;
             }
         }
 
