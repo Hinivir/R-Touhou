@@ -24,9 +24,9 @@ class Client: public ANetwork
 {
     private:
         asio::ip::udp::endpoint senderEndpoint;
-        asio::ip::udp::endpoint serverEndpoint;
 
     public:
+        asio::ip::udp::endpoint serverEndpoint;
         Client(const std::string ip, const std::string port);
         ~Client();
 };
