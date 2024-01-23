@@ -8,6 +8,7 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -67,7 +68,7 @@ int main(void)
             if (event.type == sf::Event::Closed)
                 window.close();
         // Initializing sprite textures
-        system.spriteSystem(registry);
+        GameEngine::System::sprite(registry);
         // Our gravity system
         systemGravity(registry);
         // Drawing entities on screen

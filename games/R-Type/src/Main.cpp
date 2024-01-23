@@ -10,6 +10,7 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
 #include "Macros/ForEach.hpp"
 
 #define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
@@ -252,7 +253,7 @@ int main()
         }
         enemyCoolDown++;
         shootCoolDown++;
-        system.spriteSystem(registry);
+        GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
         system.movementSystem(registry);
         system.collisionSystem(registry, totalScore);
