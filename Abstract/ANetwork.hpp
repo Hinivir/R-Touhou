@@ -66,8 +66,8 @@ class ANetwork {
             socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
-                        /*std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
-                        std::cout << message << std::endl;*/
+                        std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
+                        std::cout << message << std::endl;
                         receiveMessage(true);
                         //return buffer;
                     } else {

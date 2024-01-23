@@ -76,18 +76,18 @@ void Server::verifConnected()
 void Server::manageMessage()
 {
     this->receiveMessage(false);
-    std::string message;
+//    std::string message;
 
     //auto it = commandHandler.find(this->getBuffer().data());
     if (!handleCommand(this->getBuffer(), bytesReceived)) {
-        message = std::string(this->getBuffer().begin(), this->getBuffer().begin() + bytesReceived);
+        std::string message(this->getBuffer().data(), bytesReceived);
         sendMessageToAllClients(message, senderEndpoint);
     }
 }
 
 std::map<std::string, std::string> CommandMap = {
-    {"connect\n", "Client connected"},
-    {"ready\n", "Client ready"}
+    {"connect\n", CONNECTED},
+    {"ready\n", READY}
 };
 
 
@@ -97,6 +97,7 @@ bool Server::handleCommand(std::array<char, 2048> buffer, size_t size)
     for (std::size_t i = 0; i < CommandMap.size(); i++) {
         if (CommandMap.find(buffer.data()) != CommandMap.end()) {//strcmp
             std::cout << "Command found: " << CommandMap[buffer.data()] << std::endl;
+            sendMessage(CommandMap[buffer.data()], senderEndpoint, false);
             return true;
         }
     }
