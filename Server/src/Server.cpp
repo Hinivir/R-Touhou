@@ -27,7 +27,8 @@ Server::~Server(void)
 }
 
 const std::map<std::string, std::function<void(Server&, const asio::ip::udp::endpoint&, const std::array<char, 2048>&, size_t)>> Server::commandHandler = {
-    {"connect\n", &Server::handleConnect}
+    {"connect\n", &Server::handleConnect},
+    {"ready\n", &Server::handleReady}
 };
 
 void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
@@ -47,33 +48,40 @@ void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::a
         verifConnected();
 }
 
+void Server::handleReady(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
+{
+    std::string message(buffer.data(), size);
+    if (message == "ready\n")
+        sendMessage(READY, endpoint, false);
+}
+
 void Server::verifConnected()
 {
     std::stringstream ss;
 
-    if (std::find(clients.begin(), clients.end(), _endpoint) == clients.end()) {
+    if (std::find(clients.begin(), clients.end(), senderEndpoint) == clients.end()) {
         if (clients.size() < maxPlayers) {
             playerNumber++;
-            playerNumberMap[_endpoint] = playerNumber;
-            std::cout << "Client connected: " << _endpoint << " - Assigned Player " << playerNumber << std::endl;
+            playerNumberMap[senderEndpoint] = playerNumber;
+            std::cout << "Client connected: " << senderEndpoint << " - Assigned Player " << playerNumber << std::endl;
             ss << playerNumber;
-            sendMessage(CONNECTED, _endpoint, false);
-            sendMessage("You are player " + ss.str() + "!\n", _endpoint, false);
-            clients.push_back(_endpoint);
+            sendMessage(CONNECTED, senderEndpoint, false);
+            sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
+            clients.push_back(senderEndpoint);
         }
     }
 }
 
 void Server::manageMessage()
 {
-    size_t bytes_received = socket.receive_from(asio::buffer(buffer), _endpoint);
-    std::string message(buffer.data(), bytes_received);
+    receiveMessage(false);
+    std::string message(buffer.data(), bytesReceived);
 
     auto it = commandHandler.find(message);
     if (it != commandHandler.end())
-        it->second(*this, _endpoint, buffer, bytes_received);
+        it->second(*this, senderEndpoint, buffer, bytesReceived);
     else
-        sendMessageToAllClients(message, _endpoint);
+        sendMessageToAllClients(message, senderEndpoint);
 }
 
 void Server::manageServer()
@@ -85,6 +93,6 @@ void Server::manageServer()
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
-        std::cerr << "Error in acceptClients: " << e.what() << std::endl;
+        std::cerr << "Error in manageServer: " << e.what() << std::endl;
     }
 }
