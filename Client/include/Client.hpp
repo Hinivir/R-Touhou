@@ -36,5 +36,6 @@ class Client: public ANetwork
         void commandError();
         void commandReady();
         void commandFull();
+        int initGame();
 };
 #endif

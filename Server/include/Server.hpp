@@ -37,5 +37,5 @@ class Server: protected ANetwork
         bool handleCommand(std::array<char, 2048> buffer, size_t size);
         void handleMessageClient(std::string &message) {}
 };
-
+w
 #endif //R_TYPE_SERVER_HPP
