@@ -25,7 +25,7 @@ Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork
     try {
         this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::make_address_v4(ip), std::stoi(port));
         this->socket.open(asio::ip::udp::v4());
-        this->sendMessage("connect\n", this->serverEndpoint, false);
+        this->sendMessage<std::string>("connect\n", this->serverEndpoint, false);
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
@@ -69,13 +69,18 @@ static const std::map<std::string, std::function<void(Client &)>> clientCommandH
     {SERVER_FULL, &Client::commandFull},
 };
 
-void Client::handleMessageClient(std::string &message)
+template<typename messageTemplate>
+void Client::handleMessageClient(messageTemplate &message)
 {
-    std::cout << "message = " << message << std::endl;
-    for (auto &command : clientCommandHandler) {
-        if (message.find(command.first) != std::string::npos) {
-            command.second(*this);
-            break;
+    if (typeid(message) == typeid(std::string)) {
+        std::cout << "message = " << message << std::endl;
+        for (auto &command : clientCommandHandler) {
+            if (message.find(command.first) != std::string::npos) {
+                command.second(*this);
+                break;
+            }
         }
+    } else {
+        std::cout << "message is not a string" << std::endl;
     }
 }

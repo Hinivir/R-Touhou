@@ -65,6 +65,7 @@ class ANetwork {
         }
     }
 
+    template<typename messageTemplate>
     void receiveMessage(bool async)
     {
         buffer.fill(0);
@@ -72,9 +73,9 @@ class ANetwork {
             socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
-                        std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
-                        handleMessage(false, message);
-                        receiveMessage(true);
+                        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
+                        handleMessage<messageTemplate>(false, message);
+                        receiveMessage<messageTemplate>(true);
                         //return buffer;
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
@@ -86,16 +87,18 @@ class ANetwork {
         }
     }
 
-    void handleMessage(bool isServer, std::string &message)
+    template<typename messageTemplate>
+    void handleMessage(bool isServer, messageTemplate &message)
     {
         if (isServer) {
             std::cout << "Server" << std::endl;
         } else {
-            handleMessageClient(message);
+            handleMessageClient<messageTemplate>(message);
         }
     }
 
-    virtual void handleMessageClient(std::string &message) = 0;
+    template<typename messageTemplate>
+    void handleMessageClient(messageTemplate &message);
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }
