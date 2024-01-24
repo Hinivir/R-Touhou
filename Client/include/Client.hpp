@@ -29,5 +29,7 @@ class Client: public ANetwork
         asio::ip::udp::endpoint serverEndpoint;
         Client(const std::string ip, const std::string port);
         ~Client();
+        void handleMessage();
+        void handleMessageClient (std::string &message) override;
 };
 #endif

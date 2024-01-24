@@ -67,7 +67,7 @@ class ANetwork {
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
                         std::string message = std::string(buffer.begin(), buffer.begin() + bytes_transferred);
-                        std::cout << message << std::endl;
+                        handleMessage(false, message);
                         receiveMessage(true);
                         //return buffer;
                     } else {
@@ -79,6 +79,17 @@ class ANetwork {
             //return buffer;
         }
     }
+
+    void handleMessage(bool isServer, std::string &message)
+    {
+        if (isServer) {
+            std::cout << "Server" << std::endl;
+        } else {
+            handleMessageClient(message);
+        }
+    }
+
+    virtual void handleMessageClient(std::string &message) = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }

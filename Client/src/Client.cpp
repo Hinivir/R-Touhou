@@ -36,6 +36,11 @@ Client::~Client()
     this->socket.close();
 }
 
+void Client::handleMessageClient(std::string &message)
+{
+    std::cout << "message = " << message << std::endl;
+}
+
 /*
 
 void Client::sendMessage(const std::string &message)
