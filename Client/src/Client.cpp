@@ -36,12 +36,37 @@ Client::~Client()
     this->socket.close();
 }
 
-static const std::map<std::string, std::string> clientCommandHandler = {
-    {CONNECTED, "command connect"},
-    {DISCONNECTED, "command disconnect"},
-    {ERROR_MSG, "command error"},
-    {READY, "command ready"},
-    {SERVER_FULL, "command full"},
+void Client::commandConnect()
+{
+    std::cout << "Connected to server" << std::endl;
+}
+
+void Client::commandDisconnect()
+{
+    std::cout << "Disconnected from server" << std::endl;
+}
+
+void Client::commandError()
+{
+    std::cout << "Error sending confirmation message to server" << std::endl;
+}
+
+void Client::commandReady()
+{
+    std::cout << "Ready to play" << std::endl;
+}
+
+void Client::commandFull()
+{
+    std::cout << "Server is full" << std::endl;
+}
+
+static const std::map<std::string, std::function<void(Client &)>> clientCommandHandler = {
+    {CONNECTED, &Client::commandConnect},
+    {DISCONNECTED, &Client::commandDisconnect},
+    {ERROR_MSG, &Client::commandError},
+    {READY, &Client::commandReady},
+    {SERVER_FULL, &Client::commandFull},
 };
 
 void Client::handleMessageClient(std::string &message)
@@ -49,7 +74,7 @@ void Client::handleMessageClient(std::string &message)
     std::cout << "message = " << message << std::endl;
     for (auto &command : clientCommandHandler) {
         if (message.find(command.first) != std::string::npos) {
-            std::cout << "command = " << command.second << std::endl;
+            command.second(*this);
             break;
         }
     }

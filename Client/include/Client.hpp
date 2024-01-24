@@ -30,6 +30,11 @@ class Client: public ANetwork
         Client(const std::string ip, const std::string port);
         ~Client();
         void handleMessage();
-        void handleMessageClient (std::string &message) override;
+        void handleMessageClient(std::string &message) override;
+        void commandConnect();
+        void commandDisconnect();
+        void commandError();
+        void commandReady();
+        void commandFull();
 };
 #endif
