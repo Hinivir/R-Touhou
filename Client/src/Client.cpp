@@ -5,7 +5,7 @@
 ** Client.cpp
 */
 
-#include "../include/Client.hpp"
+#include "Client.hpp"
 #include <iostream>
 #include <map>
 #include <string>
@@ -59,28 +59,4 @@ void Client::commandReady()
 void Client::commandFull()
 {
     std::cout << "Server is full" << std::endl;
-}
-
-static const std::map<std::string, std::function<void(Client &)>> clientCommandHandler = {
-    {CONNECTED, &Client::commandConnect},
-    {DISCONNECTED, &Client::commandDisconnect},
-    {ERROR_MSG, &Client::commandError},
-    {READY, &Client::commandReady},
-    {SERVER_FULL, &Client::commandFull},
-};
-
-template<typename messageTemplate>
-void Client::handleMessageClient(messageTemplate &message)
-{
-    if (typeid(message) == typeid(std::string)) {
-        std::cout << "message = " << message << std::endl;
-        for (auto &command : clientCommandHandler) {
-            if (message.find(command.first) != std::string::npos) {
-                command.second(*this);
-                break;
-            }
-        }
-    } else {
-        std::cout << "message is not a string" << std::endl;
-    }
 }

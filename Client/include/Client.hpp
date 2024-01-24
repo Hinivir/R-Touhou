@@ -30,9 +30,6 @@ class Client: public ANetwork
         Client(const std::string ip, const std::string port);
         ~Client();
         void handleMessage();
-
-        template<typename messageTemplate>
-        void handleMessageClient(messageTemplate &message);
         void commandConnect();
         void commandDisconnect();
         void commandError();

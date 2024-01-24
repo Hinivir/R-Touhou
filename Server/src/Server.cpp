@@ -70,7 +70,7 @@ void Server::verifConnected()
 
 void Server::manageMessage()
 {
-    this->receiveMessage(false);
+    this->receiveMessage<std::string>(false);
 //    std::string message;
 
     //auto it = commandHandler.find(this->getBuffer().data());

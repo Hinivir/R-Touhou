@@ -12,6 +12,7 @@
 #include <array>
 
 #include <asio.hpp>
+#include <map>
 
 #define CONNECTED "101: You are connected!\n"
 #define DISCONNECTED "103: You are disconnected!\n"
@@ -41,6 +42,14 @@ class ANetwork {
         asio::io_context ioContext;
         asio::ip::udp::socket socket;
         asio::ip::udp::endpoint senderEndpoint;
+
+        const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
+            {CONNECTED, &ANetwork::commandConnect},
+            {DISCONNECTED, &ANetwork::commandDisconnect},
+            {ERROR_MSG, &ANetwork::commandError},
+            {READY, &ANetwork::commandReady},
+            {SERVER_FULL, &ANetwork::commandFull},
+        };
 
   public:
     ANetwork(const std::string ip, const std::string port) : ioContext(), socket(ioContext)
@@ -98,9 +107,28 @@ class ANetwork {
     }
 
     template<typename messageTemplate>
-    void handleMessageClient(messageTemplate &message);
+    void handleMessageClient(messageTemplate &message) {
+        if (typeid(message) == typeid(std::string)) {
+            std::cout << "message = " << message << std::endl;
+            for (auto &command : clientCommandHandler) {
+                if (message.find(command.first) != std::string::npos) {
+                    command.second(*this);
+                    break;
+                }
+            }
+        } else {
+            std::cout << "message is not a string" << std::endl;
+        }
+    }
+
+    void commandConnect() { std::cout << "Connected to server" << std::endl; }
+    void commandDisconnect() { std::cout << "Disconnected from server" << std::endl; }
+    void commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
+    void commandReady() { std::cout << "Ready to play" << std::endl; }
+    void commandFull() { std::cout << "Server is full" << std::endl; }
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }
 };
 #endif
+
