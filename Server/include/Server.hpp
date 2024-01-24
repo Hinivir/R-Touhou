@@ -32,7 +32,6 @@ class Server: protected ANetwork
         std::map<asio::ip::udp::endpoint, int> playerNumberMap;
 
     public:
-        static const std::map<std::string, std::function<void(Server&, const asio::ip::udp::endpoint&, const std::array<char, 2048>&, size_t)>> commandHandler;
         Server(const std::string &ip, const std::string &port);
         ~Server();
         void manageServer();

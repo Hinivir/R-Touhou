@@ -26,18 +26,13 @@ Server::~Server(void)
     socket.close();
 }
 
-const std::map<std::string, std::function<void(Server&, const asio::ip::udp::endpoint&, const std::array<char, 2048>&, size_t)>> Server::commandHandler = {
-    {"connect\n", &Server::handleConnect},
-    {"ready\n", &Server::handleReady}
-};
-
 void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
     std::stringstream ss;
 
     for (const auto& client : clients)
         if (client != sender) {
             ss << playerNumberMap.at(sender);
-            sendMessage("Player " + ss.str() + ": " + message,  client, false);
+            sendMessage<std::string>("Player " + ss.str() + ": " + message, client, false);
         }
 }
 
