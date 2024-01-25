@@ -36,6 +36,7 @@ struct outGame_message
 class ANetwork {
     protected:
         std::array<char, 2048> buffer;
+        bool isMessage = false;
         std::string ip;
         std::string port;
         std::size_t bytesReceived;
@@ -49,6 +50,12 @@ class ANetwork {
             {ERROR_MSG, &ANetwork::commandError},
             {READY, &ANetwork::commandReady},
             {SERVER_FULL, &ANetwork::commandFull},
+        };
+
+        const std::map<std::string, std::function<void(ANetwork &)>> serverCommandHandler = {
+            {"connect\n", &ANetwork::commandConnect},
+            {"disconnect\n", &ANetwork::commandDisconnect},
+            {"ready\n", &ANetwork::commandReady},
         };
 
     public:
@@ -91,7 +98,9 @@ class ANetwork {
                         }
                     });
             } else {
-                socket.receive_from(asio::buffer(buffer), senderEndpoint);
+                bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
+                messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
+                handleMessage<messageTemplate>(true, message);
                 //return buffer;
             }
         }
@@ -100,10 +109,24 @@ class ANetwork {
         void handleMessage(bool isServer, messageTemplate &message)
         {
             if (isServer) {
-                std::cout << "Server" << std::endl;//impletement server message handler
+                handleMessageServer<messageTemplate>(message);
             } else {
                 handleMessageClient<messageTemplate>(message);
             }
+        }
+
+        template<typename messageTemplate>
+        void handleMessageServer(messageTemplate &message) {
+            if (typeid(message) == typeid(std::string)) {
+                for (auto &command : serverCommandHandler) {
+                    if (message.find(command.first) != std::string::npos) {
+                        command.second(*this);
+                        return;
+                    }
+                }
+                isMessage = true;
+            } else
+                std::cout << "message is not a string" << std::endl;
         }
 
         template<typename messageTemplate>
