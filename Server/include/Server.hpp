@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <map>
 #include <asio.hpp>
-#include "../../Abstract/ANetwork.hpp"
+#include "ANetwork.hpp"
 
 class Server : protected ANetwork
 {
