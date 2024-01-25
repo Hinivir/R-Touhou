@@ -10,7 +10,7 @@
 
 namespace GameEngine
 {
-    template <char const *UNIQUE_NAME>
+    template <int UNIQUE_ID>
     struct GenericEventBase {
     };
 } // namespace GameEngine
