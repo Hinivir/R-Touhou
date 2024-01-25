@@ -21,82 +21,19 @@ Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetw
     }
 }
 
-Server::~Server(void)
-{
-    socket.close();
-}
+Server::~Server(void) { socket.close(); }
 
-void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
-    std::stringstream ss;
-
-    for (const auto& client : clients)
-        if (client != sender) {
-            ss << playerNumberMap.at(sender);
-            sendMessage<std::string>("Player " + ss.str() + ": " + message, client, false);
-        }
-}
-
-void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
-{
-    std::string message(buffer.data(), size);
-    if (message == "connect\n")
-        verifConnected();
-}
-
-void Server::handleReady(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
-{
-    std::string message(buffer.data(), size);
-    std::cout << message << std::endl;
-    if (message == "ready\n")
-        sendMessage(READY, senderEndpoint, false);
-}
-
-void Server::verifConnected()
+void Server::sendMessageToAllClients(const std::string &message)
 {
     std::stringstream ss;
 
-    if (std::find(clients.begin(), clients.end(), senderEndpoint) == clients.end()) {
-        if (clients.size() < maxPlayers) {
-            playerNumber++;
-            playerNumberMap[senderEndpoint] = playerNumber;
-            std::cout << "Client connected: " << senderEndpoint << " - Assigned Player " << playerNumber << std::endl;
-            ss << playerNumber;
-            sendMessage(CONNECTED, senderEndpoint, false);
-            sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
-            clients.push_back(senderEndpoint);
+    std::cout << clients.size() << std::endl;
+    for (const auto &client : clients) {
+        if (client != senderEndpoint) {
+            ss << playerNumberMap.at(senderEndpoint);
+            sendMessage<std::string>("Player " + ss.str() + ": " + getBuffer().data(), client, false);
         }
     }
-}
-
-void Server::manageMessage()
-{
-    this->receiveMessage(false);
-//    std::string message;
-
-    //auto it = commandHandler.find(this->getBuffer().data());
-    if (!handleCommand(this->getBuffer(), bytesReceived)) {
-        std::string message(this->getBuffer().data(), bytesReceived);
-        sendMessageToAllClients(message, senderEndpoint);
-    }
-}
-
-std::map<std::string, std::string> CommandMap = {
-    {"connect\n", CONNECTED},
-    {"ready\n", READY}
-};
-
-
-bool Server::handleCommand(std::array<char, 2048> buffer, size_t size)
-{
-    std::cout << "Command received: " << buffer.data() << std::endl;
-    for (std::size_t i = 0; i < CommandMap.size(); i++) {
-        if (CommandMap.find(buffer.data()) != CommandMap.end()) {//strcmp
-            std::cout << "Command found: " << CommandMap[buffer.data()] << std::endl;
-            sendMessage(CommandMap[buffer.data()], senderEndpoint, false);
-            return true;
-        }
-    }
-    return false;
 }
 
 void Server::manageServer()
@@ -104,10 +41,36 @@ void Server::manageServer()
     std::cout << "Waiting for clients..." << std::endl;
     try {
         while (1) {
-            manageMessage();
+            receiveMessage<std::string>(false);
+            if (isMessage)
+                sendMessageToAllClients(getBuffer().data());
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
         std::cerr << "Error in manageServer: " << e.what() << std::endl;
     }
 }
+
+void Server::handleMessage() {}
+
+void Server::commandConnect()
+{
+    std::stringstream ss;
+
+    if (std::find(clients.begin(), clients.end(), senderEndpoint) == clients.end()) {
+        if (clients.size() < maxPlayers) {
+            playerNumber++;
+            playerNumberMap[senderEndpoint] = playerNumber;
+            ss << playerNumber;
+            sendMessage(CONNECTED, senderEndpoint, false);
+            sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
+            clients.push_back(senderEndpoint);
+        }
+    }
+}
+void Server::commandDisconnect() { sendMessage(DISCONNECTED, senderEndpoint, false); }
+
+void Server::commandError() { sendMessage(ERROR_MSG, senderEndpoint, false); }
+
+void Server::commandReady() { sendMessage(READY, senderEndpoint, false); }
+void Server::commandFull() { sendMessage(SERVER_FULL, senderEndpoint, false); }

@@ -24,15 +24,15 @@ int main(int const argc, char const *const *const argv)
         return 1;
     }
     Client new_client(argv[1], argv[2]);
-    new_client.receiveMessage(true);
+    new_client.receiveMessage<std::string>(true);
     std::cout << new_client.getBuffer().begin() << std::endl;
     asio::io_context &io_context(new_client.getIoContext());
-    std::thread t([&io_context]() { io_context.run();});
+    std::thread t([&io_context]() { io_context.run(); });
     for (;;) {
         std::string message;
         std::getline(std::cin, message);
         message += "\n";
-        new_client.sendMessage(message, new_client.serverEndpoint, true);
+        new_client.sendMessage<std::string>(message, new_client.serverEndpoint, true);
     }
     io_context.stop();
     t.join();

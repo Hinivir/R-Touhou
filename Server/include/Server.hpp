@@ -16,26 +16,35 @@
 #include <asio.hpp>
 #include "../../Abstract/ANetwork.hpp"
 
-class Server: protected ANetwork
+class Server : protected ANetwork
 {
-    private:
-        std::size_t _port;
-        std::size_t maxPlayers = 4;
-        std::size_t  playerNumber = 0;
-        std::vector<asio::ip::udp::endpoint> clients;
-        std::map<asio::ip::udp::endpoint, int> playerNumberMap;
+  private:
+    std::size_t _port;
+    std::size_t maxPlayers = 4;
+    std::size_t playerNumber = 0;
+    std::vector<asio::ip::udp::endpoint> clients;
+    std::map<asio::ip::udp::endpoint, int> playerNumberMap;
 
-    public:
-        Server(const std::string &ip, const std::string &port);
-        ~Server();
-        void manageServer();
-        void verifConnected();
-        void manageMessage();
-        void handleReady(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size);
-        void handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size);
-        void sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender);
-        bool handleCommand(std::array<char, 2048> buffer, size_t size);
-        void handleMessageClient(std::string &message) {}
+  public:
+    Server(const std::string &ip, const std::string &port);
+    ~Server();
+    void manageServer();
+    void verifConnected();
+    void manageMessage();
+    void sendMessageToAllClients(const std::string &message);
+    bool handleCommand(std::array<char, 2048> buffer, size_t size);
+    template <typename messageTemplate>
+    void handleMessageClient(messageTemplate &message)
+    {
+    }
+
+    // command functions herited from ANetwork
+    void handleMessage();
+    void commandConnect();
+    void commandDisconnect();
+    void commandError();
+    void commandReady();
+    void commandFull();
 };
-w
-#endif //R_TYPE_SERVER_HPP
+
+#endif // R_TYPE_SERVER_HPP
