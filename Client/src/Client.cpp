@@ -18,9 +18,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include "SparseArray.hpp"
 
-
-
-Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork(ip, port)
+Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
     try {
         this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::make_address_v4(ip), std::stoi(port));
@@ -31,32 +29,14 @@ Client::Client(const std::string ip, const std::string port): ANetwork::ANetwork
     }
 }
 
-Client::~Client()
-{
-    this->socket.close();
-}
+Client::~Client() { this->socket.close(); }
 
-void Client::commandConnect()
-{
-    std::cout << "Connected to server" << std::endl;
-}
+void Client::commandConnect() { std::cout << "Connected to server" << std::endl; }
 
-void Client::commandDisconnect()
-{
-    std::cout << "Disconnected from server" << std::endl;
-}
+void Client::commandDisconnect() { std::cout << "Disconnected from server" << std::endl; }
 
-void Client::commandError()
-{
-    std::cout << "Error sending confirmation message to server" << std::endl;
-}
+void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
-void Client::commandReady()
-{
-    std::cout << "Ready to play" << std::endl;
-}
+void Client::commandReady() { std::cout << "Ready to play" << std::endl; }
 
-void Client::commandFull()
-{
-    std::cout << "Server is full" << std::endl;
-}
+void Client::commandFull() { std::cout << "Server is full" << std::endl; }

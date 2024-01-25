@@ -28,4 +28,3 @@ int main(const int argc, const char **argv)
     Server server(ip, port);
     server.manageServer();
 }
-
