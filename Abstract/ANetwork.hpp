@@ -19,6 +19,7 @@
 #define ERROR_MSG "102: Error sending confirmation message to client!\n"
 #define READY "104: You are ready!\n"
 #define SERVER_FULL "105: Server is full!\n"
+#define NEW_CLIENT "106: New client connected!\n"
 
 template <typename senderMessage>
 struct inGame_message

@@ -21,17 +21,19 @@ Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetw
     }
 }
 
-Server::~Server(void) { socket.close(); }
-
-void Server::sendMessageToAllClients(const std::string &message)
+Server::~Server(void)
 {
+    socket.close();
+}
+
+void Server::sendMessageToAllClients(const std::string& clientMessage) {
     std::stringstream ss;
 
     std::cout << clients.size() << std::endl;
-    for (const auto &client : clients) {
+    for (const auto& client : clients) {
         if (client != senderEndpoint) {
             ss << playerNumberMap.at(senderEndpoint);
-            sendMessage<std::string>("Player " + ss.str() + ": " + getBuffer().data(), client, false);
+            sendMessage<std::string>("Player " + ss.str() + ": " + clientMessage , client, false);
         }
     }
 }
@@ -42,8 +44,10 @@ void Server::manageServer()
     try {
         while (1) {
             receiveMessage<std::string>(false);
-            if (isMessage)
+            if (isMessage) {
+                std::cout << "Message received: " << getBuffer().data() << std::endl;
                 sendMessageToAllClients(getBuffer().data());
+            }
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
@@ -53,8 +57,7 @@ void Server::manageServer()
 
 void Server::handleMessage() {}
 
-void Server::commandConnect()
-{
+void Server::commandConnect() {
     std::stringstream ss;
 
     if (std::find(clients.begin(), clients.end(), senderEndpoint) == clients.end()) {
@@ -65,12 +68,23 @@ void Server::commandConnect()
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
+            for (const auto& client : clients)
+                if (client != senderEndpoint)
+                    sendMessage<std::string>(NEW_CLIENT, client, false);
         }
     }
 }
-void Server::commandDisconnect() { sendMessage(DISCONNECTED, senderEndpoint, false); }
+void Server::commandDisconnect() {
+    sendMessage(DISCONNECTED, senderEndpoint, false);
+}
 
-void Server::commandError() { sendMessage(ERROR_MSG, senderEndpoint, false); }
+void Server::commandError() {
+    sendMessage(ERROR_MSG, senderEndpoint, false);
+}
 
-void Server::commandReady() { sendMessage(READY, senderEndpoint, false); }
-void Server::commandFull() { sendMessage(SERVER_FULL, senderEndpoint, false); }
+void Server::commandReady() {
+    sendMessage(READY, senderEndpoint, false);
+}
+void Server::commandFull() {
+    sendMessage(SERVER_FULL, senderEndpoint, false);
+}
