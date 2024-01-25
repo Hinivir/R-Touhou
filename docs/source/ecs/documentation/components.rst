@@ -1,6 +1,6 @@
-.. _ecs-documentation-macros:
+.. _ecs-documentation-components:
 
-ECS - Macros Documenation
+ECS - Components Documenation
 ====================
 
 Learn more about the components used for definining your entities.
