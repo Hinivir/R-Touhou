@@ -68,9 +68,7 @@ void Server::commandConnect() {
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
-            for (const auto& client : clients)
-                if (client != senderEndpoint)
-                    sendMessage<std::string>(NEW_CLIENT, client, false);
+            sendMessageToAllClients(NEW_CLIENT);
         }
     }
 }
