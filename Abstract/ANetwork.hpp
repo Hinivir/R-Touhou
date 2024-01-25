@@ -44,6 +44,7 @@ class ANetwork
     asio::io_context ioContext;
     asio::ip::udp::socket socket;
     asio::ip::udp::endpoint senderEndpoint;
+    std::size_t playerNumber = 0;
 
     const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
         {CONNECTED, &ANetwork::commandConnect},

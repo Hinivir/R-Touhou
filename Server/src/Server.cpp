@@ -33,7 +33,10 @@ void Server::sendMessageToAllClients(const std::string& clientMessage) {
     for (const auto& client : clients) {
         if (client != senderEndpoint) {
             ss << playerNumberMap.at(senderEndpoint);
-            sendMessage<std::string>("Player " + ss.str() + ": " + clientMessage , client, false);
+            if (clientMessage == NEW_CLIENT)// tmp
+                sendMessage<std::string>(clientMessage, client, false);
+            else
+                sendMessage<std::string>("Player " + ss.str() + ": " + clientMessage , client, false);
         }
     }
 }
