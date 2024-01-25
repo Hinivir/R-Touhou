@@ -6,11 +6,11 @@
 */
 
 #include "../include/Client.hpp"
-#include "Registry.hpp"
-#include "Systems.hpp"
-#include "Macros/ForEach.hpp"
+//#include "Registry.hpp"
+//#include "Systems.hpp"
+//#include "Macros/ForEach.hpp"
 
-#define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
+//clea#define REGISTER_COMPONENT(COMPONENT) registry.registerComponent<COMPONENT>();
 /*
 void Client::runGame(std::string const gamename)
 {
