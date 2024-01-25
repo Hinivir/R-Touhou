@@ -29,11 +29,14 @@ Server::~Server(void)
 void Server::sendMessageToAllClients(const std::string& message, const asio::ip::udp::endpoint& sender) {
     std::stringstream ss;
 
-    for (const auto& client : clients)
+    std::cout << clients.size() << std::endl;
+    for (const auto& client : clients) {
         if (client != sender) {
+            std::cout << client << "|" << sender << std::endl;
             ss << playerNumberMap.at(sender);
-            sendMessage<std::string>("Player " + ss.str() + ": " + message, client, false);
+            sendMessage<std::string>("Player " + ss.str() + ": " + getBuffer().data() , client, false);
         }
+    }
 }
 
 void Server::handleConnect(const asio::ip::udp::endpoint &endpoint, const std::array<char, 2048> &buffer, size_t size)
@@ -71,10 +74,11 @@ void Server::verifConnected()
 void Server::manageMessage()
 {
     this->receiveMessage<std::string>(false);
-//    std::string message;
 
-    //auto it = commandHandler.find(this->getBuffer().data());
-    if (!handleCommand(this->getBuffer(), bytesReceived)) {
+    if (handleCommand(this->getBuffer(), bytesReceived)) {
+        std::string message(this->getBuffer().data(), bytesReceived);
+        sendMessageToAllClients(message, senderEndpoint);
+    } else {
         std::string message(this->getBuffer().data(), bytesReceived);
         sendMessageToAllClients(message, senderEndpoint);
     }
@@ -88,11 +92,12 @@ std::map<std::string, std::string> CommandMap = {
 
 bool Server::handleCommand(std::array<char, 2048> buffer, size_t size)
 {
-    std::cout << "Command received: " << buffer.data() << std::endl;
-    for (std::size_t i = 0; i < CommandMap.size(); i++) {
-        if (CommandMap.find(buffer.data()) != CommandMap.end()) {//strcmp
-            std::cout << "Command found: " << CommandMap[buffer.data()] << std::endl;
-            sendMessage(CommandMap[buffer.data()], senderEndpoint, false);
+    std::string message(buffer.data(), size);
+
+    for (auto it = CommandMap.begin(); it != CommandMap.end(); it++) {
+        if (it->first == getBuffer().data()) {
+            std::cout << "Command received: " << buffer.data() << std::endl;
+            sendMessage(it->second, senderEndpoint, false);
             return true;
         }
     }
@@ -111,3 +116,10 @@ void Server::manageServer()
         std::cerr << "Error in manageServer: " << e.what() << std::endl;
     }
 }
+
+void Server::handleMessage() {}
+void Server::commandConnect() {}
+void Server::commandDisconnect() {}
+void Server::commandError() {}
+void Server::commandReady() {}
+void Server::commandFull() {}

@@ -51,84 +51,85 @@ class ANetwork {
             {SERVER_FULL, &ANetwork::commandFull},
         };
 
-  public:
-    ANetwork(const std::string ip, const std::string port) : ioContext(), socket(ioContext)
-    {
-        this->ip = ip;
-        this->port = port;
-    }
-
-    template<typename messageTemplate>
-    void sendMessage(const messageTemplate &message, const asio::ip::udp::endpoint &receiverEndpoint, bool async)
-    {
-        if (async) {
-            socket.async_send_to(asio::buffer(message), receiverEndpoint,
-                [](const asio::error_code &error, std::size_t bytes_transferred) {
-                    if (error) {
-                        std::cerr << "ERROR: " << error.message() << std::endl;
-                        return;
-                    }
-                });
-        } else {
-            socket.send_to(asio::buffer(message), receiverEndpoint);
+    public:
+        ANetwork(const std::string ip, const std::string port) : ioContext(), socket(ioContext)
+        {
+            this->ip = ip;
+            this->port = port;
         }
-    }
 
-    template<typename messageTemplate>
-    void receiveMessage(bool async)
-    {
-        buffer.fill(0);
-        if (async) {
-            socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
-                [this](const asio::error_code &error, std::size_t bytes_transferred) {
-                    if (!error) {
-                        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
-                        handleMessage<messageTemplate>(false, message);
-                        receiveMessage<messageTemplate>(true);
-                        //return buffer;
-                    } else {
-                        std::cerr << "ERROR: " << error.message() << std::endl;
-                    }
-                });
-        } else {
-            socket.receive_from(asio::buffer(buffer), senderEndpoint);
-            //return buffer;
-        }
-    }
-
-    template<typename messageTemplate>
-    void handleMessage(bool isServer, messageTemplate &message)
-    {
-        if (isServer) {
-            std::cout << "Server" << std::endl;
-        } else {
-            handleMessageClient<messageTemplate>(message);
-        }
-    }
-
-    template<typename messageTemplate>
-    void handleMessageClient(messageTemplate &message) {
-        if (typeid(message) == typeid(std::string)) {
-            std::cout << "message = " << message << std::endl;
-            for (auto &command : clientCommandHandler) {
-                if (message.find(command.first) != std::string::npos) {
-                    command.second(*this);
-                    break;
-                }
+        template<typename messageTemplate>
+        void sendMessage(const messageTemplate &message, const asio::ip::udp::endpoint &receiverEndpoint, bool async)
+        {
+            if (async) {
+                socket.async_send_to(asio::buffer(message), receiverEndpoint,
+                    [](const asio::error_code &error, std::size_t bytes_transferred) {
+                        if (error) {
+                            std::cerr << "ERROR: " << error.message() << std::endl;
+                            return;
+                        }
+                    });
+            } else {
+                socket.send_to(asio::buffer(message), receiverEndpoint);
             }
-        } else {
-            std::cout << "message is not a string" << std::endl;
         }
-    }
 
-    void commandConnect() { std::cout << "Connected to server" << std::endl; }
-    void commandDisconnect() { std::cout << "Disconnected from server" << std::endl; }
-    void commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
-    void commandReady() { std::cout << "Ready to play" << std::endl; }
-    void commandFull() { std::cout << "Server is full" << std::endl; }
+        template<typename messageTemplate>
+        void receiveMessage(bool async)
+        {
+            buffer.fill(0);
+            if (async) {
+                socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
+                    [this](const asio::error_code &error, std::size_t bytes_transferred) {
+                        if (!error) {
+                            messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
+                            handleMessage<messageTemplate>(false, message);
+                            receiveMessage<messageTemplate>(true);
+                            //return buffer;
+                        } else {
+                            std::cerr << "ERROR: " << error.message() << std::endl;
+                        }
+                    });
+            } else {
+                socket.receive_from(asio::buffer(buffer), senderEndpoint);
+                //return buffer;
+            }
+        }
 
-    asio::io_context &getIoContext() { return this->ioContext; }
-    std::array<char, 2048> getBuffer() { return this->buffer; }
+        template<typename messageTemplate>
+        void handleMessage(bool isServer, messageTemplate &message)
+        {
+            if (isServer) {
+                std::cout << "Server" << std::endl;//impletement server message handler
+            } else {
+                handleMessageClient<messageTemplate>(message);
+            }
+        }
+
+        template<typename messageTemplate>
+        void handleMessageClient(messageTemplate &message) {
+            if (typeid(message) == typeid(std::string)) {
+                std::cout << "message = " << message << std::endl;
+                for (auto &command : clientCommandHandler) {
+                    if (message.find(command.first) != std::string::npos) {
+                        command.second(*this);
+                        break;
+                    }
+                }
+            } else {
+                std::cout << "message is not a string" << std::endl;
+            }
+        }
+
+        //all these functions will be virtual in the future so we can override them
+        virtual void commandConnect() = 0;
+        virtual void commandDisconnect() = 0;
+        virtual void commandError() = 0;
+        virtual void commandReady() = 0;
+        virtual void commandFull() = 0;
+
+        asio::io_context &getIoContext() { return this->ioContext; }
+        std::array<char, 2048> getBuffer() { return this->buffer; }
 };
 #endif
 

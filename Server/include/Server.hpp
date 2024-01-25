@@ -37,6 +37,14 @@ class Server: protected ANetwork
         bool handleCommand(std::array<char, 2048> buffer, size_t size);
         template<typename messageTemplate>
         void handleMessageClient(messageTemplate &message) {}
+
+        //command functions herited from ANetwork
+        void handleMessage();
+        void commandConnect();
+        void commandDisconnect();
+        void commandError();
+        void commandReady();
+        void commandFull();
 };
 
 #endif //R_TYPE_SERVER_HPP

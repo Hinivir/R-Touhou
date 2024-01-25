@@ -32,7 +32,7 @@ int main(int const argc, char const *const *const argv)
         std::string message;
         std::getline(std::cin, message);
         message += "\n";
-        new_client.sendMessage(message, new_client.serverEndpoint, true);
+        new_client.sendMessage<std::string>(message, new_client.serverEndpoint, true);
     }
     io_context.stop();
     t.join();
