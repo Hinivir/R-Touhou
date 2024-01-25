@@ -36,7 +36,7 @@ struct outGame_message
 
 class ANetwork
 {
-  protected:: Indicates that the
+  protected:
     std::array<char, 2048> buffer;
     std::string ip;
     std::string port;
