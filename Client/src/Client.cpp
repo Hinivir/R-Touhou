@@ -10,13 +10,11 @@
 #include <map>
 #include <string>
 #include <vector>
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Event.hpp>
-
-#include <SFML/Graphics/Color.hpp>
 #include "SparseArray.hpp"
+#include "Registry.hpp"
+#include "Systems.hpp"
+#include "Macros/ForEach.hpp"
+#include "Init.hpp"
 
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
