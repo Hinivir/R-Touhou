@@ -36,5 +36,6 @@ class Client : public ANetwork
     void commandFull();
 
     void manageMessage(const std::type_info &info);
+    void manageMessageString(const std::string message);
 };
 #endif
