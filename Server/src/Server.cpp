@@ -44,10 +44,6 @@ void Server::manageServer()
     try {
         while (1) {
             receiveMessage<std::string>(false);
-            if (isMessage) {
-                std::cout << "Message received: " << getBuffer().data() << std::endl;
-                sendMessageToAllClients(getBuffer().data());
-            }
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
@@ -55,7 +51,11 @@ void Server::manageServer()
     }
 }
 
-void Server::handleMessage() {}
+void Server::manageMessage(const std::type_info &info) {
+    if (info == typeid(std::string))
+        std::cout << "Message received: " << getBuffer().data() << std::endl;
+    sendMessageToAllClients(getBuffer().data());
+}
 
 void Server::commandConnect() {
     std::stringstream ss;

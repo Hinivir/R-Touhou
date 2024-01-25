@@ -30,7 +30,6 @@ class Server : protected ANetwork
     ~Server();
     void manageServer();
     void verifConnected();
-    void manageMessage();
     void sendMessageToAllClients(const std::string &message);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
     template <typename messageTemplate>
@@ -39,12 +38,13 @@ class Server : protected ANetwork
     }
 
     // command functions herited from ANetwork
-    void handleMessage();
     void commandConnect();
     void commandDisconnect();
     void commandError();
     void commandReady();
     void commandFull();
+
+    void manageMessage(const std::type_info &info);
 };
 
 #endif // R_TYPE_SERVER_HPP

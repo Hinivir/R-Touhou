@@ -38,3 +38,10 @@ void Client::commandError() { std::cout << "Error sending confirmation message t
 void Client::commandReady() { std::cout << "Ready to play" << std::endl; }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
+
+void Client::manageMessage(const std::type_info &info) {
+    if (info == typeid(std::string))
+        std::cout << getBuffer().data() << std::endl;
+    else
+        std::cout << "something else" << std::endl;
+}

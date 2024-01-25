@@ -38,7 +38,6 @@ class ANetwork
 {
   protected:
     std::array<char, 2048> buffer;
-    bool isMessage = false;
     std::string ip;
     std::string port;
     std::size_t bytesReceived;
@@ -127,7 +126,7 @@ class ANetwork
                     return;
                 }
             }
-            isMessage = true;
+            manageMessage(typeid(message));
         } else
             std::cout << "message is not a string" << std::endl;
     }
@@ -136,13 +135,13 @@ class ANetwork
     void handleMessageClient(messageTemplate &message)
     {
         if (typeid(message) == typeid(std::string)) {
-            std::cout << "message = " << message << std::endl;
             for (auto &command : clientCommandHandler) {
                 if (message.find(command.first) != std::string::npos) {
                     command.second(*this);
-                    break;
+                    return;
                 }
             }
+            manageMessage(typeid(message));
         } else {
             std::cout << "message is not a string" << std::endl;
         }
@@ -154,6 +153,8 @@ class ANetwork
     virtual void commandError() = 0;
     virtual void commandReady() = 0;
     virtual void commandFull() = 0;
+
+    virtual void manageMessage(const std::type_info &type) = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }
