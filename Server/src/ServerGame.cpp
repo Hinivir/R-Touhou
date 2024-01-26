@@ -10,9 +10,9 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
-GameEngine::Entity Game::ServerGameGame::ServerGame::spawnBaseEntity(GameEngine::Registry &registry) {}
+GameEngine::Entity Game::ServerGame::spawnBaseEntity(GameEngine::Registry &registry) {}
 
-GameEngine::Entity Game::ServerGamespawnBaseEntity(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();
 
@@ -20,7 +20,7 @@ GameEngine::Entity Game::ServerGamespawnBaseEntity(GameEngine::Registry &registr
     return entity;
 }
 
-GameEngine::Entity Game::ServerGamespawnMovableEntity(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::spawnMovableEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = spawnBaseEntity(registry);
 
@@ -33,7 +33,7 @@ GameEngine::Entity Game::ServerGamespawnMovableEntity(GameEngine::Registry &regi
     return entity;
 }
 
-GameEngine::Entity Game::ServerGamespawnEnemyEntity(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::spawnEnemyEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = spawnBaseEntity(registry);
 
@@ -47,7 +47,7 @@ GameEngine::Entity Game::ServerGamespawnEnemyEntity(GameEngine::Registry &regist
     return entity;
 }
 
-GameEngine::Entity Game::ServerGamecreateBackgroundStar(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createBackgroundStar(GameEngine::Registry &registry)
 {
     GameEngine::Entity backgroundStar = registry.spawnEntity();
 
@@ -59,7 +59,7 @@ GameEngine::Entity Game::ServerGamecreateBackgroundStar(GameEngine::Registry &re
     return backgroundStar;
 }
 
-GameEngine::Entity Game::ServerGamecreateGroundDown(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createGroundDown(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundDown = registry.spawnEntity();
 
@@ -71,7 +71,7 @@ GameEngine::Entity Game::ServerGamecreateGroundDown(GameEngine::Registry &regist
     return groundDown;
 }
 
-GameEngine::Entity Game::ServerGamecreateGroundUp(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createGroundUp(GameEngine::Registry &registry)
 {
     GameEngine::Entity groundUp = registry.spawnEntity();
 
@@ -83,7 +83,7 @@ GameEngine::Entity Game::ServerGamecreateGroundUp(GameEngine::Registry &registry
     return groundUp;
 }
 
-GameEngine::Entity Game::ServerGamecreateScore(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createScore(GameEngine::Registry &registry)
 {
     GameEngine::Entity score = registry.spawnEntity();
 
@@ -96,7 +96,7 @@ GameEngine::Entity Game::ServerGamecreateScore(GameEngine::Registry &registry)
     return score;
 }
 
-GameEngine::Entity Game::ServerGamecreateGameOver(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createGameOver(GameEngine::Registry &registry)
 {
     GameEngine::Entity gameOver = registry.spawnEntity();
 
@@ -110,7 +110,7 @@ GameEngine::Entity Game::ServerGamecreateGameOver(GameEngine::Registry &registry
     return gameOver;
 }
 
-GameEngine::Entity Game::ServerGamecreateYouWin(GameEngine::Registry &registry)
+GameEngine::Entity Game::ServerGame::createYouWin(GameEngine::Registry &registry)
 {
     GameEngine::Entity youWin = registry.spawnEntity();
 
