@@ -37,7 +37,11 @@ void Client::commandDisconnect() { std::cout << "Disconnected from server" << st
 
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
-void Client::commandReady() { std::cout << "Ready to play" << std::endl; }
+void Client::commandReady() {
+    std::cout << "Ready to play" << std::endl;
+    std::thread gameThread([&]() { runGame(); });
+    gameThread.detach();
+}
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
 
