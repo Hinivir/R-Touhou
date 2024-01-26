@@ -86,6 +86,11 @@ void Server::commandError() {
 
 void Server::commandReady() {
     sendMessage(READY, senderEndpoint, false);
+    clientsReady.push_back(senderEndpoint);
+    if (clientsReady.size() == clients.size()) {
+        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        runGame();
+    }
 }
 
 void Server::commandFull() {

@@ -9,6 +9,8 @@
 #define R_TYPE_SERVER_HPP
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -22,7 +24,9 @@ class Server : protected ANetwork
     std::size_t _port;
     std::size_t maxPlayers = 4;
     std::vector<asio::ip::udp::endpoint> clients;
+    std::vector<asio::ip::udp::endpoint> clientsReady;
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
+
 
   public:
     Server(const std::string &ip, const std::string &port);
