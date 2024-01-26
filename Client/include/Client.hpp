@@ -34,6 +34,7 @@ class Client : public ANetwork
     void commandError();
     void commandReady();
     void commandFull();
+    void commandClientDisconnect();
 
     void manageMessage(const std::type_info &info);
     void manageMessageString(const std::string message);

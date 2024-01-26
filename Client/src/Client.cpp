@@ -29,11 +29,19 @@ Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwor
     }
 }
 
-Client::~Client() { this->socket.close(); }
+Client::~Client() {
+    if (this->socket.is_open())
+        this->socket.close();
+}
 
 void Client::commandConnect() { std::cout << "Connected to server" << std::endl; }
 
-void Client::commandDisconnect() { std::cout << "Disconnected from server" << std::endl; }
+void Client::commandDisconnect() {
+    std::cout << "Disconnected from server" << std::endl;
+    this->running = false;
+    if (this->socket.is_open())
+        this->socket.close();
+}
 
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
@@ -44,6 +52,10 @@ void Client::commandReady() {
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
+
+void Client::commandClientDisconnect() {
+    playerNumber--;
+}
 
 void Client::manageMessage(const std::type_info &info) {
     if (info == typeid(std::string))
@@ -65,4 +77,5 @@ void Client::manageMessageString(const std::string message) {
 
 void Client::runGame() {
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
+    std::cout << "Game started" << std::endl;
 }

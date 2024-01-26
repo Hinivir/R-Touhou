@@ -78,6 +78,17 @@ void Server::commandConnect() {
 }
 void Server::commandDisconnect() {
     sendMessage(DISCONNECTED, senderEndpoint, false);
+    std::size_t idx = 0;
+
+    for (const auto& client : clients) {
+        if (client == senderEndpoint) {
+            clients.erase(clients.begin() + idx);
+            break;
+        }
+        idx++;
+    }
+    std::cout << "connected number " << clients.size() << std::endl; 
+    commandClientDisconnect();
 }
 
 void Server::commandError() {
@@ -95,6 +106,10 @@ void Server::commandReady() {
 
 void Server::commandFull() {
     sendMessage(SERVER_FULL, senderEndpoint, false);
+}
+
+void Server::commandClientDisconnect() {
+    sendMessageToAllClients(CLIENT_DISCONNECTED);
 }
 
 void Server::runGame() {

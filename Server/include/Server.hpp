@@ -46,6 +46,7 @@ class Server : protected ANetwork
     void commandError();
     void commandReady();
     void commandFull();
+    void commandClientDisconnect();
 
     void manageMessage(const std::type_info &info);
     void runGame();

@@ -20,6 +20,7 @@
 #define READY "104: You are ready!\n"
 #define SERVER_FULL "105: Server is full!\n"
 #define NEW_CLIENT "106: New client connected!\n"
+#define CLIENT_DISCONNECTED "107: Client disconnected!\n"
 
 template <typename senderMessage>
 struct inGame_message
@@ -45,6 +46,7 @@ class ANetwork
     asio::ip::udp::socket socket;
     asio::ip::udp::endpoint senderEndpoint;
     std::size_t playerNumber = 0;
+    bool running = true;
 
     const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
         {CONNECTED, &ANetwork::commandConnect},
@@ -52,6 +54,7 @@ class ANetwork
         {ERROR_MSG, &ANetwork::commandError},
         {READY, &ANetwork::commandReady},
         {SERVER_FULL, &ANetwork::commandFull},
+        {CLIENT_DISCONNECTED, &ANetwork::commandClientDisconnect}
     };
 
     const std::map<std::string, std::function<void(ANetwork &)>> serverCommandHandler = {
@@ -66,6 +69,8 @@ class ANetwork
         this->ip = ip;
         this->port = port;
     }
+
+    bool isConnected() { return running; }
 
     template <typename messageTemplate>
     void sendMessage(const messageTemplate &message, const asio::ip::udp::endpoint &receiverEndpoint, bool async)
@@ -93,8 +98,8 @@ class ANetwork
                     if (!error) {
                         messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
                         handleMessage<messageTemplate>(false, message);
-                        receiveMessage<messageTemplate>(true);
-                        // return buffer;
+                        if (isConnected())
+                            receiveMessage<messageTemplate>(true);
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
                     }
@@ -103,7 +108,6 @@ class ANetwork
             bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
             messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
             handleMessage<messageTemplate>(true, message);
-            // return buffer;
         }
     }
 
@@ -122,7 +126,7 @@ class ANetwork
     {
         if (typeid(message) == typeid(std::string)) {
             for (auto &command : serverCommandHandler) {
-                if (message.find(command.first) != std::string::npos) {
+                if (strcmp(message.c_str(), command.first.c_str()) == 0) {
                     command.second(*this);
                     return;
                 }
@@ -137,7 +141,8 @@ class ANetwork
     {
         if (typeid(message) == typeid(std::string)) {
             for (auto &command : clientCommandHandler) {
-                if (message.find(command.first) != std::string::npos) {
+                if (strcmp(message.c_str(), command.first.c_str()) == 0) {
+                    std::cout << "command found" << std::endl;
                     command.second(*this);
                     return;
                 }
@@ -154,6 +159,7 @@ class ANetwork
     virtual void commandError() = 0;
     virtual void commandReady() = 0;
     virtual void commandFull() = 0;
+    virtual void commandClientDisconnect() = 0;
 
     virtual void manageMessage(const std::type_info &type) = 0;
     virtual void runGame() = 0;
