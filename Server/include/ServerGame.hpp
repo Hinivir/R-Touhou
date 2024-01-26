@@ -14,7 +14,7 @@ namespace Game {
     class ServerGame: public AGame
     {
         public:
-            ServerGame();
+            ServerGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies);
             ~ServerGame();
     };
 }

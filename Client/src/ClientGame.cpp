@@ -7,8 +7,8 @@
 
 #include "ClientGame.hpp"
 
-Game::ClientGame::ClientGame()
-    : AGame(1, 2048, 20)
+Game::ClientGame::ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
+    : Game::AGame(nbPlayer, nbEntities, defaultNbEnemies)
 {
     std::cout << "ClientGame created" << std::endl;
 }

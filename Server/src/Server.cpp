@@ -6,6 +6,7 @@
 */
 
 #include "Server.hpp"
+#include "ServerGame.hpp"
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
@@ -86,6 +87,11 @@ void Server::commandError() {
 void Server::commandReady() {
     sendMessage(READY, senderEndpoint, false);
 }
+
 void Server::commandFull() {
     sendMessage(SERVER_FULL, senderEndpoint, false);
+}
+
+void Server::runGame() {
+    Game::ServerGame serverGame(this->playerNumber, 2048, 30);
 }

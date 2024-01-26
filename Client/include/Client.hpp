@@ -37,5 +37,6 @@ class Client : public ANetwork
 
     void manageMessage(const std::type_info &info);
     void manageMessageString(const std::string message);
+    void runGame();
 };
 #endif

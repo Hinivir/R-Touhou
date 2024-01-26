@@ -156,6 +156,7 @@ class ANetwork
     virtual void commandFull() = 0;
 
     virtual void manageMessage(const std::type_info &type) = 0;
+    virtual void runGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }

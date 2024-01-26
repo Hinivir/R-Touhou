@@ -7,8 +7,8 @@
 
 #include "ServerGame.hpp"
 
-Game::ServerGame::ServerGame()
-    : AGame(1, 2048, 20)
+Game::ServerGame::ServerGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
+    : AGame(nbPlayer, nbEntities, defaultNbEnemies)
 {
     std::cout << "ServerGame created" << std::endl;
 }

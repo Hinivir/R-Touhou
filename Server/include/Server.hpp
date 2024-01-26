@@ -44,6 +44,7 @@ class Server : protected ANetwork
     void commandFull();
 
     void manageMessage(const std::type_info &info);
+    void runGame();
 };
 
 #endif // R_TYPE_SERVER_HPP

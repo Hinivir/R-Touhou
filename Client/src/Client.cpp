@@ -16,6 +16,8 @@
 #include "Macros/ForEach.hpp"
 #include "Init.hpp"
 
+#include "ClientGame.hpp"
+
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
     try {
@@ -55,4 +57,8 @@ void Client::manageMessageString(const std::string message) {
         playerNumber++;
     std::cout << message << std::endl;
     std::cout << playerNumber << std::endl;
+}
+
+void Client::runGame() {
+    Game::ClientGame clientGame(this->playerNumber, 2048, 30);
 }
