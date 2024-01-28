@@ -18,12 +18,6 @@ namespace Game
             ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
                 : AGame(nbPlayer, nbEntities, defaultNbEnemies)
             {
-                registry.registerComponent<GameEngine::Color>();                  // c
-                registry.registerComponent<GameEngine::ZIndex>();                 // c
-                registry.registerComponent<GameEngine::Outline>();                // c
-                registry.registerComponent<GameEngine::Sprite>();                 // c
-                registry.registerComponent<GameEngine::SpriteTextureAnimation>(); // c
-                registry.registerComponent<GameEngine::SpriteTextureRect>();      // c
             };
             ~ClientGame() = default;
             GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);
