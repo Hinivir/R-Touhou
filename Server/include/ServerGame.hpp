@@ -18,9 +18,6 @@ namespace Game
             ServerGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
                 : AGame(nbPlayer, nbEntities, defaultNbEnemies)
             {
-                registry.registerComponent<GameEngine::Hitbox>(); // s
-                registry.registerComponent<GameEngine::Life>();   // s
-                registry.registerComponent<GameEngine::Path>();   // s
             };
             ~ServerGame() = default;
             GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);

@@ -79,8 +79,10 @@ void Client::runGame() {
 
     window.setFramerateLimit(60);
 
+    //loop for avery players
     GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
     entityVector.push_back(movableEntity);
+
     GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
     entityVector.push_back(backgroundStar1);
     GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
