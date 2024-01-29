@@ -17,21 +17,21 @@
 #include "Init.hpp"
 #include "ServerGame.hpp"
 
-std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
     for (auto &i : pos) {
-        os << i.x << " " << i.y << std::endl;
+        os << i.first << " " << i.second << std::endl;
     }
     return os;
 }
 
-std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
 {
     std::string line;
     while (std::getline(is, line)) {
         std::istringstream iss(line);
-        GameEngine::Position p;
-        iss >> p.x >> p.y;
+        std::pair<float, float> p;
+        iss >> p.first >> p.second;
         pos.push_back(p);
     }
     return is;
@@ -82,6 +82,16 @@ void Server::sendMessageToAllClients(const std::string& message)
     }
 }
 
+void Server::sendMessageToClient(std::vector<std::pair<float, float>>& pos)
+{
+    std::array<char, 2048> buffer;
+
+    serialize<std::vector<std::pair<float, float>>>(pos, buffer);
+    for (const auto& client : clients) {
+        sendMessage<std::array<char, 2048>>(buffer, client, false);
+    }
+}
+
 void Server::sendMessageToOtherClients(const std::string& message)
 {
     std::stringstream ss;
@@ -125,6 +135,7 @@ void Server::commandConnect() {
         }
     }
 }
+
 void Server::commandDisconnect() {
     sendMessage(DISCONNECTED, senderEndpoint, false);
     std::size_t idx = 0;
@@ -181,6 +192,20 @@ void Server::commandStartGame() {
 }
 
 void Server::runGame() {
+    std::vector< std::pair<float, float> > enemyPositionVector = {
+        { 100, 100 },
+        { 200, 200 },
+        { 300, 300 },
+        { 400, 400 },
+        { 500, 500 },
+        { 600, 600 },
+        { 700, 700 },
+        { 800, 800 },
+        { 900, 900 },
+    };
+    sleep(1);
+    sendMessageToClient(enemyPositionVector);
+/*
     std::size_t nbEnemies = 30;
     Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
     int nbRegistry = 2048;
@@ -281,4 +306,5 @@ void Server::runGame() {
             isGameOver = true;
         }
     }
+*/
 }

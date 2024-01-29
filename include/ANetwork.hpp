@@ -30,7 +30,7 @@
 #define START_GAME "108: Game is starting!\n"
 
 template <typename T>
-void serialize(const T& data, std::array<char, 2048>& buffer) {
+void serialize(T& data, std::array<char, 2048>& buffer) {
     std::ostringstream os;
     os << data;
     std::size_t size = os.str().copy(buffer.data(), buffer.size());
@@ -38,7 +38,7 @@ void serialize(const T& data, std::array<char, 2048>& buffer) {
 }
 
 template <typename T>
-T deserialize(const std::array<char, 2048>& buffer) {
+T deserialize(std::array<char, 2048>& buffer) {
     T data;
     std::istringstream is(std::string(buffer.data()));
     is >> data;
@@ -139,10 +139,13 @@ class ANetwork
     void handleMessage()
     {
         if (isInChat) {
+            std::cout << "chat" << std::endl;
             handleMessageString();
         } else if (isInSetup) {
+            std::cout << "setup" << std::endl;
             handleMessageString();
         } else if (isInGame) {
+            std::cout << "game" << std::endl;
             // TODO: Need to implement
         } else
             std::cout << "message is not a string" << std::endl;

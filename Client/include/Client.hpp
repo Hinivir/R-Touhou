@@ -27,6 +27,7 @@ class Client : public ANetwork
 
   public:
     asio::ip::udp::endpoint serverEndpoint;
+    std::vector <std::pair<float, float>> pos;
     Client(const std::string ip, const std::string port);
     ~Client();
 

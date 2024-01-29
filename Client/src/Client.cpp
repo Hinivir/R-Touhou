@@ -20,21 +20,21 @@
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
 
-std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
     for (auto &i : pos) {
-        os << i.x << " " << i.y << std::endl;
+        os << i.first << " " << i.second << std::endl;
     }
     return os;
 }
 
-std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
 {
     std::string line;
     while (std::getline(is, line)) {
         std::istringstream iss(line);
-        GameEngine::Position p;
-        iss >> p.x >> p.y;
+        std::pair<float, float> p;
+        iss >> p.first >> p.second;
         pos.push_back(p);
     }
     return is;
@@ -109,6 +109,12 @@ void Client::commandStartGame() {
 }
 
 void Client::runGame() {
+    receiveMessage(false);
+    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+    for (auto &i : pos) {
+        std::cout << i.first << "|" << i.second << std::endl;
+    }
+/*
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
@@ -207,4 +213,5 @@ void Client::runGame() {
             isGameOver = true;
         }
     }
+*/
 }

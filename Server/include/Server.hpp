@@ -36,6 +36,7 @@ class Server : protected ANetwork
     void verifConnected();
     void sendMessageToOtherClients(const std::string &message);
     void sendMessageToAllClients(const std::string &message);
+    void sendMessageToClient(std::vector<std::pair<float, float>> &pos);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
 
     void handleMessageString();
