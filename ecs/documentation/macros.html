@@ -37,16 +37,80 @@
 <p>Miscellaneous macros used for simplifying your code.</p>
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
+<ul class="simple">
+<li><p><a class="reference internal" href="#do-component-contains-at">DO_COMPONENT_CONTAINS_AT</a></p></li>
+<li><p><a class="reference internal" href="#extract-component-const">EXTRACT_COMPONENT(_CONST)</a></p></li>
+<li><p><a class="reference internal" href="#extract-component-from-const">EXTRACT_COMPONENT_FROM(_CONST)</a></p></li>
+<li><p><a class="reference internal" href="#from-component-to-variable-const">FROM_COMPONENT_TO_VARIABLE(_CONST)</a></p></li>
 <li><p><a class="reference internal" href="#game-engine-for-each">GAME_ENGINE_FOR_EACH ⚠️</a></p></li>
-</ol>
+<li><p><a class="reference internal" href="#registry-default-name">REGISTRY_DEFAULT_NAME</a></p></li>
+</ul>
+</section>
+<section id="do-component-contains-at">
+<h2>DO_COMPONENT_CONTAINS_AT<a class="headerlink" href="#do-component-contains-at" title="Link to this heading">¶</a></h2>
+<p><em>From Macros/Systems.hpp</em></p>
+<p>Condition checking if a COMPONENT variable contains a value at a certain ID.
+The COMPONENT variable can be first extracted with <a class="reference internal" href="#extract-component-const">EXTRACT_COMPONENT(_CONST)</a> or <a class="reference internal" href="#extract-component-from-const">EXTRACT_COMPONENT_FROM(_CONST)</a>.</p>
+<section id="code">
+<h3>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID &lt; COMPONENT.size() &amp;&amp; COMPONENT[ID].has_value())</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="extract-component-const">
+<h2>EXTRACT_COMPONENT(_CONST)<a class="headerlink" href="#extract-component-const" title="Link to this heading">¶</a></h2>
+<p><em>From Macros/Systems.hpp</em></p>
+<p>Extracts the content of a REGISTRY_DEFAULT_NAME’s COMPONENT component to a new VARIABLE variable as a list.
+Both use the <a class="reference internal" href="#registry-default-name">REGISTRY_DEFAULT_NAME</a> macro. To use another registry name, use <a class="reference internal" href="#extract-component-from-const">EXTRACT_COMPONENT_FROM(_CONST)</a>.</p>
+<section id="id1">
+<h3>Code<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define EXTRACT_COMPONENT(COMPONENT, VARIABLE) \</span>
+<span class="cp">    auto &amp;VARIABLE = REGISTRY_DEFAULT_NAME.getComponent&lt;COMPONENT&gt;()</span>
+<span class="cp">#define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) \</span>
+<span class="cp">    auto const &amp;VARIABLE = REGISTRY_DEFAULT_NAME.getComponent&lt;COMPONENT&gt;()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="extract-component-from-const">
+<h2>EXTRACT_COMPONENT_FROM(_CONST)<a class="headerlink" href="#extract-component-from-const" title="Link to this heading">¶</a></h2>
+<p><em>From Macros/Systems.hpp</em></p>
+<p>Extracts the content of a REGISTRY’s COMPONENT component to a new VARIABLE variable as a list.</p>
+<section id="id2">
+<h3>Code<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) \</span>
+<span class="cp">    auto &amp;VARIABLE = REGISTRY.getComponent&lt;COMPONENT&gt;()</span>
+<span class="cp">#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY) \</span>
+<span class="cp">    auto const &amp;VARIABLE = REGISTRY.getComponent&lt;COMPONENT&gt;()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="from-component-to-variable-const">
+<h2>FROM_COMPONENT_TO_VARIABLE(_CONST)<a class="headerlink" href="#from-component-to-variable-const" title="Link to this heading">¶</a></h2>
+<p><em>From Macros/Systems.hpp</em></p>
+<p>Extracts the value contained in the COMPONENT variable at a position ID, as a VARIABLE variable.
+Also creates a VARIABLE_HAS const variable containing weither or not COMPONENT contains a value at the position ID.
+The COMPONENT variable can be first extracted with <a class="reference internal" href="#extract-component-const">EXTRACT_COMPONENT(_CONST)</a> or <a class="reference internal" href="#extract-component-from-const">EXTRACT_COMPONENT_FROM(_CONST)</a>.</p>
+<section id="id3">
+<h3>Code<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)           \</span>
+<span class="cp">    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);              \</span>
+<span class="cp">    auto &amp;VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];</span>
+<span class="cp">#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)     \</span>
+<span class="cp">    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);              \</span>
+<span class="cp">    auto const &amp;VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="game-engine-for-each">
 <h2>GAME_ENGINE_FOR_EACH ⚠️<a class="headerlink" href="#game-engine-for-each" title="Link to this heading">¶</a></h2>
 <p><em>From Macros/ForEach.hpp</em></p>
 <p>Applies another macro ACTION to multiple arguments. (up to <strong>30</strong> arguments)</p>
-<section id="code">
-<h3>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h3>
+<section id="id4">
+<h3>Code<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define GAME_ENGINE_FOR_EACH(ACTION,...) GAME_ENGINE_GET_MACRO(_0,__VA_ARGS__ \</span>
 <span class="cp">    ,GAME_ENGINE_FE_30,GAME_ENGINE_FE_29,GAME_ENGINE_FE_28,GAME_ENGINE_FE_27,GAME_ENGINE_FE_26 \</span>
 <span class="cp">    ,GAME_ENGINE_FE_25,GAME_ENGINE_FE_24,GAME_ENGINE_FE_23,GAME_ENGINE_FE_22,GAME_ENGINE_FE_21 \</span>
@@ -79,6 +143,17 @@
 <p>May <strong>not</strong> work on <strong>Windows</strong> devices!</p>
 </section>
 </section>
+<section id="registry-default-name">
+<h2>REGISTRY_DEFAULT_NAME<a class="headerlink" href="#registry-default-name" title="Link to this heading">¶</a></h2>
+<p><em>From Macros/Systems.hpp</em></p>
+<p>Default name for a GameEngine::Registry. Allows the use of the <a class="reference internal" href="#extract-component-const">EXTRACT_COMPONENT(_CONST)</a> macros.</p>
+<section id="id5">
+<h3>Code<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define REGISTRY_DEFAULT_NAME r</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -104,7 +179,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../ecs.html#table-of-contents">Table of Contents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ecs.html#guides">Guides</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../ecs.html#detailed-documentation">Detailed Documentation</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="components.html">ECS - Macros Documenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="components.html">ECS - Components Documenation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="systems.html">ECS - Systems Documenation</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ECS - Macros Documenation</a></li>
 </ul>

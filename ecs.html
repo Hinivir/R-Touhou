@@ -72,7 +72,7 @@
 <h2>Detailed Documentation<a class="headerlink" href="#detailed-documentation" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ecs/documentation/components.html">ECS - Macros Documenation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="ecs/documentation/components.html">ECS - Components Documenation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#table-of-contents">Table of Contents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#color">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/components.html#controllable">Controllable</a></li>
@@ -95,19 +95,24 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ecs/documentation/systems.html">ECS - Systems Documenation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#table-of-contents">Table of Contents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-attacksystem">GameEngine::System.attackSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-collisionsystem">GameEngine::System.collisionSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-controlsystem">GameEngine::System.controlSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-deleteentitiessystem">GameEngine::System.deleteEntitiesSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-drawsystem">GameEngine::System.drawSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-initenemy">GameEngine::System.initEnemy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-movementsystem">GameEngine::System.movementSystem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-spritesystem">GameEngine::System.spriteSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-draw">GameEngine::System::draw</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-system-sprite">GameEngine::System::sprite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-attacksystem">GameEngine::SystemGroup.attackSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-collisionsystem">GameEngine::SystemGroup.collisionSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-controlsystem">GameEngine::SystemGroup.controlSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-deleteentitiessystem">GameEngine::SystemGroup.deleteEntitiesSystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-initenemy">GameEngine::SystemGroup.initEnemy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/systems.html#gameengine-systemgroup-movementsystem">GameEngine::SystemGroup.movementSystem</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ecs/documentation/macros.html">ECS - Macros Documenation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#do-component-contains-at">DO_COMPONENT_CONTAINS_AT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#extract-component-const">EXTRACT_COMPONENT(_CONST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#extract-component-from-const">EXTRACT_COMPONENT_FROM(_CONST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#from-component-to-variable-const">FROM_COMPONENT_TO_VARIABLE(_CONST)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#game-engine-for-each">GAME_ENGINE_FOR_EACH ⚠️</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecs/documentation/macros.html#registry-default-name">REGISTRY_DEFAULT_NAME</a></li>
 </ul>
 </li>
 </ul>
@@ -129,7 +134,6 @@
 <span class="w">   </span><span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="w"> </span><span class="n">window</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">VideoMode</span><span class="p">(</span><span class="n">WINDOW_WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">WINDOW_HEIGHT</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;ECS&quot;</span><span class="p">);</span>
 <span class="w">   </span><span class="n">window</span><span class="p">.</span><span class="n">setFramerateLimit</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
 <span class="w">   </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="n">registry</span><span class="p">(</span><span class="n">nbRegistry</span><span class="p">);</span>
-<span class="w">   </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="w"> </span><span class="n">system</span><span class="p">;</span>
 <span class="w">   </span><span class="c1">// Registering components for system.spriteSystem and system.drawSystem</span>
 <span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="w">   </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Controllable</span><span class="o">&gt;</span><span class="p">();</span>
@@ -149,9 +153,9 @@
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="o">::</span><span class="n">Closed</span><span class="p">)</span>
 <span class="w">               </span><span class="n">window</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
 <span class="w">         </span><span class="c1">// Initializing sprite textures</span>
-<span class="w">         </span><span class="n">system</span><span class="p">.</span><span class="n">spriteSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+<span class="w">         </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="o">::</span><span class="n">sprite</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
 <span class="w">         </span><span class="c1">// Drawing entities on screen</span>
-<span class="w">         </span><span class="n">system</span><span class="p">.</span><span class="n">drawSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">);</span>
+<span class="w">         </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="o">::</span><span class="n">draw</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">);</span>
 <span class="w">         </span><span class="c1">// Displaying SFML window, then clearing it</span>
 <span class="w">         </span><span class="n">window</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
 <span class="w">         </span><span class="n">window</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
@@ -162,7 +166,8 @@
 </div>
 <p>You’ll just need to import the following headers at the start of your code:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Registry.hpp&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems/Draw.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems/Sprite.hpp&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -225,7 +230,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#detailed-documentation">Detailed Documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ecs/documentation/components.html">ECS - Macros Documenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ecs/documentation/components.html">ECS - Components Documenation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ecs/documentation/systems.html">ECS - Systems Documenation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ecs/documentation/macros.html">ECS - Macros Documenation</a></li>
 </ul>

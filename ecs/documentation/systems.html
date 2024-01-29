@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="ECS - Macros Documenation" href="macros.html" />
-    <link rel="prev" title="ECS - Macros Documenation" href="components.html" />
+    <link rel="prev" title="ECS - Components Documenation" href="components.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -38,91 +38,91 @@
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="#gameengine-system-attacksystem">GameEngine::System.attackSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-collisionsystem">GameEngine::System.collisionSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-controlsystem">GameEngine::System.controlSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-deleteentitiessystem">GameEngine::System.deleteEntitiesSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-drawsystem">GameEngine::System.drawSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-initenemy">GameEngine::System.initEnemy</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-movementsystem">GameEngine::System.movementSystem</a></p></li>
-<li><p><a class="reference internal" href="#gameengine-system-spritesystem">GameEngine::System.spriteSystem</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-system-draw">GameEngine::System::draw</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-system-sprite">GameEngine::System::sprite</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-attacksystem">GameEngine::SystemGroup.attackSystem</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-collisionsystem">GameEngine::SystemGroup.collisionSystem</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-controlsystem">GameEngine::SystemGroup.controlSystem</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-deleteentitiessystem">GameEngine::SystemGroup.deleteEntitiesSystem</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-initenemy">GameEngine::SystemGroup.initEnemy</a></p></li>
+<li><p><a class="reference internal" href="#gameengine-systemgroup-movementsystem">GameEngine::SystemGroup.movementSystem</a></p></li>
 </ul>
 </section>
-<section id="gameengine-system-attacksystem">
-<h2>GameEngine::System.attackSystem<a class="headerlink" href="#gameengine-system-attacksystem" title="Link to this heading">¶</a></h2>
-<p>Creates projectiles from controllable entities.</p>
-<p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
-<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Entity</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entityVector</span>
-</pre></div>
-</div>
-<p>Requires GameEngine::Controllable, GameEngine::Position and GameEngine::Size.</p>
-</section>
-<section id="gameengine-system-collisionsystem">
-<h2>GameEngine::System.collisionSystem<a class="headerlink" href="#gameengine-system-collisionsystem" title="Link to this heading">¶</a></h2>
-<p>Manages collision between controllable entities and non-controllable entities.</p>
-<p>If these two types of entities collides, it also manages the loss of health.</p>
-<p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
-<span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">score</span>
-</pre></div>
-</div>
-<p>Requires GameEngine::Controllable, GameEngine::Hitbox, GameEngine::Life, GameEngine::Position, GameEngine::Projectile and GameEngine::Size.</p>
-</section>
-<section id="gameengine-system-controlsystem">
-<h2>GameEngine::System.controlSystem<a class="headerlink" href="#gameengine-system-controlsystem" title="Link to this heading">¶</a></h2>
-<p>Moves controllable entities from the keyboard input.</p>
-<p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
-</pre></div>
-</div>
-<p>Requires GameEngine::Controllable, GameEngine::Position, GameEngine::Size and GameEngine::Velocity.</p>
-</section>
-<section id="gameengine-system-deleteentitiessystem">
-<h2>GameEngine::System.deleteEntitiesSystem<a class="headerlink" href="#gameengine-system-deleteentitiessystem" title="Link to this heading">¶</a></h2>
-<p>Deletes every entity that has a GameEngine::Position component.</p>
-<p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
-</pre></div>
-</div>
-<p>Requires GameEngine::Position.</p>
-</section>
-<section id="gameengine-system-drawsystem">
-<h2>GameEngine::System.drawSystem<a class="headerlink" href="#gameengine-system-drawsystem" title="Link to this heading">¶</a></h2>
+<section id="gameengine-system-draw">
+<h2>GameEngine::System::draw<a class="headerlink" href="#gameengine-system-draw" title="Link to this heading">¶</a></h2>
 <p>Draws every drawable entity on a window.</p>
 <p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
 <span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="w"> </span><span class="o">&amp;</span><span class="n">window</span>
 </pre></div>
 </div>
 <p>Requires GameEngine::Color, GameEngine::Controllable, GameEngine::Drawable, GameEngine::Outline, GameEngine::Position, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect, GameEngine::Text and GameEngine::ZIndex.</p>
 </section>
-<section id="gameengine-system-initenemy">
-<h2>GameEngine::System.initEnemy<a class="headerlink" href="#gameengine-system-initenemy" title="Link to this heading">¶</a></h2>
+<section id="gameengine-system-sprite">
+<h2>GameEngine::System::sprite<a class="headerlink" href="#gameengine-system-sprite" title="Link to this heading">¶</a></h2>
+<p>Generate the textures required for the sprites to be displayed.</p>
+<p>Arguments:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
+</pre></div>
+</div>
+<p>Requires GameEngine::Size and GameEngine::Sprite.</p>
+</section>
+<section id="gameengine-systemgroup-attacksystem">
+<h2>GameEngine::SystemGroup.attackSystem<a class="headerlink" href="#gameengine-systemgroup-attacksystem" title="Link to this heading">¶</a></h2>
+<p>Creates projectiles from controllable entities.</p>
+<p>Arguments:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Entity</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entityVector</span>
+</pre></div>
+</div>
+<p>Requires GameEngine::Controllable, GameEngine::Position and GameEngine::Size.</p>
+</section>
+<section id="gameengine-systemgroup-collisionsystem">
+<h2>GameEngine::SystemGroup.collisionSystem<a class="headerlink" href="#gameengine-systemgroup-collisionsystem" title="Link to this heading">¶</a></h2>
+<p>Manages collision between controllable entities and non-controllable entities.</p>
+<p>If these two types of entities collides, it also manages the loss of health.</p>
+<p>Arguments:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
+<span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">score</span>
+</pre></div>
+</div>
+<p>Requires GameEngine::Controllable, GameEngine::Hitbox, GameEngine::Life, GameEngine::Position, GameEngine::Projectile and GameEngine::Size.</p>
+</section>
+<section id="gameengine-systemgroup-controlsystem">
+<h2>GameEngine::SystemGroup.controlSystem<a class="headerlink" href="#gameengine-systemgroup-controlsystem" title="Link to this heading">¶</a></h2>
+<p>Moves controllable entities from the keyboard input.</p>
+<p>Arguments:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
+</pre></div>
+</div>
+<p>Requires GameEngine::Controllable, GameEngine::Position, GameEngine::Size and GameEngine::Velocity.</p>
+</section>
+<section id="gameengine-systemgroup-deleteentitiessystem">
+<h2>GameEngine::SystemGroup.deleteEntitiesSystem<a class="headerlink" href="#gameengine-systemgroup-deleteentitiessystem" title="Link to this heading">¶</a></h2>
+<p>Deletes every entity that has a GameEngine::Position component.</p>
+<p>Arguments:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
+</pre></div>
+</div>
+<p>Requires GameEngine::Position.</p>
+</section>
+<section id="gameengine-systemgroup-initenemy">
+<h2>GameEngine::SystemGroup.initEnemy<a class="headerlink" href="#gameengine-systemgroup-initenemy" title="Link to this heading">¶</a></h2>
 <p>Creates a new entity enemy. It will spawn at a random y (vertical) position.</p>
 <p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
 </pre></div>
 </div>
 <p>Requires GameEngine::Controllable, GameEngine::Hitbox, GameEngine::Path, GameEngine::Position and GameEngine::Projectile.</p>
 </section>
-<section id="gameengine-system-movementsystem">
-<h2>GameEngine::System.movementSystem<a class="headerlink" href="#gameengine-system-movementsystem" title="Link to this heading">¶</a></h2>
+<section id="gameengine-systemgroup-movementsystem">
+<h2>GameEngine::SystemGroup.movementSystem<a class="headerlink" href="#gameengine-systemgroup-movementsystem" title="Link to this heading">¶</a></h2>
 <p>Moves every entity based on their velocity.</p>
 <p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">REGISTRY_DEFAULT_NAME</span>
 </pre></div>
 </div>
 <p>Requires GameEngine::Controllable, GameEngine::Path, GameEngine::Position, GameEngine::Projectile, GameEngine::Size and GameEngine::Velocity.</p>
-</section>
-<section id="gameengine-system-spritesystem">
-<h2>GameEngine::System.spriteSystem<a class="headerlink" href="#gameengine-system-spritesystem" title="Link to this heading">¶</a></h2>
-<p>Generate the textures required for the sprites to be displayed.</p>
-<p>Arguments:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span>
-</pre></div>
-</div>
-<p>Requires GameEngine::Size and GameEngine::Sprite.</p>
 </section>
 </section>
 
@@ -149,7 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../ecs.html#table-of-contents">Table of Contents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ecs.html#guides">Guides</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../ecs.html#detailed-documentation">Detailed Documentation</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="components.html">ECS - Macros Documenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="components.html">ECS - Components Documenation</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ECS - Systems Documenation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="macros.html">ECS - Macros Documenation</a></li>
 </ul>
@@ -166,7 +166,7 @@
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../../ecs.html">ECS</a><ul>
-      <li>Previous: <a href="components.html" title="previous chapter">ECS - Macros Documenation</a></li>
+      <li>Previous: <a href="components.html" title="previous chapter">ECS - Components Documenation</a></li>
       <li>Next: <a href="macros.html" title="next chapter">ECS - Macros Documenation</a></li>
   </ul></li>
   </ul></li>

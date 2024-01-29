@@ -13,7 +13,7 @@
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ECS - Macros Documenation" href="../documentation/components.html" />
+    <link rel="next" title="ECS - Components Documenation" href="../documentation/components.html" />
     <link rel="prev" title="ECS - Components Guide" href="components.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -133,7 +133,8 @@
 </div>
 <p>With a main that should look like this:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Registry.hpp&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems/Draw.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Systems/Sprite.hpp&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GravityComponent.hpp&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;SFML/Graphics.hpp&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
@@ -144,7 +145,6 @@
 <span class="w">    </span><span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span><span class="w"> </span><span class="n">window</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">VideoMode</span><span class="p">(</span><span class="n">WINDOW_WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">WINDOW_HEIGHT</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;ECS&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="n">window</span><span class="p">.</span><span class="n">setFramerateLimit</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
 <span class="w">    </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Registry</span><span class="w"> </span><span class="n">registry</span><span class="p">(</span><span class="n">nbRegistry</span><span class="p">);</span>
-<span class="w">    </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="w"> </span><span class="n">system</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">// Registering components for system.spriteSystem and system.drawSystem</span>
 <span class="w">    </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Color</span><span class="o">&gt;</span><span class="p">();</span>
 <span class="w">    </span><span class="n">registry</span><span class="p">.</span><span class="n">registerComponent</span><span class="o">&lt;</span><span class="n">GameEngine</span><span class="o">::</span><span class="n">Controllable</span><span class="o">&gt;</span><span class="p">();</span>
@@ -171,11 +171,11 @@
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="o">::</span><span class="n">Closed</span><span class="p">)</span>
 <span class="w">                </span><span class="n">window</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
 <span class="w">        </span><span class="c1">// Initializing sprite textures</span>
-<span class="w">        </span><span class="n">system</span><span class="p">.</span><span class="n">spriteSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+<span class="w">        </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="o">::</span><span class="n">sprite</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
 <span class="w">        </span><span class="c1">// Our gravity system</span>
 <span class="w">        </span><span class="n">systemGravity</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
 <span class="w">        </span><span class="c1">// Drawing entities on screen</span>
-<span class="w">        </span><span class="n">system</span><span class="p">.</span><span class="n">drawSystem</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">);</span>
+<span class="w">        </span><span class="n">GameEngine</span><span class="o">::</span><span class="n">System</span><span class="o">::</span><span class="n">draw</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">);</span>
 <span class="w">        </span><span class="c1">// Displaying SFML window, then clearing it</span>
 <span class="w">        </span><span class="n">window</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
 <span class="w">        </span><span class="n">window</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
@@ -228,7 +228,7 @@
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../../ecs.html">ECS</a><ul>
       <li>Previous: <a href="components.html" title="previous chapter">ECS - Components Guide</a></li>
-      <li>Next: <a href="../documentation/components.html" title="next chapter">ECS - Macros Documenation</a></li>
+      <li>Next: <a href="../documentation/components.html" title="next chapter">ECS - Components Documenation</a></li>
   </ul></li>
   </ul></li>
 </ul>
