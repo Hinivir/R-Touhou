@@ -120,7 +120,7 @@ void Server::runGame() {
     std::vector<GameEngine::Position> enemyPositionVector;
 
     // client
-    GameEngine::System system;
+    GameEngine::SystemGroup system;
 
     //loop for avery players
     GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
@@ -177,7 +177,6 @@ void Server::runGame() {
 //        }
         enemyCoolDown++;
 //        shootCoolDown++;
-        system.spriteSystem(serverGame.getRegistry());
         system.movementSystem(serverGame.getRegistry());
         system.collisionSystem(serverGame.getRegistry(), totalScore);
         system.deleteEntitiesSystem(serverGame.getRegistry());

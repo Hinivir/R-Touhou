@@ -11,7 +11,7 @@
 #include "Components/Color.hpp"
 #include "Components/Drawable.hpp"
 #include "Components/ZIndex.hpp"
-#include "Components/Outline.Hpp"
+#include "Components/Outline.hpp"
 #include "Components/Position.hpp"
 #include "Components/Sprite.hpp"
 #include "Components/SpriteTextureAnimation.hpp"

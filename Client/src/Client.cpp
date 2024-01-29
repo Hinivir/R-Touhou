@@ -17,6 +17,8 @@
 #include "Init.hpp"
 
 #include "ClientGame.hpp"
+#include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
 
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
@@ -75,7 +77,7 @@ void Client::runGame() {
 
     // client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
-    GameEngine::System system;
+    GameEngine::SystemGroup system;
 
     window.setFramerateLimit(60);
 
@@ -125,8 +127,8 @@ void Client::runGame() {
 //        }
 //        enemyCoolDown++;
         shootCoolDown++;
-        system.spriteSystem(clientGame.getRegistry());
-        system.drawSystem(clientGame.getRegistry(), window);
+        GameEngine::System::sprite(clientGame.getRegistry());
+        GameEngine::System::draw(clientGame.getRegistry(), window);
         system.movementSystem(clientGame.getRegistry());
         system.collisionSystem(clientGame.getRegistry(), totalScore);
         system.deleteEntitiesSystem(clientGame.getRegistry());
