@@ -66,7 +66,8 @@ void Server::handleMessageString()
             return;
         }
     }
-    manageMessage(typeid(message));
+    std::cout << "Message received: " << getBuffer().data() << std::endl;
+    sendMessageToOtherClients(getBuffer().data());
 }
 
 void Server::sendMessageToAllClients(const std::string& message)
@@ -117,12 +118,6 @@ void Server::manageServer()
     } catch (std::exception const &e) {
         std::cerr << "Error in manageServer: " << e.what() << std::endl;
     }
-}
-
-void Server::manageMessage(const std::type_info &info) {
-    if (info == typeid(std::string))
-        std::cout << "Message received: " << getBuffer().data() << std::endl;
-    sendMessageToOtherClients(getBuffer().data());
 }
 
 void Server::commandConnect() {

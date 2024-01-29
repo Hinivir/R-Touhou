@@ -51,7 +51,6 @@ class Server : protected ANetwork
     void commandClientDisconnect();
     void commandStartGame();
 
-    void manageMessage(const std::type_info &info);//to be deleted
     void runGame();
 };
 

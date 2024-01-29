@@ -42,8 +42,7 @@ class Client : public ANetwork
         void commandClientDisconnect();
         void commandStartGame();
 
-        void manageMessage(const std::type_info &info);//to be deleted
-        void manageMessageString(const std::string message);//to be deleted
+        void manageMessage(std::string &message);
         void runGame();
 };
 #endif
