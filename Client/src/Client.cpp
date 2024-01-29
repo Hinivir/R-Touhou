@@ -68,9 +68,11 @@ void Client::commandDisconnect() {
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
 void Client::commandReady() {
-    std::cout << "Ready to play" << std::endl;
-    std::thread gameThread([&]() { runGame(); });
-    gameThread.detach();
+    this->isInSetup = true;
+    this->isInChat = false;
+    this->isInGame = false;
+    // TODO: Setup game
+    sendMessage<std::string>("start game\n", this->serverEndpoint, false);
 }
 
 void Client::handleMessageString() {
@@ -105,6 +107,12 @@ void Client::manageMessageString(const std::string message) {
     else if (strcmp(NEW_CLIENT, message.c_str()) == 0)
         playerNumber++;
     std::cout << message << std::endl;
+}
+
+void Client::commandStartGame() {
+    std::cout << "Game is starting" << std::endl;
+    std::thread gameThread([&]() { runGame(); });
+    gameThread.detach();
 }
 
 void Client::runGame() {

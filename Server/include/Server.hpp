@@ -25,6 +25,7 @@ class Server : protected ANetwork
     std::size_t maxPlayers = 4;
     std::vector<asio::ip::udp::endpoint> clients;
     std::vector<asio::ip::udp::endpoint> clientsReady;
+    std::vector<asio::ip::udp::endpoint> clientsSetup;
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
 
 
@@ -46,6 +47,7 @@ class Server : protected ANetwork
     void commandReady();
     void commandFull();
     void commandClientDisconnect();
+    void commandStartGame();
 
     void manageMessage(const std::type_info &info);//to be deleted
     void runGame();

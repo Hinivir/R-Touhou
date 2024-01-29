@@ -27,6 +27,7 @@
 #define SERVER_FULL "105: Server is full!\n"
 #define NEW_CLIENT "106: New client connected!\n"
 #define CLIENT_DISCONNECTED "107: Client disconnected!\n"
+#define START_GAME "108: Game is starting!\n"
 
 template <typename T>
 void serialize(const T& data, std::array<char, 2048>& buffer) {
@@ -70,6 +71,8 @@ class ANetwork
     std::size_t playerNumber = 0;
     bool running = true;
     bool isInChat = true;
+    bool isInSetup = false;
+    bool isInGame = false;
 
     const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
         {CONNECTED, &ANetwork::commandConnect},
@@ -77,13 +80,15 @@ class ANetwork
         {ERROR_MSG, &ANetwork::commandError},
         {READY, &ANetwork::commandReady},
         {SERVER_FULL, &ANetwork::commandFull},
-        {CLIENT_DISCONNECTED, &ANetwork::commandClientDisconnect}
+        {CLIENT_DISCONNECTED, &ANetwork::commandClientDisconnect},
+        {START_GAME, &ANetwork::commandStartGame},
     };
 
     const std::map<std::string, std::function<void(ANetwork &)>> serverCommandHandler = {
         {"connect\n", &ANetwork::commandConnect},
         {"disconnect\n", &ANetwork::commandDisconnect},
         {"ready\n", &ANetwork::commandReady},
+        {"start game\n", &ANetwork::commandStartGame},
     };
 
   public:
@@ -127,8 +132,7 @@ class ANetwork
                 });
         } else {
             bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
-            if (isInChat)
-                handleMessage();
+            handleMessage();
         }
     }
 
@@ -136,6 +140,10 @@ class ANetwork
     {
         if (isInChat) {
             handleMessageString();
+        } else if (isInSetup) {
+            handleMessageString();
+        } else if (isInGame) {
+            // TODO: Need to implement
         } else
             std::cout << "message is not a string" << std::endl;
     }
@@ -148,6 +156,7 @@ class ANetwork
     virtual void commandReady() = 0;
     virtual void commandFull() = 0;
     virtual void commandClientDisconnect() = 0;
+    virtual void commandStartGame() = 0;
 
     virtual void manageMessage(const std::type_info &type) = 0;//to be deleted
     virtual void runGame() = 0;

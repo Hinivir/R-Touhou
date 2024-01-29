@@ -88,7 +88,10 @@ void Server::sendMessageToOtherClients(const std::string& message)
     for (const auto& client : clients) {
         if (client != senderEndpoint) {
             ss << playerNumberMap.at(senderEndpoint);
-            sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
+            if (message == NEW_CLIENT)
+                sendMessage<std::string>(message, client, false);
+            else
+                sendMessage<std::string>("Player " + ss.str() + ": " + message, client, false);
         }
     }
 }
@@ -154,10 +157,12 @@ void Server::commandError() {
 void Server::commandReady() {
     clientsReady.push_back(senderEndpoint);
     sendMessage("Waiting other players...", senderEndpoint, false);
-    if (clientsReady.size() == clients.size()) {
-        sendMessageToAllClients(READY);
-        runGame();
-    }
+    sendMessage(READY, senderEndpoint, false);
+    // TODO: need to setup Game
+    this->isInChat = false;
+    this->isInSetup = true;
+    this->isInGame = false;
+
 }
 
 void Server::commandFull() {
@@ -166,6 +171,18 @@ void Server::commandFull() {
 
 void Server::commandClientDisconnect() {
     sendMessageToOtherClients(CLIENT_DISCONNECTED);
+}
+
+void Server::commandStartGame() {
+    clientsSetup.push_back(senderEndpoint);
+    if (clientsSetup.size() == clientsReady.size() && clientsSetup.size() == clients.size()) {
+        sendMessageToAllClients(START_GAME);
+        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        this->isInChat = false;
+        this->isInSetup = false;
+        this->isInGame = true;
+        runGame();
+    }
 }
 
 void Server::runGame() {
