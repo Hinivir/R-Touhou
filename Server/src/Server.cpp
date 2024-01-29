@@ -36,18 +36,31 @@ Server::~Server(void)
     socket.close();
 }
 
-void Server::sendMessageToAllClients(const std::string& clientMessage) {
+void Server::sendMessageToOtherClients(const std::string& message) {
     std::stringstream ss;
 
     std::cout << clients.size() << std::endl;
     for (const auto& client : clients) {
         if (client != senderEndpoint) {
             ss << playerNumberMap.at(senderEndpoint);
-            if (clientMessage == NEW_CLIENT)// tmp
-                sendMessage<std::string>(clientMessage, client, false);
+            if (message == NEW_CLIENT)
+                sendMessage<std::string>(message, client, false);
             else
-                sendMessage<std::string>("Player " + ss.str() + ": " + clientMessage , client, false);
+                sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
         }
+    }
+}
+
+void Server::sendMessageToAllClients(const std::string& message)
+{
+    std::stringstream ss;
+
+    for (const auto& client : clients) {
+        ss << playerNumberMap.at(senderEndpoint);
+        if (message == NEW_CLIENT)
+            sendMessage<std::string>(message, client, false);
+        else
+            sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
     }
 }
 
@@ -67,7 +80,7 @@ void Server::manageServer()
 void Server::manageMessage(const std::type_info &info) {
     if (info == typeid(std::string))
         std::cout << "Message received: " << getBuffer().data() << std::endl;
-    sendMessageToAllClients(getBuffer().data());
+    sendMessageToOtherClients(getBuffer().data());
 }
 
 void Server::commandConnect() {
@@ -81,7 +94,7 @@ void Server::commandConnect() {
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
-            sendMessageToAllClients(NEW_CLIENT);
+            sendMessageToOtherClients(NEW_CLIENT);
         }
     }
 }
@@ -92,11 +105,16 @@ void Server::commandDisconnect() {
     for (const auto& client : clients) {
         if (client == senderEndpoint) {
             clients.erase(clients.begin() + idx);
+            auto playerNumberIt = playerNumberMap.find(senderEndpoint);
+            if (playerNumberIt != playerNumberMap.end()) {
+                playerNumberMap.erase(playerNumberIt);
+                playerNumber--;
+            }
             break;
         }
         idx++;
     }
-    std::cout << "connected number " << clients.size() << std::endl; 
+    std::cout << "connected number " << clients.size() << std::endl;
     commandClientDisconnect();
 }
 
@@ -105,10 +123,10 @@ void Server::commandError() {
 }
 
 void Server::commandReady() {
-    sendMessage(READY, senderEndpoint, false);
     clientsReady.push_back(senderEndpoint);
+    sendMessage("Waiting other players...", senderEndpoint, false);
     if (clientsReady.size() == clients.size()) {
-        std::cout << "All clients are ready. Starting the game!" << std::endl;
+        sendMessageToAllClients(READY);
         runGame();
     }
 }
@@ -118,7 +136,7 @@ void Server::commandFull() {
 }
 
 void Server::commandClientDisconnect() {
-    sendMessageToAllClients(CLIENT_DISCONNECTED);
+    sendMessageToOtherClients(CLIENT_DISCONNECTED);
 }
 
 void Server::runGame() {

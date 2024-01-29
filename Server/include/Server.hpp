@@ -33,6 +33,7 @@ class Server : protected ANetwork
     ~Server();
     void manageServer();
     void verifConnected();
+    void sendMessageToOtherClients(const std::string &message);
     void sendMessageToAllClients(const std::string &message);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
     template <typename messageTemplate>
