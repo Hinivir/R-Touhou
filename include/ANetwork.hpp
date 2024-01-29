@@ -158,7 +158,6 @@ class ANetwork
     virtual void commandClientDisconnect() = 0;
     virtual void commandStartGame() = 0;
 
-    virtual void manageMessage(const std::type_info &type) = 0;//to be deleted
     virtual void runGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }

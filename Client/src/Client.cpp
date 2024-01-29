@@ -83,7 +83,7 @@ void Client::handleMessageString() {
             return;
         }
     }
-    manageMessage(typeid(message));
+    manageMessage(message);
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
@@ -92,14 +92,7 @@ void Client::commandClientDisconnect() {
     playerNumber--;
 }
 
-void Client::manageMessage(const std::type_info &info) {
-    if (info == typeid(std::string))
-        manageMessageString(getBuffer().data());
-    else
-        std::cout << "something else" << std::endl;
-}
-
-void Client::manageMessageString(const std::string message) {
+void Client::manageMessage(std::string &message) {
     const std::string youArePlayer = "You are player ";
 
     if (strncmp(youArePlayer.c_str(), message.c_str(), youArePlayer.size()) == 0)
