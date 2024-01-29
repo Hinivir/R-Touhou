@@ -12,6 +12,7 @@
 #include <array>
 
 #include <asio.hpp>
+#include "Components/Position.hpp"
 #include <map>
 
 #define CONNECTED "101: You are connected!\n"
@@ -20,6 +21,22 @@
 #define READY "104: You are ready!\n"
 #define SERVER_FULL "105: Server is full!\n"
 #define NEW_CLIENT "106: New client connected!\n"
+
+template <typename T>
+void serialize(const T& data, std::array<char, 2048>& buffer) {
+    std::ostringstream os;
+    os << data;
+    std::size_t size = os.str().copy(buffer.data(), buffer.size());
+    buffer[size] = '\0';
+}
+
+template <typename T>
+T deserialize(const std::array<char, 2048>& buffer) {
+    T data;
+    std::istringstream is(std::string(buffer.data()));
+    is >> data;
+    return data;
+}
 
 template <typename senderMessage>
 struct inGame_message
@@ -45,6 +62,7 @@ class ANetwork
     asio::ip::udp::socket socket;
     asio::ip::udp::endpoint senderEndpoint;
     std::size_t playerNumber = 0;
+    bool isInChat = true;
 
     const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
         {CONNECTED, &ANetwork::commandConnect},
@@ -83,7 +101,6 @@ class ANetwork
         }
     }
 
-    template <typename messageTemplate>
     void receiveMessage(bool async)
     {
         buffer.fill(0);
@@ -91,25 +108,25 @@ class ANetwork
             socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
-                        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
-                        handleMessage<messageTemplate>(false, message);
-                        receiveMessage<messageTemplate>(true);
-                        // return buffer;
+                        bytesReceived = bytes_transferred;
+                        if (isInChat)
+                            handleMessage<std::string>(false);
+                        receiveMessage(true);
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
                     }
                 });
         } else {
             bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
-            messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
-            handleMessage<messageTemplate>(true, message);
-            // return buffer;
+            if (isInChat)
+                handleMessage<std::string>(true);
         }
     }
 
     template <typename messageTemplate>
-    void handleMessage(bool isServer, messageTemplate &message)
+    void handleMessage(bool isServer)
     {
+        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
         if (isServer) {
             handleMessageServer<messageTemplate>(message);
         } else {

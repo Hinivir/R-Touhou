@@ -17,6 +17,26 @@
 #include "Init.hpp"
 #include "ServerGame.hpp"
 
+std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+{
+    for (auto &i : pos) {
+        os << i.x << " " << i.y << std::endl;
+    }
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+{
+    std::string line;
+    while (std::getline(is, line)) {
+        std::istringstream iss(line);
+        GameEngine::Position p;
+        iss >> p.x >> p.y;
+        pos.push_back(p);
+    }
+    return is;
+}
+
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
     _port = std::stoi(port);
@@ -56,7 +76,7 @@ void Server::manageServer()
     std::cout << "Waiting for clients..." << std::endl;
     try {
         while (1) {
-            receiveMessage<std::string>(false);
+            receiveMessage(false);
             buffer.fill(0);
         }
     } catch (std::exception const &e) {

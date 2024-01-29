@@ -20,6 +20,26 @@
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
 
+std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+{
+    for (auto &i : pos) {
+        os << i.x << " " << i.y << std::endl;
+    }
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+{
+    std::string line;
+    while (std::getline(is, line)) {
+        std::istringstream iss(line);
+        GameEngine::Position p;
+        iss >> p.x >> p.y;
+        pos.push_back(p);
+    }
+    return is;
+}
+
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
     try {
