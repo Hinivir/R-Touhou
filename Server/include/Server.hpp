@@ -36,10 +36,8 @@ class Server : protected ANetwork
     void sendMessageToOtherClients(const std::string &message);
     void sendMessageToAllClients(const std::string &message);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
-    template <typename messageTemplate>
-    void handleMessageClient(messageTemplate &message)
-    {
-    }
+
+    void handleMessageString();
 
     // command functions herited from ANetwork
     void commandConnect();
@@ -49,7 +47,7 @@ class Server : protected ANetwork
     void commandFull();
     void commandClientDisconnect();
 
-    void manageMessage(const std::type_info &info);
+    void manageMessage(const std::type_info &info);//to be deleted
     void runGame();
 };
 

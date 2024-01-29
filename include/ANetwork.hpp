@@ -12,6 +12,7 @@
 #include <array>
 
 #include <asio.hpp>
+#include "Components/Position.hpp"
 #include <map>
 
 #define CONNECTED "101: You are connected!\n"
@@ -21,6 +22,22 @@
 #define SERVER_FULL "105: Server is full!\n"
 #define NEW_CLIENT "106: New client connected!\n"
 #define CLIENT_DISCONNECTED "107: Client disconnected!\n"
+
+template <typename T>
+void serialize(const T& data, std::array<char, 2048>& buffer) {
+    std::ostringstream os;
+    os << data;
+    std::size_t size = os.str().copy(buffer.data(), buffer.size());
+    buffer[size] = '\0';
+}
+
+template <typename T>
+T deserialize(const std::array<char, 2048>& buffer) {
+    T data;
+    std::istringstream is(std::string(buffer.data()));
+    is >> data;
+    return data;
+}
 
 template <typename senderMessage>
 struct inGame_message
@@ -47,6 +64,7 @@ class ANetwork
     asio::ip::udp::endpoint senderEndpoint;
     std::size_t playerNumber = 0;
     bool running = true;
+    bool isInChat = true;
 
     const std::map<std::string, std::function<void(ANetwork &)>> clientCommandHandler = {
         {CONNECTED, &ANetwork::commandConnect},
@@ -88,7 +106,6 @@ class ANetwork
         }
     }
 
-    template <typename messageTemplate>
     void receiveMessage(bool async)
     {
         buffer.fill(0);
@@ -96,62 +113,28 @@ class ANetwork
             socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
-                        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytes_transferred);
-                        handleMessage<messageTemplate>(false, message);
-                        if (isConnected())
-                            receiveMessage<messageTemplate>(true);
+                        bytesReceived = bytes_transferred;
+                        handleMessage();
+                        receiveMessage(true);
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
                     }
                 });
         } else {
             bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
-            messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
-            handleMessage<messageTemplate>(true, message);
+            if (isInChat)
+                handleMessage();
         }
     }
 
-    template <typename messageTemplate>
-    void handleMessage(bool isServer, messageTemplate &message)
+    void handleMessage()
     {
-        if (isServer) {
-            handleMessageServer<messageTemplate>(message);
-        } else {
-            handleMessageClient<messageTemplate>(message);
-        }
-    }
-
-    template <typename messageTemplate>
-    void handleMessageServer(messageTemplate &message)
-    {
-        if (typeid(message) == typeid(std::string)) {
-            for (auto &command : serverCommandHandler) {
-                if (strcmp(message.c_str(), command.first.c_str()) == 0) {
-                    command.second(*this);
-                    return;
-                }
-            }
-            manageMessage(typeid(message));
+        if (isInChat) {
+            handleMessageString();
         } else
             std::cout << "message is not a string" << std::endl;
     }
-
-    template <typename messageTemplate>
-    void handleMessageClient(messageTemplate &message)
-    {
-        if (typeid(message) == typeid(std::string)) {
-            for (auto &command : clientCommandHandler) {
-                if (strcmp(message.c_str(), command.first.c_str()) == 0) {
-                    std::cout << "command found" << std::endl;
-                    command.second(*this);
-                    return;
-                }
-            }
-            manageMessage(typeid(message));
-        } else {
-            std::cout << "message is not a string" << std::endl;
-        }
-    }
+    virtual void handleMessageString() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;
@@ -161,7 +144,7 @@ class ANetwork
     virtual void commandFull() = 0;
     virtual void commandClientDisconnect() = 0;
 
-    virtual void manageMessage(const std::type_info &type) = 0;
+    virtual void manageMessage(const std::type_info &type) = 0;//to be deleted
     virtual void runGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }

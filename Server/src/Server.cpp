@@ -17,6 +17,26 @@
 #include "Init.hpp"
 #include "ServerGame.hpp"
 
+std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+{
+    for (auto &i : pos) {
+        os << i.x << " " << i.y << std::endl;
+    }
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+{
+    std::string line;
+    while (std::getline(is, line)) {
+        std::istringstream iss(line);
+        GameEngine::Position p;
+        iss >> p.x >> p.y;
+        pos.push_back(p);
+    }
+    return is;
+}
+
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
     _port = std::stoi(port);
@@ -36,19 +56,16 @@ Server::~Server(void)
     socket.close();
 }
 
-void Server::sendMessageToOtherClients(const std::string& message) {
-    std::stringstream ss;
-
-    std::cout << clients.size() << std::endl;
-    for (const auto& client : clients) {
-        if (client != senderEndpoint) {
-            ss << playerNumberMap.at(senderEndpoint);
-            if (message == NEW_CLIENT)
-                sendMessage<std::string>(message, client, false);
-            else
-                sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
+void Server::handleMessageString()
+{
+    std::string message = getBuffer().data();
+    for (auto &command : serverCommandHandler) {
+        if (message.find(command.first) != std::string::npos) {
+            command.second(*this);
+            return;
         }
     }
+    manageMessage(typeid(message));
 }
 
 void Server::sendMessageToAllClients(const std::string& message)
@@ -69,7 +86,7 @@ void Server::manageServer()
     std::cout << "Waiting for clients..." << std::endl;
     try {
         while (1) {
-            receiveMessage<std::string>(false);
+            receiveMessage(false);
             buffer.fill(0);
         }
     } catch (std::exception const &e) {
@@ -80,7 +97,7 @@ void Server::manageServer()
 void Server::manageMessage(const std::type_info &info) {
     if (info == typeid(std::string))
         std::cout << "Message received: " << getBuffer().data() << std::endl;
-    sendMessageToOtherClients(getBuffer().data());
+    sendMessageToAllClients(getBuffer().data());
 }
 
 void Server::commandConnect() {
@@ -94,7 +111,7 @@ void Server::commandConnect() {
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
-            sendMessageToOtherClients(NEW_CLIENT);
+            sendMessageToAllClients(NEW_CLIENT);
         }
     }
 }
@@ -136,7 +153,7 @@ void Server::commandFull() {
 }
 
 void Server::commandClientDisconnect() {
-    sendMessageToOtherClients(CLIENT_DISCONNECTED);
+    sendMessageToAllClients(CLIENT_DISCONNECTED);
 }
 
 void Server::runGame() {
