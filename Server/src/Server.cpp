@@ -8,6 +8,7 @@
 #include "Server.hpp"
 #include <iostream>
 #include <map>
+#include <utility>
 #include <string>
 #include <vector>
 #include "SparseArray.hpp"
@@ -17,21 +18,21 @@
 #include "Init.hpp"
 #include "ServerGame.hpp"
 
-std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
     for (auto &i : pos) {
-        os << i.x << " " << i.y << std::endl;
+        os << i.first << " " << i.second << std::endl;
     }
     return os;
 }
 
-std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
 {
     std::string line;
     while (std::getline(is, line)) {
         std::istringstream iss(line);
-        GameEngine::Position p;
-        iss >> p.x >> p.y;
+        std::pair<float, float> p;
+        iss >> p.first >> p.second;
         pos.push_back(p);
     }
     return is;
@@ -78,6 +79,15 @@ void Server::sendMessageToAllClients(const std::string& message)
             sendMessage<std::string>(message, client, false);
         else
             sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
+    }
+}
+
+void Server::sendMessageToAllClients(std::vector<std::pair<float, float>> &pos)
+{
+    std::array<char, 2048> senderBuf;
+    serialize(&pos, senderBuf);
+    for (const auto& client : clients) {
+        sendMessage(senderBuf, client, false);
     }
 }
 
@@ -130,6 +140,7 @@ void Server::commandConnect() {
         }
     }
 }
+
 void Server::commandDisconnect() {
     sendMessage(DISCONNECTED, senderEndpoint, false);
     std::size_t idx = 0;
@@ -196,7 +207,7 @@ void Server::runGame() {
     bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> enemyVector;
-    std::vector<GameEngine::Position> enemyPositionVector;
+    std::vector<std::pair<float, float>> enemyPositionVector;
 
     // client
     GameEngine::SystemGroup system;
@@ -230,12 +241,12 @@ void Server::runGame() {
     for (auto &enemies: enemyVector) {
         float x = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().x;
         float y = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().y;
-        enemyPositionVector.push_back(GameEngine::Position{x, y});
+        enemyPositionVector.push_back(std::pair{x, y});
     }
 
     for (auto const &enemyPosition: enemyPositionVector)
-        std::cout << enemyPosition.x << " " << enemyPosition.y << std::endl;
-    //send enemyPositionVector to clients
+        std::cout << enemyPosition.first << " " << enemyPosition.second << std::endl;
+    sendMessageToAllClients(enemyPositionVector);
 
 
     while (1) {

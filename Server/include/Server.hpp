@@ -36,9 +36,11 @@ class Server : protected ANetwork
     void verifConnected();
     void sendMessageToOtherClients(const std::string &message);
     void sendMessageToAllClients(const std::string &message);
+    void sendMessageToAllClients(std::vector<std::pair<float, float>> &pos);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
 
     void handleMessageString();
+    void handleMessageSetup(){handleMessageString();}
 
     // command functions herited from ANetwork
     void commandConnect();

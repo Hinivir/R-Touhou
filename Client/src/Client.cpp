@@ -20,21 +20,21 @@
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
 
-std::ostream &operator<<(std::ostream &os, std::vector<GameEngine::Position> &pos)
+std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
     for (auto &i : pos) {
-        os << i.x << " " << i.y << std::endl;
+        os << i.first << " " << i.second << std::endl;
     }
     return os;
 }
 
-std::istream& operator>>(std::istream& is, std::vector<GameEngine::Position>& pos)
+std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
 {
     std::string line;
     while (std::getline(is, line)) {
         std::istringstream iss(line);
-        GameEngine::Position p;
-        iss >> p.x >> p.y;
+        std::pair<float, float> p;
+        iss >> p.first >> p.second;
         pos.push_back(p);
     }
     return is;
@@ -71,7 +71,8 @@ void Client::commandReady() {
     this->isInSetup = true;
     this->isInChat = false;
     this->isInGame = false;
-    // TODO: Setup game
+    while (enemiesPos.size() != 30) {}
+    std::cout << "we gottem" << std::endl;
     sendMessage<std::string>("start game\n", this->serverEndpoint, false);
 }
 
@@ -84,6 +85,10 @@ void Client::handleMessageString() {
         }
     }
     manageMessage(typeid(message));
+}
+
+void Client::handleMessageSetup() {
+    enemiesPos = deserialize<std::vector<std::pair<float, float>>>(getBuffer());
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
@@ -117,7 +122,9 @@ void Client::commandStartGame() {
 
 void Client::runGame() {
     isInChat = false;
-    Game::ClientGame clientGame(this->playerNumber, 2048, 30);
+    isInSetup = true;
+    std::size_t nbEnemies = 30;
+    Game::ClientGame clientGame(this->playerNumber, 2048, nbEnemies);
     int nbRegistry = 2048;
     int totalScore = 0;
     bool isGameOver = false;
@@ -150,7 +157,8 @@ void Client::runGame() {
     GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
 
     //get message from server that gives us nb enemies and their position
-
+    while (enemiesPos.size() != nbEnemies) {}
+    std::cout << "we gottem" << std::endl;
 //    system.initEnemy(registry);
 
     while (window.isOpen()) {

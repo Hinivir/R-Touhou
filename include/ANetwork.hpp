@@ -139,15 +139,18 @@ class ANetwork
     void handleMessage()
     {
         if (isInChat) {
+            std::cout << "message is in chat" << std::endl;
             handleMessageString();
         } else if (isInSetup) {
-            handleMessageString();
+            std::cout << "message is in setup" << std::endl;
+            handleMessageSetup();
         } else if (isInGame) {
-            // TODO: Need to implement
+            std::cout << "message is in game" << std::endl;
         } else
-            std::cout << "message is not a string" << std::endl;
+            std::cout << "I don't know what to do" << std::endl;
     }
     virtual void handleMessageString() = 0;
+    virtual void handleMessageSetup() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;

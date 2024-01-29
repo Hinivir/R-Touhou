@@ -22,26 +22,28 @@
 
 class Client : public ANetwork
 {
-  private:
-    asio::ip::udp::endpoint senderEndpoint;
+    private:
+        asio::ip::udp::endpoint senderEndpoint;
 
-  public:
-    asio::ip::udp::endpoint serverEndpoint;
-    Client(const std::string ip, const std::string port);
-    ~Client();
+    public:
+        asio::ip::udp::endpoint serverEndpoint;
+        std::vector<std::pair<float, float>> enemiesPos = {};
+        Client(const std::string ip, const std::string port);
+        ~Client();
 
-    void handleMessageString();
+        void handleMessageString();
+        void handleMessageSetup();
 
-    void commandConnect();
-    void commandDisconnect();
-    void commandError();
-    void commandReady();
-    void commandFull();
-    void commandClientDisconnect();
-    void commandStartGame();
+        void commandConnect();
+        void commandDisconnect();
+        void commandError();
+        void commandReady();
+        void commandFull();
+        void commandClientDisconnect();
+        void commandStartGame();
 
-    void manageMessage(const std::type_info &info);//to be deleted
-    void manageMessageString(const std::string message);//to be deleted
-    void runGame();
+        void manageMessage(const std::type_info &info);//to be deleted
+        void manageMessageString(const std::string message);//to be deleted
+        void runGame();
 };
 #endif
