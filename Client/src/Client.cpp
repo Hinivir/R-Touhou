@@ -65,6 +65,22 @@ void Client::commandReady() {
     gameThread.detach();
 }
 
+void Client::handleMessage()
+{
+    if (isInChat) {
+        std::string message = getBuffer().data();
+        for (auto &command : clientCommandHandler) {
+            if (message.find(command.first) != std::string::npos) {
+                command.second(*this);
+                return;
+            }
+        }
+        manageMessage(typeid(message));
+    } else {
+        std::cout << "message is not a string" << std::endl;
+    }
+}
+
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
 
 void Client::manageMessage(const std::type_info &info) {
@@ -82,10 +98,10 @@ void Client::manageMessageString(const std::string message) {
     else if (strcmp(NEW_CLIENT, message.c_str()) == 0)
         playerNumber++;
     std::cout << message << std::endl;
-    std::cout << playerNumber << std::endl;
 }
 
 void Client::runGame() {
+    isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
     int totalScore = 0;

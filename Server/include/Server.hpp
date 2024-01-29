@@ -40,6 +40,7 @@ class Server : protected ANetwork
     {
     }
 
+    void handleMessage();
     // command functions herited from ANetwork
     void commandConnect();
     void commandDisconnect();
@@ -47,7 +48,7 @@ class Server : protected ANetwork
     void commandReady();
     void commandFull();
 
-    void manageMessage(const std::type_info &info);
+    void manageMessage(const std::type_info &info);//to be deleted
     void runGame();
 };
 

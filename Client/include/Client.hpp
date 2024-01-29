@@ -29,14 +29,16 @@ class Client : public ANetwork
     asio::ip::udp::endpoint serverEndpoint;
     Client(const std::string ip, const std::string port);
     ~Client();
+    void handleMessage();
+
     void commandConnect();
     void commandDisconnect();
     void commandError();
     void commandReady();
     void commandFull();
 
-    void manageMessage(const std::type_info &info);
-    void manageMessageString(const std::string message);
+    void manageMessage(const std::type_info &info);//to be deleted
+    void manageMessageString(const std::string message);//to be deleted
     void runGame();
 };
 #endif

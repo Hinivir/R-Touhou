@@ -110,7 +110,7 @@ class ANetwork
                     if (!error) {
                         bytesReceived = bytes_transferred;
                         if (isInChat)
-                            handleMessage<std::string>(false);
+                            handleMessage();
                         receiveMessage(true);
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
@@ -119,51 +119,11 @@ class ANetwork
         } else {
             bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
             if (isInChat)
-                handleMessage<std::string>(true);
+                handleMessage();
         }
     }
 
-    template <typename messageTemplate>
-    void handleMessage(bool isServer)
-    {
-        messageTemplate message = messageTemplate(buffer.begin(), buffer.begin() + bytesReceived);
-        if (isServer) {
-            handleMessageServer<messageTemplate>(message);
-        } else {
-            handleMessageClient<messageTemplate>(message);
-        }
-    }
-
-    template <typename messageTemplate>
-    void handleMessageServer(messageTemplate &message)
-    {
-        if (typeid(message) == typeid(std::string)) {
-            for (auto &command : serverCommandHandler) {
-                if (message.find(command.first) != std::string::npos) {
-                    command.second(*this);
-                    return;
-                }
-            }
-            manageMessage(typeid(message));
-        } else
-            std::cout << "message is not a string" << std::endl;
-    }
-
-    template <typename messageTemplate>
-    void handleMessageClient(messageTemplate &message)
-    {
-        if (typeid(message) == typeid(std::string)) {
-            for (auto &command : clientCommandHandler) {
-                if (message.find(command.first) != std::string::npos) {
-                    command.second(*this);
-                    return;
-                }
-            }
-            manageMessage(typeid(message));
-        } else {
-            std::cout << "message is not a string" << std::endl;
-        }
-    }
+    virtual void handleMessage() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;
@@ -172,7 +132,7 @@ class ANetwork
     virtual void commandReady() = 0;
     virtual void commandFull() = 0;
 
-    virtual void manageMessage(const std::type_info &type) = 0;
+    virtual void manageMessage(const std::type_info &type) = 0;//to be deleted
     virtual void runGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
