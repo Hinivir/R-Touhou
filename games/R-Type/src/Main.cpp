@@ -9,6 +9,8 @@
 #include <iostream>
 #include "Registry.hpp"
 #include "Systems.hpp"
+#include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
 #include "Macros/ForEach.hpp"
 #include "Init.hpp"
 
@@ -34,7 +36,7 @@ int main()
     // client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
     GameEngine::Registry registry(nbRegistry);
-    GameEngine::System system;
+    GameEngine::SystemGroup system;
 
     window.setFramerateLimit(60);
 
@@ -110,8 +112,8 @@ int main()
         }
         enemyCoolDown++;
         shootCoolDown++;
-        system.spriteSystem(registry);
-        system.drawSystem(registry, window);
+        GameEngine::System::sprite(registry);
+        GameEngine::System::draw(registry, window);
         system.movementSystem(registry);
         system.collisionSystem(registry, totalScore);
         system.deleteEntitiesSystem(registry);

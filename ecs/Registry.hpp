@@ -163,6 +163,43 @@ namespace GameEngine
             getComponent<Component>().erase(entity);
         };
 
+        /// @brief Register a new Event to the registry
+        /// @tparam Event Type of the event to register
+        /// @return A reference to the newly created sparseArray
+        template <class Event>
+        SparseArray<Event> &registerEvent()
+        {
+            auto typeIndex = std::type_index(typeid(Event));
+            _container[typeIndex] = SparseArray<Event>();
+            return std::any_cast<SparseArray<Event> &>(_container[typeIndex]);
+        };
+
+        /// @brief Add an event to the ECS
+        /// @tparam Event Type of the component to add
+        /// @param event Event to add
+        /// @return A reference to the newly added event
+        template <typename Event>
+        typename SparseArray<Event>::ReferenceType addEvent(Event &&event)
+        {
+            return getComponent<Event>().insertAtEnd(std::forward<Event>(event));
+        };
+
+        /// @brief Add an event to the ECS
+        /// @tparam Event Type of the component to add
+        /// @param event Event to add
+        /// @return A reference to the newly added event
+        template <typename Event>
+        typename SparseArray<Event>::ReferenceType addEvent(const Event &event)
+        {
+            return getComponent<Event>().insertAtEnd(event);
+        };
+
+        template <typename Event>
+        void clearEvent()
+        {
+            return getComponent<Event>().clear();
+        };
+
       private:
         /// @brief Unordered map containing all the components
         std::unordered_map<std::type_index, std::any> _container;

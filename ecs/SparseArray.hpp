@@ -119,6 +119,23 @@ class SparseArray
         return _data[pos];
     };
 
+    /// @brief Insert a copy of the given value at the end
+    /// @param comp Copy of the Component to insert
+    /// @return A reference to the newly inserted value
+    ReferenceType insertAtEnd(Component const &comp)
+    {
+        _data.push_back(comp);
+        return _data.back();
+    };
+    /// @brief Insert the component at the end
+    /// @param comp Component to insert
+    /// @return A reference to the newly inserted value
+    ReferenceType insertAtEnd(Component &&comp)
+    {
+        _data.push_back(comp);
+        return _data.back();
+    };
+
     /// @brief Creates the component at the specified position.
     /// @param pos Position to create the component at.
     /// @return A reference to the created component.
@@ -148,6 +165,12 @@ class SparseArray
     {
         if (_data.size() > pos && _data[pos].has_value())
             _data[pos].reset();
+    };
+
+    /// @brief Clear the SparseArray
+    void clear()
+    {
+        _data.clear();
     };
 
     /// @brief Get the index of the given value

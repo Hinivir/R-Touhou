@@ -8,7 +8,83 @@ Miscellaneous macros used for simplifying your code.
 Table of Contents
 -----------------
 
-1. `GAME_ENGINE_FOR_EACH ⚠️`_
+- `DO_COMPONENT_CONTAINS_AT`_
+- `EXTRACT_COMPONENT(_CONST)`_
+- `EXTRACT_COMPONENT_FROM(_CONST)`_
+- `FROM_COMPONENT_TO_VARIABLE(_CONST)`_
+- `GAME_ENGINE_FOR_EACH ⚠️`_
+- `REGISTRY_DEFAULT_NAME`_
+
+DO_COMPONENT_CONTAINS_AT
+-----------------
+
+*From Macros/Systems.hpp*
+
+Condition checking if a COMPONENT variable contains a value at a certain ID.
+The COMPONENT variable can be first extracted with `EXTRACT_COMPONENT(_CONST)`_ or `EXTRACT_COMPONENT_FROM(_CONST)`_.
+
+Code
+~~~~~~~~~~~~~~~~~
+
+.. code:: cpp
+
+    #define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
+
+EXTRACT_COMPONENT(_CONST)
+-----------------
+
+*From Macros/Systems.hpp*
+
+Extracts the content of a REGISTRY_DEFAULT_NAME's COMPONENT component to a new VARIABLE variable as a list.
+Both use the `REGISTRY_DEFAULT_NAME`_ macro. To use another registry name, use `EXTRACT_COMPONENT_FROM(_CONST)`_.
+
+Code
+~~~~~~~~~~~~~~~~~
+
+.. code:: cpp
+
+    #define EXTRACT_COMPONENT(COMPONENT, VARIABLE) \
+        auto &VARIABLE = REGISTRY_DEFAULT_NAME.getComponent<COMPONENT>()
+    #define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) \
+        auto const &VARIABLE = REGISTRY_DEFAULT_NAME.getComponent<COMPONENT>()
+
+EXTRACT_COMPONENT_FROM(_CONST)
+-----------------
+
+*From Macros/Systems.hpp*
+
+Extracts the content of a REGISTRY's COMPONENT component to a new VARIABLE variable as a list.
+
+Code
+~~~~~~~~~~~~~~~~~
+
+.. code:: cpp
+
+    #define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) \
+        auto &VARIABLE = REGISTRY.getComponent<COMPONENT>()
+    #define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY) \
+        auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
+
+FROM_COMPONENT_TO_VARIABLE(_CONST)
+-----------------
+
+*From Macros/Systems.hpp*
+
+Extracts the value contained in the COMPONENT variable at a position ID, as a VARIABLE variable.
+Also creates a VARIABLE_HAS const variable containing weither or not COMPONENT contains a value at the position ID.
+The COMPONENT variable can be first extracted with `EXTRACT_COMPONENT(_CONST)`_ or `EXTRACT_COMPONENT_FROM(_CONST)`_.
+
+Code
+~~~~~~~~~~~~~~~~~
+
+.. code:: cpp
+
+    #define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)           \
+        bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);              \
+        auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
+    #define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)     \
+        bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);              \
+        auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
 GAME_ENGINE_FOR_EACH ⚠️
 -----------------
@@ -56,3 +132,17 @@ Warning
 ~~~~~~~~~~~~~~~~~
 
 May **not** work on **Windows** devices!
+
+REGISTRY_DEFAULT_NAME
+-----------------
+
+*From Macros/Systems.hpp*
+
+Default name for a GameEngine::Registry. Allows the use of the `EXTRACT_COMPONENT(_CONST)`_ macros.
+
+Code
+~~~~~~~~~~~~~~~~~
+
+.. code:: cpp
+
+    #define REGISTRY_DEFAULT_NAME r

@@ -54,7 +54,6 @@ For example, if you have the following code:
       sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
       window.setFramerateLimit(60);
       GameEngine::Registry registry(nbRegistry);
-      GameEngine::System system;
       // Registering components for system.spriteSystem and system.drawSystem
       registry.registerComponent<GameEngine::Color>();
       registry.registerComponent<GameEngine::Controllable>();
@@ -74,9 +73,9 @@ For example, if you have the following code:
                if (event.type == sf::Event::Closed)
                   window.close();
             // Initializing sprite textures
-            system.spriteSystem(registry);
+            GameEngine::System::sprite(registry);
             // Drawing entities on screen
-            system.drawSystem(registry, window);
+            GameEngine::System::draw(registry, window);
             // Displaying SFML window, then clearing it
             window.display();
             window.clear();
@@ -89,7 +88,8 @@ You'll just need to import the following headers at the start of your code:
 .. code:: cpp
 
    #include "Registry.hpp"
-   #include "Systems.hpp"
+   #include "Systems/Draw.hpp"
+   #include "Systems/Sprite.hpp"
 
 Do I need to register my components before using them?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,6 +11,8 @@
 #include "Registry.hpp"
 #include "Components/Components.hpp"
 
+#include "Macros/Systems.hpp"
+
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -19,22 +21,6 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <vector>
-
-#define DO_COMPONENT_CONTAINS_AT(COMPONENT, ID) (ID < COMPONENT.size() && COMPONENT[ID].has_value())
-
-#define EXTRACT_COMPONENT(COMPONENT, VARIABLE) auto &VARIABLE = r.getComponent<COMPONENT>()
-#define EXTRACT_COMPONENT_CONST(COMPONENT, VARIABLE) auto const &VARIABLE = r.getComponent<COMPONENT>()
-
-#define EXTRACT_COMPONENT_FROM(COMPONENT, VARIABLE, REGISTRY) auto &VARIABLE = REGISTRY.getComponent<COMPONENT>()
-#define EXTRACT_COMPONENT_FROM_CONST(COMPONENT, VARIABLE, REGISTRY)                                                    \
-    auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
-
-#define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
-    auto &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
-#define FROM_COMPONENT_TO_VARIABLE_CONST(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                        \
-    bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \
-    auto const &VARIABLE = COMPONENT[VARIABLE_HAS ? ID : 0];
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -48,13 +34,13 @@ bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2,
 namespace GameEngine
 {
 
-    class System
+    class SystemGroup
     {
       public:
-        System() = default;
-        ~System() = default;
+        SystemGroup() = default;
+        ~SystemGroup() = default;
 
-        void loggingSystem(GameEngine::Registry &r)
+        void loggingSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
@@ -76,7 +62,7 @@ namespace GameEngine
             }
         }
 
-        void controlSystem(GameEngine::Registry &r)
+        void controlSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -121,162 +107,7 @@ namespace GameEngine
             }
         }
 
-        void drawSystem(GameEngine::Registry &r, sf::RenderWindow &window)
-        {
-            EXTRACT_COMPONENT_CONST(GameEngine::Drawable, drawables);
-            EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
-            EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
-            EXTRACT_COMPONENT_CONST(GameEngine::Color, colors);
-            EXTRACT_COMPONENT_CONST(GameEngine::ZIndex, zIndexes);
-            EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureAnimation, spriteTextureAnimations);
-            EXTRACT_COMPONENT_CONST(GameEngine::SpriteTextureRect, spriteTextureRects);
-            EXTRACT_COMPONENT(GameEngine::Text, texts);
-            EXTRACT_COMPONENT_CONST(GameEngine::Outline, outlines);
-            GameEngine::ZIndexValue lowestZIndex = GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE;
-            GameEngine::ZIndexValue currentZIndex;
-
-            do {
-                currentZIndex = lowestZIndex;
-                for (size_t i = 0; i < drawables.size() && i < positions.size(); ++i) {
-                    if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
-                        continue;
-                    // Drawable - Continues if drawable is undefined or not visible
-                    FROM_COMPONENT_TO_VARIABLE_CONST(drawables, i, drawable, hasDrawable);
-                    if (!hasDrawable || !drawable.value().isVisible)
-                        continue;
-
-                    // ZIndex - Continues if (zIndex != currentZIndex)
-                    FROM_COMPONENT_TO_VARIABLE_CONST(zIndexes, i, zIndexComponent, hasZIndex);
-                    GameEngine::ZIndexValue const zIndex =
-                        hasZIndex ? zIndexComponent.value().zIndex : GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE;
-                    if (zIndex < currentZIndex)
-                        continue;
-                    if (zIndex != currentZIndex) {
-                        if (lowestZIndex == currentZIndex || zIndex < lowestZIndex)
-                            lowestZIndex = zIndex;
-                        continue;
-                    }
-
-                    // Color
-                    FROM_COMPONENT_TO_VARIABLE_CONST(colors, i, colorComponent, hasColor);
-                    GameEngine::Color const color = hasColor ? colorComponent.value() : GameEngine::Color();
-                    // Outline
-                    FROM_COMPONENT_TO_VARIABLE_CONST(outlines, i, outlineComponent, hasOutline);
-                    GameEngine::Outline const &outline = hasOutline ? outlineComponent.value() : GameEngine::Outline();
-                    // Position
-                    FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, positionComponent, hasPosition);
-                    GameEngine::Position const position =
-                        hasPosition ? positionComponent.value() : GameEngine::Position({0.0, 0.0});
-                    // Sprite
-                    FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
-                    // SpriteTextureAnimation
-                    FROM_COMPONENT_TO_VARIABLE_CONST(
-                        spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
-                    GameEngine::SpriteTextureAnimation const spriteTextureAnimation =
-                        hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value()
-                                                  : GameEngine::SpriteTextureAnimation();
-                    // SpriteTextureRects
-                    FROM_COMPONENT_TO_VARIABLE_CONST(
-                        spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
-                    GameEngine::SpriteTextureRect const spriteTextureRect =
-                        hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
-                    // Text
-                    FROM_COMPONENT_TO_VARIABLE(texts, i, textComponent, hasText);
-
-                    if (hasText) {
-                        GameEngine::Text &text = textComponent.value();
-                        if (!text.isLoaded) {
-                            if (text.font.loadFromFile(text.fontPath))
-                                text.text.setFont(text.font);
-                            if (text.text.getFont() == nullptr) {
-                                goto drawSystemEndOfHasText;
-                            }
-                            text.isLoaded = true;
-                        }
-                        text.text.setString(text.string);
-                        text.text.setPosition(position.x, position.y);
-                        text.text.setCharacterSize(text.fontSize);
-                        if (hasOutline && outline.thickness > 0) {
-                            text.text.setFillColor(
-                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
-                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
-                                     sf::Vector2f(-outline.thickness, 0),
-                                     sf::Vector2f(-outline.thickness, outline.thickness),
-                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
-                                     sf::Vector2f(outline.thickness, -outline.thickness),
-                                     sf::Vector2f(outline.thickness, 0),
-                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
-                                text.text.setPosition(position.x + coor.x, position.y + coor.y);
-                                window.draw(text.text);
-                            }
-                        }
-                        text.text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-                        text.text.setPosition(position.x, position.y);
-                        window.draw(text.text);
-                    }
-                drawSystemEndOfHasText:
-                    if (hasSprite) {
-                        // Sprite
-                        sf::Sprite &sprite = spriteComponent.value().sprite;
-
-                        // SpriteTextureAnimation
-                        FROM_COMPONENT_TO_VARIABLE_CONST(
-                            spriteTextureAnimations, i, spriteTextureAnimationComponent, hasSpriteTextureAnimation);
-                        GameEngine::SpriteTextureAnimation const spriteTextureAnimation =
-                            hasSpriteTextureAnimation ? spriteTextureAnimationComponent.value()
-                                                      : GameEngine::SpriteTextureAnimation();
-
-                        // SpriteTextureRects
-                        FROM_COMPONENT_TO_VARIABLE_CONST(
-                            spriteTextureRects, i, spriteTextureRectComponent, hasSpriteTextureRect);
-                        GameEngine::SpriteTextureRect const spriteTextureRect =
-                            hasSpriteTextureRect ? spriteTextureRectComponent.value() : GameEngine::SpriteTextureRect();
-
-                        //
-                        sf::Vector2u const &spriteTextureSize = spriteComponent.value().texture.getSize();
-                        sf::IntRect textureRect = hasSpriteTextureRect
-                                                      ? sf::IntRect{spriteTextureRect.left, spriteTextureRect.top,
-                                                            spriteTextureRect.width, spriteTextureRect.height}
-                                                      : sf::IntRect{0, 0, static_cast<int>(spriteTextureSize.x),
-                                                            static_cast<int>(spriteTextureSize.y)};
-
-                        if (sprite.getTexture() == nullptr)
-                            continue;
-                        sprite.setPosition(position.x, position.y);
-                        if (hasColor)
-                            sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
-                        if (hasSpriteTextureAnimation) {
-                            textureRect.width /= std::max(spriteTextureAnimation.slicing.x, 1);
-                            textureRect.height /= std::max(spriteTextureAnimation.slicing.y, 1);
-                            textureRect.left += spriteTextureAnimation.frame.y * textureRect.width;
-                            textureRect.top += spriteTextureAnimation.frame.x * textureRect.height;
-                        }
-                        if (hasSpriteTextureRect || hasSpriteTextureAnimation)
-                            sprite.setTextureRect(textureRect);
-                        textureRect = sprite.getTextureRect();
-                        if (hasOutline && outline.thickness > 0) {
-                            sprite.setColor(
-                                sf::Color(outline.color.r, outline.color.g, outline.color.b, outline.color.a));
-                            for (sf::Vector2f const coor : {sf::Vector2f(-outline.thickness, -outline.thickness),
-                                     sf::Vector2f(-outline.thickness, 0),
-                                     sf::Vector2f(-outline.thickness, outline.thickness),
-                                     sf::Vector2f(0, -outline.thickness), sf::Vector2f(0, outline.thickness),
-                                     sf::Vector2f(outline.thickness, -outline.thickness),
-                                     sf::Vector2f(outline.thickness, 0),
-                                     sf::Vector2f(outline.thickness, outline.thickness)}) {
-                                sprite.setPosition(position.x + coor.x, position.y + coor.y);
-                                window.draw(sprite);
-                            }
-                        }
-                        sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
-                        sprite.setPosition(position.x, position.y);
-                        window.draw(sprite);
-                    }
-                }
-            } while (currentZIndex != lowestZIndex);
-        }
-
-        void initEnemy(GameEngine::Registry &r)
+        void initEnemy(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT(GameEngine::Position, positions);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
@@ -331,7 +162,7 @@ namespace GameEngine
             }
         }
 
-        void movementSystem(GameEngine::Registry &r)
+        void movementSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -372,35 +203,7 @@ namespace GameEngine
             }
         }
 
-        void spriteSystem(GameEngine::Registry &r)
-        {
-            EXTRACT_COMPONENT(GameEngine::Sprite, sprites);
-            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
-
-            for (size_t i = 0; i < sprites.size(); ++i) {
-                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
-                    continue;
-                // Sprite - Continues if sprite is undefined or if it has no path
-                FROM_COMPONENT_TO_VARIABLE(sprites, i, spriteComponent, hasSprite);
-                if (!hasSprite)
-                    continue;
-                GameEngine::Sprite &sprite = spriteComponent.value();
-                std::string const &path = sprite.path;
-                if (path == "")
-                    continue;
-
-                sprite.texture.loadFromFile(sprite.path);
-                sprite.sprite.setTexture(sprite.texture);
-
-                // Size
-                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, size, hasSize);
-                if (hasSize)
-                    sprite.sprite.setScale(size.value().width / sprite.texture.getSize().x,
-                        size.value().height / sprite.texture.getSize().y);
-            }
-        }
-
-        void collisionSystem(GameEngine::Registry &r, int &score)
+        void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
@@ -519,7 +322,7 @@ namespace GameEngine
             }
         }
 
-        void attackSystem(GameEngine::Registry &r, std::vector<GameEngine::Entity> &entityVector)
+        void attackSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<GameEngine::Entity> &entityVector)
         {
             auto &positions = r.getComponent<GameEngine::Position>();
             auto &controllables = r.getComponent<GameEngine::Controllable>();
@@ -560,7 +363,7 @@ namespace GameEngine
             }
         }
 
-        void deleteEntitiesSystem(GameEngine::Registry &r)
+        void deleteEntitiesSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             auto &positions = r.getComponent<Position>();
             auto &paths = r.getComponent<Path>();
