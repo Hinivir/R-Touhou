@@ -9,6 +9,11 @@
 #define ANETWORK_HPP
 
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <functional>
+
+
 #include <array>
 
 #include <asio.hpp>

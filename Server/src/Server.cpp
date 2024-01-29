@@ -81,6 +81,18 @@ void Server::sendMessageToAllClients(const std::string& message)
     }
 }
 
+void Server::sendMessageToOtherClients(const std::string& message)
+{
+    std::stringstream ss;
+
+    for (const auto& client : clients) {
+        if (client != senderEndpoint) {
+            ss << playerNumberMap.at(senderEndpoint);
+            sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
+        }
+    }
+}
+
 void Server::manageServer()
 {
     std::cout << "Waiting for clients..." << std::endl;
@@ -97,7 +109,7 @@ void Server::manageServer()
 void Server::manageMessage(const std::type_info &info) {
     if (info == typeid(std::string))
         std::cout << "Message received: " << getBuffer().data() << std::endl;
-    sendMessageToAllClients(getBuffer().data());
+    sendMessageToOtherClients(getBuffer().data());
 }
 
 void Server::commandConnect() {
@@ -111,7 +123,7 @@ void Server::commandConnect() {
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
-            sendMessageToAllClients(NEW_CLIENT);
+            sendMessageToOtherClients(NEW_CLIENT);
         }
     }
 }
@@ -153,7 +165,7 @@ void Server::commandFull() {
 }
 
 void Server::commandClientDisconnect() {
-    sendMessageToAllClients(CLIENT_DISCONNECTED);
+    sendMessageToOtherClients(CLIENT_DISCONNECTED);
 }
 
 void Server::runGame() {
