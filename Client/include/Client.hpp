@@ -29,7 +29,8 @@ class Client : public ANetwork
     asio::ip::udp::endpoint serverEndpoint;
     Client(const std::string ip, const std::string port);
     ~Client();
-    void handleMessage();
+
+    void handleMessageString();
 
     void commandConnect();
     void commandDisconnect();

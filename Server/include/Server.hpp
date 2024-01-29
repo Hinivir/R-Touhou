@@ -35,12 +35,9 @@ class Server : protected ANetwork
     void verifConnected();
     void sendMessageToAllClients(const std::string &message);
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
-    template <typename messageTemplate>
-    void handleMessageClient(messageTemplate &message)
-    {
-    }
 
-    void handleMessage();
+    void handleMessageString();
+
     // command functions herited from ANetwork
     void commandConnect();
     void commandDisconnect();

@@ -56,19 +56,16 @@ Server::~Server(void)
     socket.close();
 }
 
-void Server::handleMessage()
+void Server::handleMessageString()
 {
-    if (isInChat) {
-        std::string message = getBuffer().data();
-        for (auto &command : serverCommandHandler) {
-            if (message.find(command.first) != std::string::npos) {
-                command.second(*this);
-                return;
-            }
+    std::string message = getBuffer().data();
+    for (auto &command : serverCommandHandler) {
+        if (message.find(command.first) != std::string::npos) {
+            command.second(*this);
+            return;
         }
-        manageMessage(typeid(message));
-    } else
-        std::cout << "message is not a string" << std::endl;
+    }
+    manageMessage(typeid(message));
 }
 
 void Server::sendMessageToAllClients(const std::string& clientMessage) {

@@ -65,20 +65,15 @@ void Client::commandReady() {
     gameThread.detach();
 }
 
-void Client::handleMessage()
-{
-    if (isInChat) {
-        std::string message = getBuffer().data();
-        for (auto &command : clientCommandHandler) {
-            if (message.find(command.first) != std::string::npos) {
-                command.second(*this);
-                return;
-            }
+void Client::handleMessageString() {
+    std::string message = getBuffer().data();
+    for (auto &command : clientCommandHandler) {
+        if (message.find(command.first) != std::string::npos) {
+            command.second(*this);
+            return;
         }
-        manageMessage(typeid(message));
-    } else {
-        std::cout << "message is not a string" << std::endl;
     }
+    manageMessage(typeid(message));
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }

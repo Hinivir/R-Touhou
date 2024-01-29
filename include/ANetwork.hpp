@@ -109,8 +109,7 @@ class ANetwork
                 [this](const asio::error_code &error, std::size_t bytes_transferred) {
                     if (!error) {
                         bytesReceived = bytes_transferred;
-                        if (isInChat)
-                            handleMessage();
+                        handleMessage();
                         receiveMessage(true);
                     } else {
                         std::cerr << "ERROR: " << error.message() << std::endl;
@@ -123,7 +122,14 @@ class ANetwork
         }
     }
 
-    virtual void handleMessage() = 0;
+    void handleMessage()
+    {
+        if (isInChat) {
+            handleMessageString();
+        } else
+            std::cout << "message is not a string" << std::endl;
+    }
+    virtual void handleMessageString() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;
