@@ -150,12 +150,14 @@ namespace GameEngine
 
                 GameEngine::Path &path = pathComponent.value();
                 GameEngine::Size const &size = sizeComponent.value();
+                //useless
                 position.x = rand() % 1080 + 1920;
                 position.y = rand() % 1000 - 50;
                 if (position.y < 50)
                     position.y = 50;
                 if (position.y > 1030)
                     position.y = 1030;
+                //
                 path.startX = position.x;
                 path.startY = position.y;
                 path.endY = -100 + size.width;

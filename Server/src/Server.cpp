@@ -156,20 +156,6 @@ void Server::commandStartGame() {
 }
 
 void Server::handleGame() {
-    std::vector< std::pair<float, float> > enemyPositionVector = {
-        { 100, 100 },
-        { 200, 200 },
-        { 300, 300 },
-        { 400, 400 },
-        { 500, 500 },
-        { 600, 600 },
-        { 700, 700 },
-        { 800, 800 },
-        { 900, 900 },
-    };
-//    sleep(1);
-    sendMessageToAllClients(enemyPositionVector);
-/*
     std::size_t nbEnemies = 30;
     Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
     int nbRegistry = 2048;
@@ -180,9 +166,8 @@ void Server::handleGame() {
     bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> enemyVector;
-    std::vector<GameEngine::Position> enemyPositionVector;
+    std::vector<std::pair<float, float>> enemyPositionVector;
 
-    // client
     GameEngine::SystemGroup system;
 
     //loop for avery players
@@ -209,19 +194,22 @@ void Server::handleGame() {
     }
     //  get message from server that gives us nb enemies and their position
 
-    system.initEnemy(serverGame.getRegistry());
+    //generate random pos
+
+    system.initEnemy(serverGame.getRegistry());//enemyPositionvector
 
     for (auto &enemies: enemyVector) {
         float x = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().x;
         float y = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().y;
-        enemyPositionVector.push_back(GameEngine::Position{x, y});
+        enemyPositionVector.push_back(std::pair<float, float>{x, y});
     }
-
+////////////// 1111
     for (auto const &enemyPosition: enemyPositionVector)
-        std::cout << enemyPosition.x << " " << enemyPosition.y << std::endl;
-    //send enemyPositionVector to clients
+        std::cout << enemyPosition.first << " " << enemyPosition.second << std::endl;
+///////////// 1111
+    sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
-
+    /*
     while (1) {
 //        serverGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
 //        system.controlSystem(serverGame.getRegistry());
@@ -270,5 +258,5 @@ void Server::handleGame() {
             isGameOver = true;
         }
     }
-*/
+    */
 }

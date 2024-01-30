@@ -68,9 +68,6 @@ void Client::commandDisconnect() {
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
 void Client::commandReady() {
-    this->isInSetup = true;
-    this->isInChat = false;
-    this->isInGame = false;
     // TODO: Setup game
     sendMessage<std::string>("start game\n", this->serverEndpoint, false);
 }
@@ -88,9 +85,6 @@ void Client::handleMessageString() {
 
 void Client::handleMessageSetup() {
     pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
-    for (auto &i : pos) {
-        std::cout << i.first << "|" << i.second << std::endl;
-    }
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
@@ -111,11 +105,23 @@ void Client::manageMessage(std::string &message) {
 
 void Client::commandStartGame() {
     std::cout << "Game is starting" << std::endl;
-    std::thread gameThread([&]() { handleGame(); });
+
+//    sleep(1);
+    std::thread gameThread([&]() { this->handleGame(); });
     gameThread.detach();
 }
 
 void Client::handleGame() {
+    this->isInSetup = true;
+    this->isInChat = false;
+    while (pos.empty()) {
+//        receiveMessage(false);
+//        handleMessageSetup();
+    }
+    std::cout << "Game started: " << pos.size() << std::endl;
+    for (auto &i : pos) {
+        std::cout << i.first << " | " << i.second << std::endl;
+    }
 //    receiveMessage(false);
 
 /*
