@@ -15,11 +15,11 @@ namespace Game
     class ClientGame : public AGame
     {
         public:
-            ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
-                : AGame(nbPlayer, nbEntities, defaultNbEnemies)
-            {
-            };
+            int shootCoolDown = 0;
+
+            ClientGame() : AGame(){};
             ~ClientGame() = default;
+            void init(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies);
             GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);
             GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry);
             GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry);

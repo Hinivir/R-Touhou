@@ -10,9 +10,11 @@
 
 #include <iostream>
 #include <sstream>
+#include <ostream>
 #include <string>
 #include <functional>
 
+#include "operator.hpp"
 
 #include <array>
 

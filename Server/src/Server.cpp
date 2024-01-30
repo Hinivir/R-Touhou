@@ -16,28 +16,9 @@
 #include "Macros/ForEach.hpp"
 #include "Init.hpp"
 #include "ServerGame.hpp"
+#include "operator.hpp"
 
-std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
-{
-    for (auto &i : pos) {
-        os << i.first << " " << i.second << std::endl;
-    }
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
-{
-    std::string line;
-    while (std::getline(is, line)) {
-        std::istringstream iss(line);
-        std::pair<float, float> p;
-        iss >> p.first >> p.second;
-        pos.push_back(p);
-    }
-    return is;
-}
-
-Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
+Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port), serverGame()
 {
     _port = std::stoi(port);
 
@@ -133,6 +114,7 @@ void Server::commandReady() {
     this->isInChat = false;
     this->isInSetup = true;
     this->isInGame = false;
+    this->serverGame.init(this->playerNumber, 2048, 20);
 
 }
 
@@ -152,51 +134,15 @@ void Server::commandStartGame() {
         this->isInChat = false;
         this->isInSetup = false;
         this->isInGame = true;
+        this->serverGame.setup();
         handleGame();
     }
 }
 
 void Server::handleGame() {
-    std::size_t nbEnemies = 30;
-    Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
-    int nbRegistry = 2048;
-    int totalScore = 0;
-    bool isGameOver = false;
-    int shootCoolDown = 0;
-    int enemyCoolDown = 0;
-    bool spawnEnemy = true;
-    std::vector<GameEngine::Entity> entityVector;
-    std::vector<GameEngine::Entity> enemyVector;
-
-    GameEngine::SystemGroup system;
-
-    for (std::size_t i = 0; i < playerNumber; i++) {
-        GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
-        entityVector.push_back(movableEntity);
-    }
-    GameEngine::Entity backgroundStar1 = createBackgroundStar(serverGame.getRegistry());
-    entityVector.push_back(backgroundStar1);
-    GameEngine::Entity backgroundStar2 = createBackgroundStar(serverGame.getRegistry());
-    serverGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-    entityVector.push_back(backgroundStar2);
-    GameEngine::Entity groundDown = createGroundDown(serverGame.getRegistry());
-    entityVector.push_back(groundDown);
-    GameEngine::Entity groundUp = createGroundUp(serverGame.getRegistry());
-    entityVector.push_back(groundUp);
-    GameEngine::Entity score = createScore(serverGame.getRegistry());
-    GameEngine::Entity gameOver = createGameOver(serverGame.getRegistry());
-    GameEngine::Entity youWin = createYouWin(serverGame.getRegistry());
-
-    for (int i = 0; i < nbEnemies; ++i) {
-        GameEngine::Entity staticEntity = spawnEnemyEntity(serverGame.getRegistry());
-        entityVector.push_back(staticEntity);
-        enemyVector.push_back(staticEntity);
-    }
-    //  get message from server that gives us nb enemies and their position
-
     //generate random pos
     std::vector<std::pair<float, float>> enemyPositionVector;
-    for (std::size_t i = 0; i < nbEnemies; i++) {
+    for (std::size_t i = serverGame.getNbPlayer(); i < serverGame.getDefaultNbEnemies() + serverGame.getNbPlayer(); i++) {
         float x = rand() % 1080 + 1920;
         float y = rand() % 1000 - 50;
         while (x < 50)
@@ -205,7 +151,7 @@ void Server::handleGame() {
             y += 1030;
         enemyPositionVector.push_back(std::pair<float, float>{x, y});
     }
-    system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
+    serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), enemyPositionVector);
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
     /*

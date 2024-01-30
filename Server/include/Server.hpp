@@ -17,6 +17,7 @@
 #include <map>
 #include <asio.hpp>
 #include "ANetwork.hpp"
+#include "ServerGame.hpp"
 
 class Server : protected ANetwork
 {
@@ -27,7 +28,7 @@ class Server : protected ANetwork
     std::vector<asio::ip::udp::endpoint> clientsReady;
     std::vector<asio::ip::udp::endpoint> clientsSetup;
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
-
+    Game::ServerGame serverGame;
 
   public:
     Server(const std::string &ip, const std::string &port);

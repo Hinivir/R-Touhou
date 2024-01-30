@@ -10,6 +10,28 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
+void Game::ClientGame::init(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
+{
+    this->nbPlayer = nbPlayer;
+    this->nbEntities = nbEntities;
+    this->defaultNbEnemies = defaultNbEnemies;
+    this->registry = GameEngine::Registry(nbEntities);
+    this->entityVector = std::vector<GameEngine::Entity>(nbEntities);
+    registry.registerComponent<GameEngine::Color>();//c
+    registry.registerComponent<GameEngine::ZIndex>();//c
+    registry.registerComponent<GameEngine::Outline>();//c
+    registry.registerComponent<GameEngine::Sprite>();//c
+    registry.registerComponent<GameEngine::SpriteTextureAnimation>();//c
+    registry.registerComponent<GameEngine::SpriteTextureRect>();//c
+    registry.registerComponent<GameEngine::Controllable>();
+    registry.registerComponent<GameEngine::Drawable>();
+    registry.registerComponent<GameEngine::Position>();
+    registry.registerComponent<GameEngine::Projectile>();
+    registry.registerComponent<GameEngine::Size>();
+    registry.registerComponent<GameEngine::Text>();
+    registry.registerComponent<GameEngine::Velocity>();
+}
+
 GameEngine::Entity Game::ClientGame::spawnBaseEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = registry.spawnEntity();
@@ -24,7 +46,7 @@ GameEngine::Entity Game::ClientGame::spawnMovableEntity(GameEngine::Registry &re
     GameEngine::Entity entity = spawnBaseEntity(registry);
     float entityColor[3] = {0.0, 1.0, 0.0};
 
-    registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{true});
+    registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{0.0f, 500.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
