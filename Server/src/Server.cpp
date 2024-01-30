@@ -69,31 +69,7 @@ void Server::handleMessageString()
     std::stringstream ss;
     ss << playerNumberMap.at(senderEndpoint);
     std::string msg = "Player " + ss.str() + ": " + getBuffer().data();
-    sendMessageToOtherClients(msg);
-}
-
-void Server::sendMessageToAllClients(const std::string& message)
-{
-    for (const auto& client : clients)
-        sendMessage<std::string>(message, client, false);
-}
-
-void Server::sendMessageToOtherClients(const std::string& message)
-{
-    for (const auto& client : clients)
-        if (client != senderEndpoint)
-            sendMessage<std::string>(message, client, false);
-}
-
-//template<typename T>
-void Server::sendMessageToAllClients(std::vector<std::pair<float, float>>& pos)
-{
-    std::array<char, 2048> buffer;
-
-    serialize<std::vector<std::pair<float, float>>>(pos, buffer);
-    for (const auto& client : clients) {
-        sendMessage<std::array<char, 2048>>(buffer, client, false);
-    }
+    sendMessageStringToOtherClients(msg);
 }
 
 void Server::manageServer()
@@ -120,7 +96,7 @@ void Server::commandConnect() {
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
-            sendMessageToOtherClients(NEW_CLIENT);
+            sendMessageStringToOtherClients(NEW_CLIENT);
         }
     }
 }
@@ -142,7 +118,6 @@ void Server::commandDisconnect() {
         idx++;
     }
     std::cout << "connected number " << clients.size() << std::endl;
-    commandClientDisconnect();
 }
 
 void Server::commandError() {
@@ -171,7 +146,7 @@ void Server::commandClientDisconnect() {
 void Server::commandStartGame() {
     clientsSetup.push_back(senderEndpoint);
     if (clientsSetup.size() == clientsReady.size() && clientsSetup.size() == clients.size()) {
-        sendMessageToAllClients(START_GAME);
+        sendMessageStringToAllClients(START_GAME);
         std::cout << "All clients are ready. Starting the game!" << std::endl;
         this->isInChat = false;
         this->isInSetup = false;
