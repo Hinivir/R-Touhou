@@ -66,44 +66,33 @@ void Server::handleMessageString()
         }
     }
     std::cout << "Message received: " << getBuffer().data() << std::endl;
-    sendMessageToOtherClients(getBuffer().data());
+    std::stringstream ss;
+    ss << playerNumberMap.at(senderEndpoint);
+    std::string msg = "Player " + ss.str() + ": " + getBuffer().data();
+    sendMessageToOtherClients(msg);
 }
 
 void Server::sendMessageToAllClients(const std::string& message)
 {
-    std::stringstream ss;
-
-    for (const auto& client : clients) {
-        ss << playerNumberMap.at(senderEndpoint);
-        if (message == NEW_CLIENT)
-            sendMessage<std::string>(message, client, false);
-        else
-            sendMessage<std::string>("Player " + ss.str() + ": " + message , client, false);
-    }
+    for (const auto& client : clients)
+        sendMessage<std::string>(message, client, false);
 }
 
-void Server::sendMessageToClient(std::vector<std::pair<float, float>>& pos)
+void Server::sendMessageToOtherClients(const std::string& message)
+{
+    for (const auto& client : clients)
+        if (client != senderEndpoint)
+            sendMessage<std::string>(message, client, false);
+}
+
+//template<typename T>
+void Server::sendMessageToAllClients(std::vector<std::pair<float, float>>& pos)
 {
     std::array<char, 2048> buffer;
 
     serialize<std::vector<std::pair<float, float>>>(pos, buffer);
     for (const auto& client : clients) {
         sendMessage<std::array<char, 2048>>(buffer, client, false);
-    }
-}
-
-void Server::sendMessageToOtherClients(const std::string& message)
-{
-    std::stringstream ss;
-
-    for (const auto& client : clients) {
-        if (client != senderEndpoint) {
-            ss << playerNumberMap.at(senderEndpoint);
-            if (message == NEW_CLIENT)
-                sendMessage<std::string>(message, client, false);
-            else
-                sendMessage<std::string>("Player " + ss.str() + ": " + message, client, false);
-        }
     }
 }
 
@@ -204,7 +193,7 @@ void Server::handleGame() {
         { 900, 900 },
     };
 //    sleep(1);
-    sendMessageToClient(enemyPositionVector);
+    sendMessageToAllClients(enemyPositionVector);
 /*
     std::size_t nbEnemies = 30;
     Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
