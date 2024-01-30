@@ -114,24 +114,17 @@ void Client::commandStartGame() {
 void Client::handleGame() {
     this->isInSetup = true;
     this->isInChat = false;
-    while (pos.empty()) {
-//        receiveMessage(false);
-//        handleMessageSetup();
-    }
+    while (pos.empty()) { }
     std::cout << "Game started: " << pos.size() << std::endl;
-    for (auto &i : pos) {
+    for (auto &i : pos)
         std::cout << i.first << " | " << i.second << std::endl;
-    }
-//    receiveMessage(false);
-
-/*
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
     int totalScore = 0;
     bool isGameOver = false;
     int shootCoolDown = 0;
-//    int enemyCoolDown = 0;
+    int enemyCoolDown = 0;
     bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
 
@@ -158,10 +151,12 @@ void Client::handleGame() {
     GameEngine::Entity gameOver = createGameOver(clientGame.getRegistry());
     GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
 
-    //get message from server that gives us nb enemies and their position
+    system.initEnemy(clientGame.getRegistry(), pos);
 
-//    system.initEnemy(registry);
-
+    for (std::size_t i = 0; i < pos.size(); ++i) {
+        GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
+        entityVector.push_back(staticEntity);
+    }
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -177,15 +172,15 @@ void Client::handleGame() {
             system.attackSystem(clientGame.getRegistry(), entityVector);
             shootCoolDown = 0;
         }
-//        if (enemyCoolDown == 50 && spawnEnemy) {
-//            for (int i = 0; i < std::rand() % 31; ++i) {
-//                GameEngine::Entity staticEntity = spawnEnemyEntity(registry);
-//                entityVector.push_back(staticEntity);
-//            }
-//            enemyCoolDown = 0;
-//            system.initEnemy(registry);
-//        }
-//        enemyCoolDown++;
+        if (enemyCoolDown == 50 && spawnEnemy) {
+            for (int i = 0; i < std::rand() % 31; ++i) {
+                GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
+                entityVector.push_back(staticEntity);
+            }
+            enemyCoolDown = 0;
+            system.initEnemy(clientGame.getRegistry());
+        }
+        enemyCoolDown++;
         shootCoolDown++;
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
@@ -196,7 +191,7 @@ void Client::handleGame() {
         window.clear();
 
         if (totalScore == 100) {
-//            enemyCoolDown = 0;
+            enemyCoolDown = 0;
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
@@ -209,7 +204,7 @@ void Client::handleGame() {
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
         if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
-//            enemyCoolDown = 0;
+            enemyCoolDown = 0;
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
@@ -223,5 +218,4 @@ void Client::handleGame() {
             isGameOver = true;
         }
     }
-*/
 }

@@ -164,6 +164,59 @@ namespace GameEngine
             }
         }
 
+
+        void initEnemy(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<std::pair<float, float>> &pos)
+        {
+            EXTRACT_COMPONENT(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
+            EXTRACT_COMPONENT(GameEngine::Path, paths);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
+            EXTRACT_COMPONENT(GameEngine::Projectile, projectiles);
+
+            for (size_t i = 0; i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
+                // Position - Continues if position is undefined
+                FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
+                if (!hasPosition)
+                    continue;
+                GameEngine::Position &position = positionComponent.value();
+                if (position.x != 30.0f && position.y != 30.0f)
+                    continue;
+
+                // Controllable - Continues if controllable is defined and controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (hasControllable && controllable.value().isControllable)
+                    continue;
+
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, hitbox, hasHitbox);
+                if (!hasHitbox)
+                    continue;
+
+                // Path - Continues if path is not defined
+                FROM_COMPONENT_TO_VARIABLE(paths, i, pathComponent, hasPath);
+                if (!hasPath)
+                    continue;
+
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize)
+
+                FROM_COMPONENT_TO_VARIABLE(projectiles, i, projectileComponent, hasProjectile);
+                if (hasProjectile)
+                    continue;
+
+                GameEngine::Path &path = pathComponent.value();
+                GameEngine::Size const &size = sizeComponent.value();
+                position.x = pos[i].first;
+                position.y = pos[i].second;
+                path.startX = position.x;
+                path.startY = position.y;
+                path.endY = -100 + size.width;
+            }
+        }
+
+
         void movementSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);

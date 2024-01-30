@@ -166,7 +166,6 @@ void Server::handleGame() {
     bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> enemyVector;
-    std::vector<std::pair<float, float>> enemyPositionVector;
 
     GameEngine::SystemGroup system;
 
@@ -195,18 +194,17 @@ void Server::handleGame() {
     //  get message from server that gives us nb enemies and their position
 
     //generate random pos
-
-    system.initEnemy(serverGame.getRegistry());//enemyPositionvector
-
-    for (auto &enemies: enemyVector) {
-        float x = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().x;
-        float y = serverGame.getRegistry().getComponent<GameEngine::Position>()[enemies].value().y;
+    std::vector<std::pair<float, float>> enemyPositionVector;
+    for (std::size_t i = 0; i < nbEnemies; i++) {
+        float x = rand() % 1080 + 1920;
+        float y = rand() % 1000 - 50;
+        while (x < 50)
+            x += 50;
+        while (y < 1030)
+            y += 1030;
         enemyPositionVector.push_back(std::pair<float, float>{x, y});
     }
-////////////// 1111
-    for (auto const &enemyPosition: enemyPositionVector)
-        std::cout << enemyPosition.first << " " << enemyPosition.second << std::endl;
-///////////// 1111
+    system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
     /*
