@@ -95,11 +95,14 @@ void Client::commandClientDisconnect() {
 
 void Client::manageMessage(std::string &message) {
     const std::string youArePlayer = "You are player ";
+    const std::string playerNumberMsg = "Number of players: ";
 
     if (strncmp(youArePlayer.c_str(), message.c_str(), youArePlayer.size()) == 0)
         this->playerNumber = std::stoi(message.substr(youArePlayer.size(), 1));
     else if (strcmp(NEW_CLIENT, message.c_str()) == 0)
         playerNumber++;
+    else if (strncmp(playerNumberMsg.c_str(), message.c_str(), playerNumberMsg.size()) == 0)
+        playerNumber = std::stoi(message.substr(playerNumberMsg.size(), 1));
     std::cout << message << std::endl;
 }
 
@@ -127,6 +130,8 @@ void Client::handleGame() {
     int enemyCoolDown = 0;
     bool spawnEnemy = true;
     std::vector<GameEngine::Entity> entityVector;
+    std::vector<GameEngine::Entity> playerVector;
+    std::size_t my_player;
 
     // client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
@@ -134,9 +139,12 @@ void Client::handleGame() {
 
     window.setFramerateLimit(60);
 
-    //loop for avery players
-    GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
-    entityVector.push_back(movableEntity);
+    for (std::size_t i = 0; i < playerNumber; i++) {
+        GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
+        if (i == playerNumber - 1)
+            my_player = movableEntity;
+        playerVector.push_back(movableEntity);
+    }
 
     GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
     entityVector.push_back(backgroundStar1);
@@ -195,7 +203,8 @@ void Client::handleGame() {
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
-            clientGame.getRegistry().garbageEntities.push_back(movableEntity);
+            for (const auto &entity : playerVector)
+                clientGame.getRegistry().garbageEntities.push_back(entity);
             clientGame.getRegistry().garbageEntities.push_back(backgroundStar1);
             clientGame.getRegistry().garbageEntities.push_back(backgroundStar2);
             clientGame.getRegistry().garbageEntities.push_back(groundDown);
@@ -203,12 +212,13 @@ void Client::handleGame() {
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
-        if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
+        if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[my_player].value().life <= 0) {
             enemyCoolDown = 0;
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
-            clientGame.getRegistry().garbageEntities.push_back(movableEntity);
+            for (const auto &entity : playerVector)
+                clientGame.getRegistry().garbageEntities.push_back(entity);
             clientGame.getRegistry().garbageEntities.push_back(backgroundStar1);
             clientGame.getRegistry().garbageEntities.push_back(backgroundStar2);
             clientGame.getRegistry().garbageEntities.push_back(groundDown);

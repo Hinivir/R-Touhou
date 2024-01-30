@@ -95,6 +95,7 @@ void Server::commandConnect() {
             ss << playerNumber;
             sendMessage(CONNECTED, senderEndpoint, false);
             sendMessage("You are player " + ss.str() + "!\n", senderEndpoint, false);
+            sendMessage("Number of players: " + ss.str() + "\n", senderEndpoint, false);
             clients.push_back(senderEndpoint);
             sendMessageStringToOtherClients(NEW_CLIENT);
         }
@@ -169,10 +170,10 @@ void Server::handleGame() {
 
     GameEngine::SystemGroup system;
 
-    //loop for avery players
-    GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
-    entityVector.push_back(movableEntity);
-
+    for (std::size_t i = 0; i < playerNumber; i++) {
+        GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
+        entityVector.push_back(movableEntity);
+    }
     GameEngine::Entity backgroundStar1 = createBackgroundStar(serverGame.getRegistry());
     entityVector.push_back(backgroundStar1);
     GameEngine::Entity backgroundStar2 = createBackgroundStar(serverGame.getRegistry());
