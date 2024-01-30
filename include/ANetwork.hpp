@@ -143,7 +143,7 @@ class ANetwork
             handleMessageString();
         } else if (isInSetup) {
             std::cout << "setup" << std::endl;
-            handleMessageString();
+            handleMessageSetup();
         } else if (isInGame) {
             std::cout << "game" << std::endl;
             // TODO: Need to implement
@@ -151,6 +151,7 @@ class ANetwork
             std::cout << "message is not a string" << std::endl;
     }
     virtual void handleMessageString() = 0;
+    virtual void handleMessageSetup() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;
@@ -161,7 +162,7 @@ class ANetwork
     virtual void commandClientDisconnect() = 0;
     virtual void commandStartGame() = 0;
 
-    virtual void runGame() = 0;
+    virtual void handleGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }

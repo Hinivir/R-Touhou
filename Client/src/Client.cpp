@@ -86,6 +86,13 @@ void Client::handleMessageString() {
     manageMessage(message);
 }
 
+void Client::handleMessageSetup() {
+    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+    for (auto &i : pos) {
+        std::cout << i.first << "|" << i.second << std::endl;
+    }
+}
+
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
 
 void Client::commandClientDisconnect() {
@@ -104,16 +111,13 @@ void Client::manageMessage(std::string &message) {
 
 void Client::commandStartGame() {
     std::cout << "Game is starting" << std::endl;
-    std::thread gameThread([&]() { runGame(); });
+    std::thread gameThread([&]() { handleGame(); });
     gameThread.detach();
 }
 
-void Client::runGame() {
-    receiveMessage(false);
-    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
-    for (auto &i : pos) {
-        std::cout << i.first << "|" << i.second << std::endl;
-    }
+void Client::handleGame() {
+//    receiveMessage(false);
+
 /*
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);

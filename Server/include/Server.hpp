@@ -40,6 +40,7 @@ class Server : protected ANetwork
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
 
     void handleMessageString();
+    void handleMessageSetup(){ handleMessageString(); }
 
     // command functions herited from ANetwork
     void commandConnect();
@@ -50,7 +51,7 @@ class Server : protected ANetwork
     void commandClientDisconnect();
     void commandStartGame();
 
-    void runGame();
+    void handleGame();
 };
 
 #endif // R_TYPE_SERVER_HPP

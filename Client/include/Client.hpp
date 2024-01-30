@@ -32,6 +32,7 @@ class Client : public ANetwork
     ~Client();
 
     void handleMessageString();
+    void handleMessageSetup();
 
     void commandConnect();
     void commandDisconnect();
@@ -42,6 +43,6 @@ class Client : public ANetwork
     void commandStartGame();
 
     void manageMessage(std::string &);
-    void runGame();
+    void handleGame();
 };
 #endif

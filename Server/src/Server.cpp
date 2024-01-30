@@ -187,11 +187,11 @@ void Server::commandStartGame() {
         this->isInChat = false;
         this->isInSetup = false;
         this->isInGame = true;
-        runGame();
+        handleGame();
     }
 }
 
-void Server::runGame() {
+void Server::handleGame() {
     std::vector< std::pair<float, float> > enemyPositionVector = {
         { 100, 100 },
         { 200, 200 },
@@ -203,7 +203,7 @@ void Server::runGame() {
         { 800, 800 },
         { 900, 900 },
     };
-    sleep(1);
+//    sleep(1);
     sendMessageToClient(enemyPositionVector);
 /*
     std::size_t nbEnemies = 30;
