@@ -20,8 +20,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 include(Client/Client.cmake)
 include(Server/Server.cmake)
-include(games/guideExample/Build.cmake)
-include(games/R-Type/R-Type.cmake)
+#include(games/guideExample/Build.cmake)
+#include(games/R-Type/R-Type.cmake)
 
 if (DEFINED INSTALL)
 

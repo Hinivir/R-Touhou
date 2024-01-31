@@ -8,16 +8,15 @@
 #ifndef R_TYPE_SERVER_HPP
 #define R_TYPE_SERVER_HPP
 
-#include <iostream>
+#include "ANetwork.hpp"
+#include "ServerGame.hpp"
+#include "operator.hpp"
+
 #include <fstream>
-#include <sstream>
 #include <string>
-#include <vector>
 #include <algorithm>
 #include <map>
 #include <asio.hpp>
-#include "ANetwork.hpp"
-#include "ServerGame.hpp"
 
 class Server : protected ANetwork
 {
@@ -74,7 +73,6 @@ class Server : protected ANetwork
     void handleMessageString();
     void handleMessageSetup(){ handleMessageString(); }
 
-    // command functions herited from ANetwork
     void commandConnect();
     void commandDisconnect();
     void commandError();

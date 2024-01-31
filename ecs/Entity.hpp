@@ -23,6 +23,9 @@ namespace GameEngine
             /// @param entity Number of the entity
             explicit Entity(std::size_t entity) : _entity(entity){};
 
+            /// @brief Default constructor
+            Entity() = default;
+
             /// @brief Default destructor
             ~Entity() = default;
 

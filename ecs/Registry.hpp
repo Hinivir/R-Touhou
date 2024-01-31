@@ -8,6 +8,9 @@
 #ifndef REGISTRY_H_
 #define REGISTRY_H_
 
+#include "SparseArray.hpp"
+#include "Entity.hpp"
+
 #include <any>
 #include <cstddef>
 #include <functional>
@@ -15,8 +18,6 @@
 #include <stdexcept>
 #include <algorithm>
 #include <unordered_map>
-#include "SparseArray.hpp"
-#include "Entity.hpp"
 
 namespace GameEngine
 {

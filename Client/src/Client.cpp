@@ -6,21 +6,11 @@
 */
 
 #include "Client.hpp"
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-#include "SparseArray.hpp"
-#include "Registry.hpp"
-#include "Systems.hpp"
-#include "Macros/ForEach.hpp"
-#include "Init.hpp"
-
 #include "ClientGame.hpp"
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
 
-Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
+Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port), clientGame()
 {
     try {
         this->serverEndpoint = asio::ip::udp::endpoint(asio::ip::make_address_v4(ip), std::stoi(port));
@@ -54,6 +44,8 @@ void Client::commandReady() {
 
 void Client::handleMessageString() {
     std::string message = getBuffer().data();
+    if (message.find("You are player ") == 0)
+        this->playerNumber = std::stoi(message.substr(15, 1));
     for (auto &command : clientCommandHandler) {
         if (message.find(command.first) != std::string::npos) {
             command.second(*this);
@@ -64,7 +56,7 @@ void Client::handleMessageString() {
 }
 
 void Client::handleMessageSetup() {
-    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+    this->clientGame.getEnemiesPosPair() = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
@@ -88,63 +80,26 @@ void Client::manageMessage(std::string &message) {
 
 void Client::commandStartGame() {
     std::cout << "Game is starting" << std::endl;
+    this->isInSetup = true;
+    this->isInChat = false;
+    while (this->clientGame.getEnemiesPosPair().empty()) { }
+    this->clientGame.init(this->playerNumber, 2048, this->clientGame.getEnemiesPosPair().size());
+    this->clientGame.setup();
+    this->clientGame.myPlayer = this->myPlayer;
 
-//    sleep(1);
     std::thread gameThread([&]() { this->handleGame(); });
     gameThread.detach();
 }
 
 void Client::handleGame() {
-    this->isInSetup = true;
-    this->isInChat = false;
-    while (pos.empty()) { }
-    std::cout << "Game started: " << pos.size() << std::endl;
-    for (auto &i : pos)
+    for (auto &i : this->clientGame.getEnemiesPosPair())
         std::cout << i.first << " | " << i.second << std::endl;
     isInChat = false;
-    Game::ClientGame clientGame(this->playerNumber, 2048, 30);
-    int nbRegistry = 2048;
-    int totalScore = 0;
-    bool isGameOver = false;
-    int shootCoolDown = 0;
-    int enemyCoolDown = 0;
-    bool spawnEnemy = true;
-    std::vector<GameEngine::Entity> entityVector;
-    std::vector<GameEngine::Entity> playerVector;
-    std::size_t my_player;
 
-    // client
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
-    GameEngine::SystemGroup system;
-
     window.setFramerateLimit(60);
+    this->clientGame.getSystemGroup().initEnemy(clientGame.getRegistry(), this->clientGame.getEnemiesPosPair());
 
-    for (std::size_t i = 0; i < playerNumber; i++) {
-        GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
-        if (i == playerNumber - 1)
-            my_player = movableEntity;
-        playerVector.push_back(movableEntity);
-    }
-
-    GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
-    entityVector.push_back(backgroundStar1);
-    GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
-    clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-    entityVector.push_back(backgroundStar2);
-    GameEngine::Entity groundDown = createGroundDown(clientGame.getRegistry());
-    entityVector.push_back(groundDown);
-    GameEngine::Entity groundUp = createGroundUp(clientGame.getRegistry());
-    entityVector.push_back(groundUp);
-    GameEngine::Entity score = createScore(clientGame.getRegistry());
-    GameEngine::Entity gameOver = createGameOver(clientGame.getRegistry());
-    GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
-
-    system.initEnemy(clientGame.getRegistry(), pos);
-
-    for (std::size_t i = 0; i < pos.size(); ++i) {
-        GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
-        entityVector.push_back(staticEntity);
-    }
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -153,59 +108,52 @@ void Client::handleGame() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
-        clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-        system.controlSystem(clientGame.getRegistry());
 
-        if (shootCoolDown == 7) {
+        //clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
+        //this->clientGame.getSystemGroup().controlSystem(clientGame.getRegistry());
+
+        /*if (shootCoolDown == 7) {
             system.attackSystem(clientGame.getRegistry(), entityVector);
             shootCoolDown = 0;
-        }
-        if (enemyCoolDown == 50 && spawnEnemy) {
+        }*/
+        /*if (enemyCoolDown == 50 && spawnEnemy) {
             for (int i = 0; i < std::rand() % 31; ++i) {
-                GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
+                GameEngine::Entity staticEntity = this->clientGame.spawnEnemyEntity(clientGame.getRegistry());
                 entityVector.push_back(staticEntity);
             }
             enemyCoolDown = 0;
             system.initEnemy(clientGame.getRegistry());
         }
         enemyCoolDown++;
-        shootCoolDown++;
+        shootCoolDown++;*/
+
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
-        system.movementSystem(clientGame.getRegistry());
-        system.collisionSystem(clientGame.getRegistry(), totalScore);
-        system.deleteEntitiesSystem(clientGame.getRegistry());
+
+        //this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
+        //system.collisionSystem(clientGame.getRegistry(), totalScore);
+        //this->clientGame.getSystemGroup().deleteEntitiesSystem(clientGame.getRegistry());
+
         window.display();
         window.clear();
-
+/*
         if (totalScore == 100) {
             enemyCoolDown = 0;
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
-            for (const auto &entity : playerVector)
-                clientGame.getRegistry().garbageEntities.push_back(entity);
-            clientGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            clientGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            clientGame.getRegistry().garbageEntities.push_back(groundDown);
-            clientGame.getRegistry().garbageEntities.push_back(groundUp);
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
-        if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[my_player].value().life <= 0) {
+        if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[this->clientGame.myPlayer].value().life <= 0) {
             enemyCoolDown = 0;
             spawnEnemy = false;
             for (const auto &entity : entityVector)
                 clientGame.getRegistry().garbageEntities.push_back(entity);
-            for (const auto &entity : playerVector)
-                clientGame.getRegistry().garbageEntities.push_back(entity);
-            clientGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            clientGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            clientGame.getRegistry().garbageEntities.push_back(groundDown);
-            clientGame.getRegistry().garbageEntities.push_back(groundUp);
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
         }
+        */
     }
 }

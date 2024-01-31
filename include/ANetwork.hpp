@@ -8,18 +8,16 @@
 #ifndef ANETWORK_HPP
 #define ANETWORK_HPP
 
-#include <iostream>
+#include "operator.hpp"
+#include "Components/Position.hpp"
+
 #include <sstream>
 #include <ostream>
 #include <string>
 #include <functional>
-
-#include "operator.hpp"
-
+#include <iostream>
 #include <array>
-
 #include <asio.hpp>
-#include "Components/Position.hpp"
 #include <map>
 
 #define CONNECTED "101: You are connected!\n"

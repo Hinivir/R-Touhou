@@ -11,23 +11,22 @@
 #include <iostream>
 #include <cstdlib>
 #include <array>
-
 #include <asio.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include "SparseArray.hpp"
 
-#include "Components/Components.hpp"
-#include "Entity.hpp"
 #include "ANetwork.hpp"
+#include "ClientGame.hpp"
+#include "operator.hpp"
 
 class Client : public ANetwork
 {
   private:
     asio::ip::udp::endpoint senderEndpoint;
+    Game::ClientGame clientGame;
+    std::size_t myPlayer = 0;
 
   public:
     asio::ip::udp::endpoint serverEndpoint;
-    std::vector <std::pair<float, float>> pos;
     Client(const std::string ip, const std::string port);
     ~Client();
 

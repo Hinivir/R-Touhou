@@ -6,17 +6,6 @@
 */
 
 #include "Server.hpp"
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-#include "SparseArray.hpp"
-#include "Registry.hpp"
-#include "Systems.hpp"
-#include "Macros/ForEach.hpp"
-#include "Init.hpp"
-#include "ServerGame.hpp"
-#include "operator.hpp"
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port), serverGame()
 {
@@ -110,10 +99,6 @@ void Server::commandReady() {
     clientsReady.push_back(senderEndpoint);
     sendMessage("Waiting other players...", senderEndpoint, false);
     sendMessage(READY, senderEndpoint, false);
-    // TODO: need to setup Game
-    this->isInChat = false;
-    this->isInSetup = true;
-    this->isInGame = false;
     this->serverGame.init(this->playerNumber, 2048, 20);
 
 }
@@ -134,14 +119,13 @@ void Server::commandStartGame() {
         this->isInChat = false;
         this->isInSetup = false;
         this->isInGame = true;
+        std::cout << "boolean pass" << std::endl;
         this->serverGame.setup();
         handleGame();
     }
 }
 
 void Server::handleGame() {
-    //generate random pos
-    std::vector<std::pair<float, float>> enemyPositionVector;
     for (std::size_t i = serverGame.getNbPlayer(); i < serverGame.getDefaultNbEnemies() + serverGame.getNbPlayer(); i++) {
         float x = rand() % 1080 + 1920;
         float y = rand() % 1000 - 50;
@@ -149,59 +133,8 @@ void Server::handleGame() {
             x += 50;
         while (y < 1030)
             y += 1030;
-        enemyPositionVector.push_back(std::pair<float, float>{x, y});
+        this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
     }
-    serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), enemyPositionVector);
-    sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
-
-    /*
-    while (1) {
-//        serverGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-//        system.controlSystem(serverGame.getRegistry());
-
-//        if (shootCoolDown == 7) {
-//            system.attackSystem(serverGame.getRegistry(), entityVector);
-//            shootCoolDown = 0;
-//        }
-//        if (enemyCoolDown == 50 && spawnEnemy) {
-//            for (int i = 0; i < std::rand() % 31; ++i) {
-//                GameEngine::Entity staticEntity = spawnEnemyEntity(serverGame.getRegistry());
-//                entityVector.push_back(staticEntity);
-//            }
-//            enemyCoolDown = 0;
-//            system.initEnemy(serverGame.getRegistry());
-//        }
-        enemyCoolDown++;
-//        shootCoolDown++;
-        system.movementSystem(serverGame.getRegistry());
-        system.collisionSystem(serverGame.getRegistry(), totalScore);
-        system.deleteEntitiesSystem(serverGame.getRegistry());
-
-        if (totalScore == 100) {
-            enemyCoolDown = 0;
-            spawnEnemy = false;
-            for (const auto &entity : entityVector)
-                serverGame.getRegistry().garbageEntities.push_back(entity);
-            serverGame.getRegistry().garbageEntities.push_back(movableEntity);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            serverGame.getRegistry().garbageEntities.push_back(groundDown);
-            serverGame.getRegistry().garbageEntities.push_back(groundUp);
-            serverGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
-        }
-        if (!isGameOver && serverGame.getRegistry().getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
-            enemyCoolDown = 0;
-            spawnEnemy = false;
-            for (const auto &entity : entityVector)
-                serverGame.getRegistry().garbageEntities.push_back(entity);
-            serverGame.getRegistry().garbageEntities.push_back(movableEntity);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            serverGame.getRegistry().garbageEntities.push_back(groundDown);
-            serverGame.getRegistry().garbageEntities.push_back(groundUp);
-            serverGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
-            isGameOver = true;
-        }
-    }
-    */
+    serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
+    sendMessageToAllClients<std::vector<std::pair<float, float>>>(this->serverGame.getEnemiesPosPair());
 }
