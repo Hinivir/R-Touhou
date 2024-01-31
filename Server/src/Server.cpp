@@ -39,15 +39,73 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
     return is;
 }
 
+struct positionMessage {
+    int id;
+    float x;
+    float y;
 
+    friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
+        os << message.id << " " << message.x << " " << message.y;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, positionMessage &message) {
+        is >> message.id >> message.x >> message.y;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing positionMessage");
+        }
+        return is;
+    }
+};
 
+std::ostream &operator<<(std::ostream &os, sf::Keyboard::Key &key)
+{
+    os << key;
+    return os;
+}
 
+std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
+{
+    int k;
+    is >> k;
+    key = static_cast<sf::Keyboard::Key>(k);
+    if (is.fail()) {
+        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
+    }
+    return is;
+}
 
+struct inputMessage {
+    int id;
+    sf::Keyboard::Key key;
 
+    friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
+        os << message.id << " " << message.key;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, inputMessage &message) {
+        is >> message.id >> message.key;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing inputMessage");
+        }
+        return is;
+    }
+};
 
+struct garbageMessage {
+    int id;
 
-
-
+    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
+        os << message.id;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
+        is >> message.id;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing garbageMessage");
+        }
+        return is;
+    }
+};
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
@@ -223,16 +281,16 @@ void Server::handleGame() {
     this->isInSetup = false;
     this->isInGame = true;
 
+    bool a = 0;
     while (1) {
-        int i = rand() % 10;
-
-        if (i < 5) {
-            int s = 4;
-            sendMessageToAllClients<int>(s);
+        if (a) {
+            positionMessage s = {1, 1, 1};
+            sendMessageToAllClients<positionMessage>(s);
         } else {
-            float s = 9.99;
-            sendMessageToAllClients<float>(s);
+            inputMessage s = {1, sf::Keyboard::Key::Space};
+            sendMessageToAllClients<inputMessage>(s);
         }
+        a = !a;
         /*
         if (i < 5) {
             inputMessage s = {1, sf::Keyboard::Key::Space};

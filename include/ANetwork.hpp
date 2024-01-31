@@ -45,20 +45,6 @@ T deserialize(std::array<char, 2048>& buffer) {
     return data;
 }
 
-struct inputMessage {
-    std::size_t playerNumber;
-    sf::Keyboard::Key key;
-};
-
-struct positionMessage {
-    std::size_t playerNumber;
-    GameEngine::Position pos;//si marche pas, 2 floats
-};
-
-struct garbageMessage {
-    std::size_t garbageNumber;
-};
-
 class ANetwork
 {
   protected:

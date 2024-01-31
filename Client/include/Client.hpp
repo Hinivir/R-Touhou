@@ -35,7 +35,16 @@ class Client : public ANetwork
     void handleMessageSetup();
     void handleMessageGame();
 
+    bool deserializePositionMessage();
+    bool deserializeInputMessage();
+    bool deserializeGarbageMessage();
     void managePackageGame();
+
+    std::vector<std::function<bool()>> deserializeFunctions = {
+      [this]() { return this->deserializePositionMessage(); },
+      [this]() { return this->deserializeInputMessage(); },
+      [this]() { return this->deserializeGarbageMessage(); }
+    };
 
     void commandConnect();
     void commandDisconnect();

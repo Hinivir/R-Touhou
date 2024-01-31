@@ -42,26 +42,74 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, std::variant<int, float> &pos)
+struct positionMessage {
+    int id;
+    float x;
+    float y;
+
+    friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
+        os << message.id << " " << message.x << " " << message.y;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, positionMessage &message) {
+        is >> message.id >> message.x >> message.y;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing positionMessage");
+        }
+        return is;
+    }
+};
+
+struct garbageMessage {
+    int id;
+
+    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
+        os << message.id;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
+        is >> message.id;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing garbageMessage");
+        }
+        return is;
+    }
+};
+
+std::ostream &operator<<(std::ostream &os, sf::Keyboard::Key &key)
 {
-    if (std::holds_alternative<int>(pos))
-        os << std::get<int>(pos);
-    else if (std::holds_alternative<float>(pos))
-        os << std::get<float>(pos);
+    os << key;
     return os;
 }
 
-std::istream &operator>>(std::istream &is, std::variant<int, float> &pos)
+std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
 {
-    std::string line;
-    std::getline(is, line);
-    std::istringstream iss(line);
-    if (std::holds_alternative<int>(pos))
-        iss >> std::get<int>(pos);
-    else if (std::holds_alternative<float>(pos))
-        iss >> std::get<float>(pos);
+    int k;
+    is >> k;
+    key = static_cast<sf::Keyboard::Key>(k);
+    if (is.fail()) {
+        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
+    }
     return is;
 }
+
+struct inputMessage {
+    int id;
+    sf::Keyboard::Key key;
+
+    friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
+        os << message.id << " " << message.key;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, inputMessage &message) {
+        is >> message.id >> message.key;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing inputMessage");
+        }
+        return is;
+    }
+};
+
 
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
@@ -110,17 +158,48 @@ void Client::handleMessageSetup() {
     pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
 }
 
-void Client::managePackageGame() {
-    static std::variant<int, float> recv = deserialize<std::variant<int, float>>(this->buffer);
-    if (std::holds_alternative<int>(recv)) {
-        std::cout << "int" << std::endl;
-    } else if (std::holds_alternative<float>(recv)) {
-        std::cout << "float" << std::endl;
+bool Client::deserializePositionMessage() {
+    try {
+        positionMessage message = deserialize<positionMessage>(this->buffer);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
     }
+    return true;
+}
+
+bool Client::deserializeInputMessage() {
+    try {
+        inputMessage message = deserialize<inputMessage>(this->buffer);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool Client::deserializeGarbageMessage() {
+    try {
+        garbageMessage message = deserialize<garbageMessage>(this->buffer);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return true;
+}
+
+void Client::managePackageGame() {
+    for (auto &deserializeFunction : deserializeFunctions) {
+        if (deserializeFunction())
+            return;
+    }
+    std::cout << "Error while deserializing" << std::endl;
 }
 
 void Client::handleMessageGame() {
-    handleMessageString();
+    std::cout << buffer.data() << std::endl;
+//    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+    managePackageGame();
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
