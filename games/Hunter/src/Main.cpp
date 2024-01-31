@@ -1,30 +1,103 @@
+/*
+** EPITECH PROJECT, 2024
+** R-Touhou
+** File description:
+** Main
+*/
+
+#include "Registry.hpp"
+#include "Systems.hpp"
+#include "Systems/Draw.hpp"
+#include "Systems/Sprite.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <cstdlib>
 #include <ctime>
 
+GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
+{
+    GameEngine::Entity entity = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Outline>(entity, GameEngine::Outline{5});
+    return entity;
+}
+
+GameEngine::Entity createDuck(GameEngine::Registry &registry)
+{
+    srand(static_cast<unsigned>(time(0)));
+    GameEngine::Entity duck = spawnBaseEntity(registry);
+    registry.addComponent<GameEngine::Sprite>(duck, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Position>(duck, GameEngine::Position{static_cast<float>(rand() % 700), static_cast<float>(rand() % 500)});
+    registry.addComponent<GameEngine::Size>(duck, GameEngine::Size{50.0f, 50.0f});
+    registry.addComponent<GameEngine::Velocity>(duck, GameEngine::Velocity{0.07f, 0.07f});
+    registry.addComponent<GameEngine::Drawable>(duck, GameEngine::Drawable{true});
+    return duck;
+}
+
+GameEngine::Entity createBackground(GameEngine::Registry &registry)
+{
+    GameEngine::Entity background = registry.spawnEntity();
+    registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
+    registry.addComponent<GameEngine::Size>(background, GameEngine::Size{800.0f, 600.0f});
+    registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::ZIndex>(background, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+    return background;
+}
+
+GameEngine::Entity createScore(GameEngine::Registry &registry)
+{
+    GameEngine::Entity score = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Position>(score, GameEngine::Position{10.0f, 10.0f});
+    registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
+    std::string scoreText = "Score: 0";
+    registry.addComponent<GameEngine::Text>(
+        score, GameEngine::Text{sf::Text(), sf::Font(), scoreText, "../resources/R-Touhou/font/arial.ttf", 24});
+
+    return score;
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(0)));
+    std::vector<GameEngine::Entity> entityVector;
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Duck Hunt");
+    GameEngine::Registry registry(2048);
+    GameEngine::SystemGroup system;
 
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("../../resources/R-Touhou/graphics/Background.jpg"))
-        return -1;
-    sf::Sprite background(backgroundTexture);
+    window.setFramerateLimit(60);
 
-    sf::Texture duckTexture;
-    if (!duckTexture.loadFromFile("../../resources/R-Touhou/graphics/Fish.png"))
-        return -1;
-    sf::Sprite duck(duckTexture);
-    duck.setPosition(rand() % 700, rand() % 500);
+    registry.registerComponent<GameEngine::Color>();
+    registry.registerComponent<GameEngine::ZIndex>();
+    registry.registerComponent<GameEngine::Outline>();
+    registry.registerComponent<GameEngine::Sprite>();
+    registry.registerComponent<GameEngine::SpriteTextureAnimation>();
+    registry.registerComponent<GameEngine::SpriteTextureRect>();
 
+    registry.registerComponent<GameEngine::Hitbox>();
+    registry.registerComponent<GameEngine::Life>();
+    registry.registerComponent<GameEngine::Path>();
+
+    registry.registerComponent<GameEngine::Controllable>();
+    registry.registerComponent<GameEngine::Drawable>();
+    registry.registerComponent<GameEngine::Position>();
+    registry.registerComponent<GameEngine::Projectile>();
+    registry.registerComponent<GameEngine::Size>();
+    registry.registerComponent<GameEngine::Text>();
+    registry.registerComponent<GameEngine::Velocity>();
+
+    GameEngine::Entity background = createBackground(registry);
+    entityVector.push_back(background);
+    GameEngine::Entity duck = createDuck(registry);
+    entityVector.push_back(duck);
+    GameEngine::Entity scoreEntity = createScore(registry);
+    entityVector.push_back(scoreEntity);
     int score = 0;
-    sf::Font font;
-    if (!font.loadFromFile("../../resources/R-Touhou/font/arial.ttf"))
-        return -1;
-    sf::Text scoreText("Score: 0", font, 24);
-    scoreText.setPosition(10, 10);
 
     float speed = 0.07f;
     int direction = rand() % 4;
@@ -37,14 +110,15 @@ int main()
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                if (duck.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (registry.getComponent<GameEngine::Sprite>()[duck].value().sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     score++;
-                    duck.setPosition(rand() % 700, rand() % 500);
-                    scoreText.setString("Score: " + std::to_string(score));
+                    registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 700);
+                    registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 500);
+                    registry.getComponent<GameEngine::Text>()[scoreEntity].value().string = "Score: " + std::to_string(score);
                 }
             }
         }
-
+/*
         // Move the duck based on the current direction
         if (direction == 0) {
             duck.move(speed, 0); // Horizontal
@@ -62,12 +136,12 @@ int main()
             duck.setPosition(rand() % 790, rand() % 590);
             direction = rand() % 3;
         }
-
-        window.clear(sf::Color::Black);
-        window.draw(background);
-        window.draw(duck);
-        window.draw(scoreText);
+*/
+        GameEngine::System::sprite(registry);
+        GameEngine::System::draw(registry, window);
+        //system.movementSystem(registry);
         window.display();
+        window.clear();
     }
     return 0;
 }
