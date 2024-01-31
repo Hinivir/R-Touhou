@@ -20,6 +20,8 @@
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
 
+#include <variant>
+
 std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
     for (auto &i : pos) {
@@ -37,6 +39,27 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
         iss >> p.first >> p.second;
         pos.push_back(p);
     }
+    return is;
+}
+
+std::ostream &operator<<(std::ostream &os, std::variant<int, float> &pos)
+{
+    if (std::holds_alternative<int>(pos))
+        os << std::get<int>(pos);
+    else if (std::holds_alternative<float>(pos))
+        os << std::get<float>(pos);
+    return os;
+}
+
+std::istream &operator>>(std::istream &is, std::variant<int, float> &pos)
+{
+    std::string line;
+    std::getline(is, line);
+    std::istringstream iss(line);
+    if (std::holds_alternative<int>(pos))
+        iss >> std::get<int>(pos);
+    else if (std::holds_alternative<float>(pos))
+        iss >> std::get<float>(pos);
     return is;
 }
 
@@ -85,6 +108,19 @@ void Client::handleMessageString() {
 
 void Client::handleMessageSetup() {
     pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+}
+
+void Client::managePackageGame() {
+    static std::variant<int, float> recv = deserialize<std::variant<int, float>>(this->buffer);
+    if (std::holds_alternative<int>(recv)) {
+        std::cout << "int" << std::endl;
+    } else if (std::holds_alternative<float>(recv)) {
+        std::cout << "float" << std::endl;
+    }
+}
+
+void Client::handleMessageGame() {
+    handleMessageString();
 }
 
 void Client::commandFull() { std::cout << "Server is full" << std::endl; }
@@ -165,6 +201,8 @@ void Client::handleGame() {
         GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
         entityVector.push_back(staticEntity);
     }
+    this->isInSetup = false;
+    this->isInGame = true;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

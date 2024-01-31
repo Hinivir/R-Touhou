@@ -33,6 +33,9 @@ class Client : public ANetwork
 
     void handleMessageString();
     void handleMessageSetup();
+    void handleMessageGame();
+
+    void managePackageGame();
 
     void commandConnect();
     void commandDisconnect();

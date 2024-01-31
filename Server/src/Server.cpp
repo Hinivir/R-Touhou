@@ -6,16 +6,18 @@
 */
 
 #include "Server.hpp"
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
 #include "SparseArray.hpp"
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
 #include "Init.hpp"
 #include "ServerGame.hpp"
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <variant>
 
 std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
 {
@@ -36,6 +38,16 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
     }
     return is;
 }
+
+
+
+
+
+
+
+
+
+
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
@@ -208,6 +220,29 @@ void Server::handleGame() {
     system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
+    this->isInSetup = false;
+    this->isInGame = true;
+
+    while (1) {
+        int i = rand() % 10;
+
+        if (i < 5) {
+            int s = 4;
+            sendMessageToAllClients<int>(s);
+        } else {
+            float s = 9.99;
+            sendMessageToAllClients<float>(s);
+        }
+        /*
+        if (i < 5) {
+            inputMessage s = {1, sf::Keyboard::Key::Space};
+            sendMessageToAllClients<inputMessage>(s);
+        } else {
+            positionMessage s = {1, {1, 1}};
+            sendMessageToAllClients<positionMessage>(s);
+        }
+        */
+    }
     /*
     while (1) {
 //        serverGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));

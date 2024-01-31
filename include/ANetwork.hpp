@@ -12,13 +12,13 @@
 #include <sstream>
 #include <string>
 #include <functional>
-
-
 #include <array>
+#include <map>
 
 #include <asio.hpp>
+#include <SFML/Window/Keyboard.hpp>
+
 #include "Components/Position.hpp"
-#include <map>
 
 #define CONNECTED "101: You are connected!\n"
 #define DISCONNECTED "103: You are disconnected!\n"
@@ -45,17 +45,18 @@ T deserialize(std::array<char, 2048>& buffer) {
     return data;
 }
 
-template <typename senderMessage>
-struct inGame_message
-{
-    std::size_t index;
-    senderMessage message;
+struct inputMessage {
+    std::size_t playerNumber;
+    sf::Keyboard::Key key;
 };
 
-struct outGame_message
-{
-    asio::ip::udp::endpoint senderEndpoint;
-    std::string &message;
+struct positionMessage {
+    std::size_t playerNumber;
+    GameEngine::Position pos;//si marche pas, 2 floats
+};
+
+struct garbageMessage {
+    std::size_t garbageNumber;
 };
 
 class ANetwork
@@ -145,6 +146,7 @@ class ANetwork
             std::cout << "setup" << std::endl;
             handleMessageSetup();
         } else if (isInGame) {
+            handleMessageGame();
             std::cout << "game" << std::endl;
             // TODO: Need to implement
         } else
@@ -152,6 +154,7 @@ class ANetwork
     }
     virtual void handleMessageString() = 0;
     virtual void handleMessageSetup() = 0;
+    virtual void handleMessageGame() = 0;
 
     // all these functions will be virtual in the future so we can override them
     virtual void commandConnect() = 0;
