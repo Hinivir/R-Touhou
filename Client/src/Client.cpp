@@ -94,7 +94,7 @@ std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
 }
 
 struct inputMessage {
-    int id;
+    std::size_t id;
     sf::Keyboard::Key key;
 
     friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
@@ -110,6 +110,13 @@ struct inputMessage {
     }
 };
 
+static const std::vector<sf::Keyboard::Key> kepMap = {
+    {sf::Keyboard::Key::Up},
+    {sf::Keyboard::Key::Left},
+    {sf::Keyboard::Key::Down},
+    {sf::Keyboard::Key::Right},
+    {sf::Keyboard::Key::Space},
+};
 
 Client::Client(const std::string ip, const std::string port) : ANetwork::ANetwork(ip, port)
 {
@@ -139,7 +146,6 @@ void Client::commandDisconnect() {
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
 void Client::commandReady() {
-    // TODO: Setup game
     sendMessage<std::string>("start game\n", this->serverEndpoint, false);
 }
 
@@ -213,7 +219,7 @@ void Client::manageMessage(std::string &message) {
     const std::string playerNumberMsg = "Number of players: ";
 
     if (strncmp(youArePlayer.c_str(), message.c_str(), youArePlayer.size()) == 0)
-        this->playerNumber = std::stoi(message.substr(youArePlayer.size(), 1));
+        this->myNumber = std::stoi(message.substr(youArePlayer.size(), 1));
     else if (strcmp(NEW_CLIENT, message.c_str()) == 0)
         playerNumber++;
     else if (strncmp(playerNumberMsg.c_str(), message.c_str(), playerNumberMsg.size()) == 0)
@@ -223,8 +229,6 @@ void Client::manageMessage(std::string &message) {
 
 void Client::commandStartGame() {
     std::cout << "Game is starting" << std::endl;
-
-//    sleep(1);
     std::thread gameThread([&]() { this->handleGame(); });
     gameThread.detach();
 }
@@ -234,8 +238,6 @@ void Client::handleGame() {
     this->isInChat = false;
     while (pos.empty()) { }
     std::cout << "Game started: " << pos.size() << std::endl;
-    for (auto &i : pos)
-        std::cout << i.first << " | " << i.second << std::endl;
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
@@ -256,8 +258,8 @@ void Client::handleGame() {
 
     for (std::size_t i = 0; i < playerNumber; i++) {
         GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
-        if (i == playerNumber - 1)
-            my_player = movableEntity;
+        if (i == myNumber - 1)
+            my_player = myNumber - 1;
         playerVector.push_back(movableEntity);
     }
 
@@ -280,6 +282,7 @@ void Client::handleGame() {
         GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
         entityVector.push_back(staticEntity);
     }
+
     this->isInSetup = false;
     this->isInGame = true;
     while (window.isOpen()) {
@@ -290,6 +293,16 @@ void Client::handleGame() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
+
+        for (auto const &key: kepMap) {
+            if (sf::Keyboard::isKeyPressed(key)) {
+                inputMessage message = {my_player, key};
+                std::array<char, 2048> sendBuffer;
+                serialize<inputMessage>(message, sendBuffer);
+                sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
+            }
+        }
+
         clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
         system.controlSystem(clientGame.getRegistry());
 

@@ -132,11 +132,10 @@ class ANetwork
             std::cout << "setup" << std::endl;
             handleMessageSetup();
         } else if (isInGame) {
-            handleMessageGame();
             std::cout << "game" << std::endl;
-            // TODO: Need to implement
+            handleMessageGame();
         } else
-            std::cout << "message is not a string" << std::endl;
+            std::cerr << "ERROR: cannot handle this message" << std::endl;
     }
     virtual void handleMessageString() = 0;
     virtual void handleMessageSetup() = 0;
