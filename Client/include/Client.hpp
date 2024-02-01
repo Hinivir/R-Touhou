@@ -24,6 +24,7 @@ class Client : public ANetwork
 {
   private:
     asio::ip::udp::endpoint senderEndpoint;
+    std::size_t myNumber = 0;
 
   public:
     asio::ip::udp::endpoint serverEndpoint;

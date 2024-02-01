@@ -219,7 +219,7 @@ void Client::manageMessage(std::string &message) {
     const std::string playerNumberMsg = "Number of players: ";
 
     if (strncmp(youArePlayer.c_str(), message.c_str(), youArePlayer.size()) == 0)
-        this->playerNumber = std::stoi(message.substr(youArePlayer.size(), 1));
+        this->myNumber = std::stoi(message.substr(youArePlayer.size(), 1));
     else if (strcmp(NEW_CLIENT, message.c_str()) == 0)
         playerNumber++;
     else if (strncmp(playerNumberMsg.c_str(), message.c_str(), playerNumberMsg.size()) == 0)
@@ -258,8 +258,8 @@ void Client::handleGame() {
 
     for (std::size_t i = 0; i < playerNumber; i++) {
         GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
-        if (i == playerNumber - 1)
-            my_player = movableEntity;
+        if (i == myNumber - 1)
+            my_player = myNumber - 1;
         playerVector.push_back(movableEntity);
     }
 
