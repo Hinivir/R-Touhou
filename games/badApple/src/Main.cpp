@@ -15,37 +15,60 @@
 
 static const sf::Color ColorDarkGray(85, 85, 85);
 static const sf::Color ColorLightGray(170, 170, 170);
+static const sf::Color ColorWhite(255, 255, 255);
 
-static void systemDrawBadAppleFromAscii(GameEngine::Registry &REGISTRY_DEFAULT_NAME, sf::RenderWindow &window, std::size_t const frame)
+static void systemDrawBadAppleFromAscii(GameEngine::Registry &REGISTRY_DEFAULT_NAME, sf::RenderWindow &window, std::string const &frame)
 {
-    std::string str;
-    std::ifstream file("badApple/res/BA" + std::to_string(frame) + ".txt");
     sf::RectangleShape pixel;
     sf::Vector2f size(WINDOW_WIDTH_FLOAT / 79, WINDOW_HEIGHT_FLOAT / 31);
     sf::Vector2f position(0, 0);
+    std::size_t i = 0;
+    std::size_t length = frame.size();
+    char c;
+    bool step = 0;
+    bool isShowed;
+    std::size_t count = 0;
 
     pixel.setSize(size);
-    if (file.is_open()) {
-        while (std::getline(file, str)) {
-            position.x = -1;
-            for (auto const c: str) {
-                position.x += 1;
-                if (!('0' <= c && c <= '9') && !('A' <= c && c <= 'Z') && c != '@')
-                    continue;
-                if (c == 'M')
-                    pixel.setFillColor(sf::Color::White);
-                else if ('a' <= c && c <= 'z')
-                    pixel.setFillColor(ColorLightGray);
-                else if (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || c == '@')
-                    pixel.setFillColor(ColorDarkGray);
-                else
-                    continue;
-                pixel.setPosition(position.x * size.x, position.y * size.y);
-                window.draw(pixel);
+    for (i = 0; i < length; i++) {
+        c = frame[i];
+        if (step == 0) {
+            step = 1;
+            isShowed = true;
+            if (c == 'D')
+                pixel.setFillColor(ColorWhite);
+            else if (c == 'C')
+                pixel.setFillColor(ColorLightGray);
+            else if (c == 'B')
+                pixel.setFillColor(ColorDarkGray);
+            else if (c == 'A')
+                isShowed = false;
+            else
+                return;
+        } else if (step == 1) {
+            step = 0;
+            if (c != '!') {
+                if ((i + 3) < length) {
+                    count = (frame[i] - '0') * 1000 + (frame[i + 1] - '0') * 100 + (frame[i + 2] - '0') * 10 + (frame[i + 3] - '0');
+                    i += 3;
+                } else {
+                    return;
+                }
+            } else {
+                count = 1;
             }
-            position.y += 1;
+            for (std::size_t _i = 0; _i < count; _i++) {
+                if (isShowed) {
+                    pixel.setPosition(position.x * size.x, position.y * size.y);
+                    window.draw(pixel);
+                }
+                position.x += 1;
+                if (position.x >= 79) {
+                    position.x = 0;
+                    position.y += 1;
+                }
+            }
         }
-        file.close();
     }
 }
 
@@ -55,7 +78,8 @@ int main(void)
     int nbRegistry = 1024;
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bad Apple");
     sf::Music music;
-    std::size_t frame = 0;
+    std::ifstream file("badApple/res/BA.txt");
+    std::string frame;
     window.setFramerateLimit(30);
     GameEngine::Registry registry(nbRegistry);
     GameEngine::SystemGroup system;
@@ -72,11 +96,17 @@ int main(void)
             if (event.type == sf::Event::Closed)
                 window.close();
         // Draw
-        systemDrawBadAppleFromAscii(registry, window, frame);
-        frame++;
+        if (file.is_open()) {
+            if (std::getline(file, frame))
+                systemDrawBadAppleFromAscii(registry, window, frame);
+            else
+                file.close();
+        }
         // Displaying SFML window, then clearing it
         window.display();
         window.clear();
     }
+    if (file.is_open())
+        file.close();
     return 0;
 }
