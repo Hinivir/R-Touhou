@@ -6,10 +6,8 @@
 */
 
 #include "Server.hpp"
-#include "SparseArray.hpp"
 #include "Registry.hpp"
 #include "Systems.hpp"
-#include "Macros/ForEach.hpp"
 #include "ServerGame.hpp"
 
 #include <iostream>
@@ -17,112 +15,6 @@
 #include <string>
 #include <vector>
 #include <variant>
-
-std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
-{
-    for (auto &i : pos) {
-        os << i.first << " " << i.second << std::endl;
-    }
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
-{
-    std::string line;
-    while (std::getline(is, line)) {
-        std::istringstream iss(line);
-        std::pair<float, float> p;
-        iss >> p.first >> p.second;
-        pos.push_back(p);
-    }
-    return is;
-}
-
-struct positionMessage {
-    int id;
-    float x;
-    float y;
-
-    friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
-        os << message.id << " " << message.x << " " << message.y;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, positionMessage &message) {
-        is >> message.id >> message.x >> message.y;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing positionMessage");
-        }
-        return is;
-    }
-};
-
-struct shootMessage {
-    float shootX;
-    float shootY;
-    std::size_t id;
-
-    friend std::ostream &operator<<(std::ostream &os, const shootMessage &message) {
-        os << message.shootX << " " << message.shootY << " " << message.id;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, shootMessage &message) {
-        is >> message.shootX >> message.shootY >> message.id;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing shootMessage");
-        }
-        return is;
-    }
-};
-
-std::ostream &operator<<(std::ostream &os, sf::Keyboard::Key &key)
-{
-    os << key;
-    return os;
-}
-
-std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
-{
-    int k;
-    is >> k;
-    key = static_cast<sf::Keyboard::Key>(k);
-    if (is.fail()) {
-        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
-    }
-    return is;
-}
-
-struct inputMessage {
-    std::size_t id;
-    sf::Keyboard::Key key;
-
-    friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
-        os << message.id << " " << message.key;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, inputMessage &message) {
-        is >> message.id >> message.key;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing inputMessage");
-        }
-        return is;
-    }
-};
-
-struct garbageMessage {
-    int id;
-
-    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
-        os << message.id;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
-        is >> message.id;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing garbageMessage");
-        }
-        return is;
-    }
-};
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port), serverGame()
 {
@@ -264,7 +156,18 @@ void Server::commandReady() {
     this->isInGame = false;
     // Need to put random number of enemies
     this->serverGame.init(this->playerNumber, 2048, 20);
-
+    for (std::size_t i = this->serverGame.getNbPlayer(); i < this->serverGame.getDefaultNbEnemies() + this->serverGame.getNbPlayer(); i++) {
+           float x = rand() % 1080 + 1920;
+           float y = rand() % 1000 - 50;
+           while (x < 50)
+               x += 50;
+           while (y < 1030)
+               y += 1030;
+           this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
+    }
+    this->serverGame.setup();
+    this->serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
+    std::cout << "Enemies pos: " << this->serverGame.getEnemiesPosPair().size() << std::endl;
 }
 
 void Server::commandFull() {
@@ -283,19 +186,7 @@ void Server::commandStartGame() {
         this->isInChat = false;
         this->isInSetup = false;
         this->isInGame = true;
-        this->serverGame.setup();
-        for (std::size_t i = this->serverGame.getNbPlayer(); i < this->serverGame.getDefaultNbEnemies() + this->serverGame.getNbPlayer(); i++) {
-            float x = rand() % 1080 + 1920;
-            float y = rand() % 1000 - 50;
-            while (x < 50)
-                x += 50;
-            while (y < 1030)
-                y += 1030;
-            this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
-        }
-        this->serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
         sendMessageToAllClients<std::vector<std::pair<float, float>>>(this->serverGame.getEnemiesPosPair());
-        std::cout << "Enemies pos: " << this->serverGame.getEnemiesPosPair().size() << std::endl;
         handleGame();
     }
 }

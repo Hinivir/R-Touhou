@@ -115,7 +115,7 @@ int main()
         GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
         system.movementSystem(registry);
-        system.collisionSystem(registry, totalScore);
+        //system.collisionSystem(registry, totalScore);
         system.deleteEntitiesSystem(registry);
         window.display();
         window.clear();

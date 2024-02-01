@@ -5,128 +5,18 @@
 ** Client.cpp
 */
 
-#include "Client.hpp"
 #include <iostream>
 #include <map>
+#include <variant>
 #include <string>
 #include <vector>
-#include "SparseArray.hpp"
+
 #include "Registry.hpp"
 #include "Systems.hpp"
-#include "Macros/ForEach.hpp"
-#include "Init.hpp"
-
+#include "Client.hpp"
 #include "ClientGame.hpp"
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
-
-#include <variant>
-
-std::ostream &operator<<(std::ostream &os, std::vector<std::pair<float, float>> &pos)
-{
-    for (auto &i : pos) {
-        os << i.first << " " << i.second << std::endl;
-    }
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos)
-{
-    std::string line;
-    while (std::getline(is, line)) {
-        std::istringstream iss(line);
-        std::pair<float, float> p;
-        iss >> p.first >> p.second;
-        pos.push_back(p);
-    }
-    return is;
-}
-
-struct positionMessage {
-    int id;
-    float x;
-    float y;
-
-    friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
-        os << message.id << " " << message.x << " " << message.y;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, positionMessage &message) {
-        is >> message.id >> message.x >> message.y;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing positionMessage");
-        }
-        return is;
-    }
-};
-
-struct garbageMessage {
-    int id;
-
-    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
-        os << message.id;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
-        is >> message.id;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing garbageMessage");
-        }
-        return is;
-    }
-};
-
-std::ostream &operator<<(std::ostream &os, sf::Keyboard::Key &key)
-{
-    os << key;
-    return os;
-}
-
-std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
-{
-    int k;
-    is >> k;
-    key = static_cast<sf::Keyboard::Key>(k);
-    if (is.fail()) {
-        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
-    }
-    return is;
-}
-
-struct inputMessage {
-    std::size_t id;
-    sf::Keyboard::Key key;
-
-    friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
-        os << message.id << " " << message.key;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, inputMessage &message) {
-        is >> message.id >> message.key;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing inputMessage");
-        }
-        return is;
-    }
-};
-
-struct shootMessage {
-    float shootX;
-    float shootY;
-    std::size_t id;
-
-    friend std::ostream &operator<<(std::ostream &os, const shootMessage &message) {
-        os << message.shootX << " " << message.shootY << " " << message.id;
-        return os;
-    }
-    friend std::istream &operator>>(std::istream &is, shootMessage &message) {
-        is >> message.shootX >> message.shootY >> message.id;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing shootMessage");
-        }
-        return is;
-    }
-};
 
 static const std::vector<sf::Keyboard::Key> kepMap = {
     {sf::Keyboard::Key::Up},
@@ -179,7 +69,7 @@ void Client::handleMessageString() {
 }
 
 void Client::handleMessageSetup() {
-    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
+    this->clientGame.getEnemiesPosPair() = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
 }
 
 bool Client::deserializePositionMessage() {
@@ -259,17 +149,16 @@ void Client::manageMessage(std::string &message) {
 
 void Client::commandStartGame() {
     std::cout << "Game is starting" << std::endl;
+    this->isInChat = false;
+    this->isInSetup = true;
     std::thread gameThread([&]() { this->handleGame(); });
     gameThread.detach();
 }
 
 void Client::handleGame() {
-    this->isInSetup = true;
-    this->isInChat = false;
     this->clientGame.init(this->playerNumber, 2048, 20);
-    while (this->clientGame.getEnemiesPosPair().empty()) { }
+    while (this->clientGame.getEnemiesPosPair().size() != 20) { }
     std::cout << "Game started: " << this->clientGame.getEnemiesPosPair().size() << std::endl;
-    isInChat = false;
     std::size_t my_player;
     this->clientGame.setup();
 

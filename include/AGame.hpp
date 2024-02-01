@@ -207,10 +207,6 @@ namespace Game
                 this->nbEntities = nbEntities;
                 this->defaultNbEnemies = defaultNbEnemies;
                 this->registry = GameEngine::Registry(nbEntities);
-                this->entityVector = std::vector<GameEngine::Entity>(nbEntities);
-                this->enemiesVector = std::vector<GameEngine::Entity>(defaultNbEnemies);
-                this->enemiesPos = std::vector<GameEngine::Position>(defaultNbEnemies);
-                this->enemiesPosPair = std::vector<std::pair<float, float>>(defaultNbEnemies);
                 this->systemGroup = GameEngine::SystemGroup();
                 this->registry.registerComponent<GameEngine::Color>();
                 this->registry.registerComponent<GameEngine::ZIndex>();
@@ -243,6 +239,11 @@ namespace Game
                     GameEngine::Entity movableEntity = spawnMovableEntity(this->registry);
                     entityVector.push_back(movableEntity);
                 }
+                for (int i = 0; i < defaultNbEnemies; ++i) {
+                    GameEngine::Entity staticEntity = spawnEnemyEntity(this->registry);
+                    entityVector.push_back(staticEntity);
+                    enemiesVector.push_back(staticEntity);
+                }
                 GameEngine::Entity backgroundStar1 = createBackgroundStar(this->registry);
                 entityVector.push_back(backgroundStar1);
                 GameEngine::Entity backgroundStar2 = createBackgroundStar(this->registry);
@@ -256,11 +257,6 @@ namespace Game
                 entityVector.push_back(gameOver);
                 GameEngine::Entity youWin = createYouWin(this->registry);
                 entityVector.push_back(youWin);
-                for (int i = 0; i < defaultNbEnemies; ++i) {
-                    GameEngine::Entity staticEntity = spawnEnemyEntity(this->registry);
-                    entityVector.push_back(staticEntity);
-                    enemiesVector.push_back(staticEntity);
-                }
             };
 
             GameEngine::Registry &getRegistry() { return registry; };

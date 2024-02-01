@@ -19,6 +19,7 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include "Components/Position.hpp"
+#include "Serialization.hpp"
 
 #define CONNECTED "101: You are connected!\n"
 #define DISCONNECTED "103: You are disconnected!\n"
@@ -28,22 +29,6 @@
 #define NEW_CLIENT "106: New client connected!\n"
 #define CLIENT_DISCONNECTED "107: Client disconnected!\n"
 #define START_GAME "108: Game is starting!\n"
-
-template <typename T>
-void serialize(T& data, std::array<char, 2048>& buffer) {
-    std::ostringstream os;
-    os << data;
-    std::size_t size = os.str().copy(buffer.data(), buffer.size());
-    buffer[size] = '\0';
-}
-
-template <typename T>
-T deserialize(std::array<char, 2048>& buffer) {
-    T data;
-    std::istringstream is(std::string(buffer.data()));
-    is >> data;
-    return data;
-}
 
 class ANetwork
 {
