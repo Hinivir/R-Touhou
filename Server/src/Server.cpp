@@ -10,7 +10,6 @@
 #include "Registry.hpp"
 #include "Systems.hpp"
 #include "Macros/ForEach.hpp"
-#include "Init.hpp"
 #include "ServerGame.hpp"
 
 #include <iostream>
@@ -52,6 +51,24 @@ struct positionMessage {
         is >> message.id >> message.x >> message.y;
         if (is.fail()) {
             throw std::runtime_error("Error while deserializing positionMessage");
+        }
+        return is;
+    }
+};
+
+struct shootMessage {
+    float shootX;
+    float shootY;
+    std::size_t id;
+
+    friend std::ostream &operator<<(std::ostream &os, const shootMessage &message) {
+        os << message.shootX << " " << message.shootY << " " << message.id;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, shootMessage &message) {
+        is >> message.shootX >> message.shootY >> message.id;
+        if (is.fail()) {
+            throw std::runtime_error("Error while deserializing shootMessage");
         }
         return is;
     }
@@ -107,7 +124,7 @@ struct garbageMessage {
     }
 };
 
-Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
+Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port), serverGame()
 {
     _port = std::stoi(port);
 
@@ -171,6 +188,13 @@ void Server::handleMessageGame(Game::ServerGame &game)
         game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
     else if (input.key == sf::Keyboard::Key::Right)
         game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
+    else if (input.key == sf::Keyboard::Key::Space) {
+        GameEngine::Entity shoot = game.createShoot(game.getRegistry(), game.getRegistry().getEntityById(input.id));
+        game.getEntityVector().push_back(shoot);
+        shootMessage shootMsg = {game.getRegistry().getComponent<GameEngine::Position>()[shoot].value().x,
+            game.getRegistry().getComponent<GameEngine::Position>()[shoot].value().y, input.id};
+        sendMessageToAllClients<shootMessage>(shootMsg);
+    }
     float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
     float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
     positionMessage toSend = {int(input.id), x, y};
@@ -238,6 +262,8 @@ void Server::commandReady() {
     this->isInChat = false;
     this->isInSetup = true;
     this->isInGame = false;
+    // Need to put random number of enemies
+    this->serverGame.init(this->playerNumber, 2048, 20);
 
 }
 
@@ -257,6 +283,19 @@ void Server::commandStartGame() {
         this->isInChat = false;
         this->isInSetup = false;
         this->isInGame = true;
+        this->serverGame.setup();
+        for (std::size_t i = this->serverGame.getNbPlayer(); i < this->serverGame.getDefaultNbEnemies() + this->serverGame.getNbPlayer(); i++) {
+            float x = rand() % 1080 + 1920;
+            float y = rand() % 1000 - 50;
+            while (x < 50)
+                x += 50;
+            while (y < 1030)
+                y += 1030;
+            this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
+        }
+        this->serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
+        sendMessageToAllClients<std::vector<std::pair<float, float>>>(this->serverGame.getEnemiesPosPair());
+        std::cout << "Enemies pos: " << this->serverGame.getEnemiesPosPair().size() << std::endl;
         handleGame();
     }
 }
@@ -276,57 +315,6 @@ void Server::asyncReceive(Game::ServerGame &game)
 }
 
 void Server::handleGame() {
-    std::size_t nbEnemies = 30;
-    Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
-    int nbRegistry = 2048;
-    int totalScore = 0;
-    bool isGameOver = false;
-    int shootCoolDown = 0;
-    int enemyCoolDown = 0;
-    bool spawnEnemy = true;
-    std::vector<GameEngine::Entity> entityVector;
-    std::vector<GameEngine::Entity> enemyVector;
-
-    GameEngine::SystemGroup system;
-
-    for (std::size_t i = 0; i < playerNumber; i++) {
-        GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
-        entityVector.push_back(movableEntity);
-    }
-    GameEngine::Entity backgroundStar1 = createBackgroundStar(serverGame.getRegistry());
-    entityVector.push_back(backgroundStar1);
-    GameEngine::Entity backgroundStar2 = createBackgroundStar(serverGame.getRegistry());
-    serverGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-    entityVector.push_back(backgroundStar2);
-    GameEngine::Entity groundDown = createGroundDown(serverGame.getRegistry());
-    entityVector.push_back(groundDown);
-    GameEngine::Entity groundUp = createGroundUp(serverGame.getRegistry());
-    entityVector.push_back(groundUp);
-    GameEngine::Entity score = createScore(serverGame.getRegistry());
-    GameEngine::Entity gameOver = createGameOver(serverGame.getRegistry());
-    GameEngine::Entity youWin = createYouWin(serverGame.getRegistry());
-
-    for (int i = 0; i < nbEnemies; ++i) {
-        GameEngine::Entity staticEntity = spawnEnemyEntity(serverGame.getRegistry());
-        entityVector.push_back(staticEntity);
-        enemyVector.push_back(staticEntity);
-    }
-    //  get message from server that gives us nb enemies and their position
-
-    //generate random pos
-    std::vector<std::pair<float, float>> enemyPositionVector;
-    for (std::size_t i = 0; i < nbEnemies; i++) {
-        float x = rand() % 1080 + 1920;
-        float y = rand() % 1000 - 50;
-        while (x < 50)
-            x += 50;
-        while (y < 1030)
-            y += 1030;
-        enemyPositionVector.push_back(std::pair<float, float>{x, y});
-    }
-    system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
-    sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
-
     this->isInSetup = false;
     this->isInGame = true;
     runGame(serverGame);

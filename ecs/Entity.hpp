@@ -26,6 +26,9 @@ namespace GameEngine
             /// @brief Default destructor
             ~Entity() = default;
 
+            /// @brief Default constructor
+            Entity() = default;
+
             /// @brief Overload to be able to use the Entity class as a std::size_t
             operator std::size_t() const { return _entity; };
 

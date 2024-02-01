@@ -24,13 +24,13 @@
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
-
+/*
 bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width1,
     std::size_t height1, std::size_t width2, std::size_t height2)
 {
     return (x1 < x2 + width2 && x1 + width1 > x2 && y1 < y2 + height2 && y1 + height1 > y2);
 }
-
+*/
 namespace GameEngine
 {
 
@@ -257,7 +257,7 @@ namespace GameEngine
                 }
             }
         }
-
+/*
         void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
@@ -376,7 +376,7 @@ namespace GameEngine
                 }
             }
         }
-
+*/
         void attackSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<GameEngine::Entity> &entityVector)
         {
             auto &positions = r.getComponent<GameEngine::Position>();

@@ -14,11 +14,11 @@
 
 #include <asio.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include "SparseArray.hpp"
 
 #include "Components/Components.hpp"
 #include "Entity.hpp"
 #include "ANetwork.hpp"
+#include "ClientGame.hpp"
 
 class Client : public ANetwork
 {
@@ -29,6 +29,8 @@ class Client : public ANetwork
     int entityPos = -1;
     float newPosX = 0;
     float newPosY = 0;
+
+    Game::ClientGame clientGame;
 
   public:
     asio::ip::udp::endpoint serverEndpoint;
@@ -43,12 +45,14 @@ class Client : public ANetwork
     bool deserializePositionMessage();
     bool deserializeInputMessage();
     bool deserializeGarbageMessage();
+    bool deserializeShootMessage();
     void managePackageGame();
 
     std::vector<std::function<bool()>> deserializeFunctions = {
       [this]() { return this->deserializePositionMessage(); },
       [this]() { return this->deserializeInputMessage(); },
-      [this]() { return this->deserializeGarbageMessage(); }
+      [this]() { return this->deserializeGarbageMessage(); },
+      [this]() { return this->deserializeShootMessage(); }
     };
 
     void commandConnect();

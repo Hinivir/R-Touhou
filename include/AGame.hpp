@@ -8,73 +8,270 @@
 #ifndef AGAME_HPP_
 #define AGAME_HPP_
 
-#include "Registry.hpp"
-#include "Components/Components.hpp"
-// #include "Init.hpp"
-#include <iostream>
+#include "Systems.hpp"
+
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 
 namespace Game
 {
-    /**
-     * @class AGame
-     * @brief Represents a game object.
-     */
     class AGame
     {
-      protected:
-        std::size_t nbEntities = 2048;                /**< The number of entities in the game. */
-        std::size_t nbPlayer = 1;                     /**< The number of players in the game. */
-        std::size_t defaultNbEnemies = 20;            /**< The default number of enemies in the game. */
-        GameEngine::Registry registry;                /**< The game's entity registry. */
-        std::vector<GameEngine::Entity> entityVector; /**< Vector to store game entities. */
+        protected:
+            std::size_t nbEntities = 2048;
+            std::size_t nbPlayer = 1;
+            std::size_t defaultNbEnemies = 20;
+            GameEngine::Registry registry;
+            GameEngine::SystemGroup systemGroup;
+            std::vector<GameEngine::Entity> entityVector = {};
+            std::vector<GameEngine::Entity> enemiesVector = {};
+            std::vector<GameEngine::Position> enemiesPos = {};
+            std::vector<std::pair<float, float>> enemiesPosPair = {};
+            int totalScore = 0;
 
-      public:
-        /**
-         * @brief Constructor for AGame.
-         * @param nbPlayer The number of players in the game.
-         * @param nbEntities The number of entities in the game.
-         * @param defaultNbEnemies The default number of enemies in the game.
-         */
-        AGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
-            : nbPlayer(nbPlayer), nbEntities(nbEntities), registry(nbEntities), defaultNbEnemies(defaultNbEnemies)
-        {
-            registry.registerComponent<GameEngine::Color>();//c
-            registry.registerComponent<GameEngine::ZIndex>();//c
-            registry.registerComponent<GameEngine::Outline>();//c
-            registry.registerComponent<GameEngine::Sprite>();//c
-            registry.registerComponent<GameEngine::SpriteTextureAnimation>();//c
-            registry.registerComponent<GameEngine::SpriteTextureRect>();//c
+        public:
+            AGame() : registry(nbEntities), systemGroup()
+            {};
+            ~AGame() = default;
 
-            registry.registerComponent<GameEngine::Hitbox>();//s
-            registry.registerComponent<GameEngine::Life>();//s
-            registry.registerComponent<GameEngine::Path>();//s
+            GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity entity = registry.spawnEntity();
 
-            registry.registerComponent<GameEngine::Controllable>();//sc
-            registry.registerComponent<GameEngine::Drawable>();//sc
-            registry.registerComponent<GameEngine::Position>();//sc
-            registry.registerComponent<GameEngine::Projectile>();//sc
-            registry.registerComponent<GameEngine::Size>();//sc
-            registry.registerComponent<GameEngine::Text>();//sc
-            registry.registerComponent<GameEngine::Velocity>();//sc
-        };
+                registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Outline>(entity, GameEngine::Outline{5});
+                return entity;
+            }
 
-        void justATest() { std::cout << "just a test" << std::endl; }
-        /**
-         * @brief Destructor for AGame.
-         */
-        ~AGame() = default;
+            GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity entity = spawnBaseEntity(registry);
+                float entityColor[3] = {0.0, 1.0, 0.0};
 
-        GameEngine::Registry &getRegistry() { return registry; }
+                registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{true});
+                registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{0.0f, 500.0f});
+                registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{10.0f, 10.0f});
+                registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
+                registry.addComponent<GameEngine::Sprite>(
+                    entity, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/Player.png", sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{3});
+                registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
+                registry.addComponent<GameEngine::Color>(
+                    entity, GameEngine::Color{static_cast<GameEngine::ColorValue>(205 * entityColor[0] + 50),
+                                static_cast<GameEngine::ColorValue>(205 * entityColor[1] + 50),
+                                static_cast<GameEngine::ColorValue>(205 * entityColor[2] + 50)});
+                registry.addComponent<GameEngine::Outline>(
+                    entity, GameEngine::Outline{5, {static_cast<GameEngine::ColorValue>(100 * entityColor[0]),
+                                                       static_cast<GameEngine::ColorValue>(100 * entityColor[1]),
+                                                       static_cast<GameEngine::ColorValue>(100 * entityColor[2])}});
+                return entity;
+            }
 
-        GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);
-        GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry);
-        GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry);
-        GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry);
-        GameEngine::Entity createGroundDown(GameEngine::Registry &registry);
-        GameEngine::Entity createGroundUp(GameEngine::Registry &registry);
-        GameEngine::Entity createScore(GameEngine::Registry &registry);
-        GameEngine::Entity createGameOver(GameEngine::Registry &registry);
-        GameEngine::Entity createYouWin(GameEngine::Registry &registry);
+            GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity entity = spawnBaseEntity(registry);
+
+                registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
+                registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
+                registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{15.5f, 0.0f});
+                registry.addComponent<GameEngine::Sprite>(
+                    entity, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/Enemy.png", sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::Hitbox>(entity, GameEngine::Hitbox{});
+                registry.addComponent<GameEngine::Path>(entity, GameEngine::Path{30.0f, 30.0f, 0.0f, 0.0f});
+                registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{2});
+                registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
+                return entity;
+            }
+
+            GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity backgroundStar = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(backgroundStar, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Size>(backgroundStar, GameEngine::Size{WINDOW_WIDTH, WINDOW_HEIGHT});
+                registry.addComponent<GameEngine::Position>(backgroundStar, GameEngine::Position{0.0f, 0.0f});
+                registry.addComponent<GameEngine::Velocity>(backgroundStar, GameEngine::Velocity{2.0f, 0.0f});
+                registry.addComponent<GameEngine::Sprite>(backgroundStar,
+                    GameEngine::Sprite{"../games/resources/R-Touhou/graphics/BackgroundStar.jpg", sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::ZIndex>(
+                    backgroundStar, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE});
+                registry.addComponent<GameEngine::Color>(backgroundStar, GameEngine::Color{50, 50, 50});
+
+                return backgroundStar;
+            }
+
+            GameEngine::Entity createGroundDown(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity groundDown = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(groundDown, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Size>(groundDown, GameEngine::Size{1920.0f, 50.0f});
+                registry.addComponent<GameEngine::Position>(groundDown, GameEngine::Position{0.0f, 0.0f});
+                registry.addComponent<GameEngine::Sprite>(
+                    groundDown, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/Ground.png", sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::ZIndex>(
+                    groundDown, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE + 1});
+                registry.addComponent<GameEngine::Controllable>(groundDown, GameEngine::Controllable{false});
+
+                return groundDown;
+            }
+
+            GameEngine::Entity createGroundUp(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity groundUp = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(groundUp, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Size>(groundUp, GameEngine::Size{1920.0f, 50.0f});
+                registry.addComponent<GameEngine::Position>(groundUp, GameEngine::Position{0.0f, 1030.0f});
+                registry.addComponent<GameEngine::Sprite>(
+                    groundUp, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/Ground.png", sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::ZIndex>(groundUp, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_LOWEST_VALUE + 2});
+                registry.addComponent<GameEngine::Controllable>(groundUp, GameEngine::Controllable{false});
+
+                return groundUp;
+            }
+
+            GameEngine::Entity createScore(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity score = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(score, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Position>(score, GameEngine::Position{0.0f, 0.0f});
+                registry.addComponent<GameEngine::ZIndex>(score, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+                registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
+                std::string scoreText = "Score: 0";
+                registry.addComponent<GameEngine::Text>(
+                    score, GameEngine::Text{sf::Text(), sf::Font(), scoreText, "../games/resources/R-Touhou/font/arial.ttf", 40});
+                return score;
+            }
+
+            GameEngine::Entity createGameOver(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity gameOver = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
+                registry.addComponent<GameEngine::Position>(
+                    gameOver, GameEngine::Position{WINDOW_WIDTH / 2 - 220, WINDOW_HEIGHT / 2 - 120});
+                registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+                registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
+                std::string gameOverText = "Game Over";
+                registry.addComponent<GameEngine::Text>(
+                    gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameOverText, "../games/resources/R-Touhou/font/arial.ttf", 80});
+
+                return gameOver;
+            }
+
+            GameEngine::Entity createYouWin(GameEngine::Registry &registry)
+            {
+                GameEngine::Entity youWin = registry.spawnEntity();
+
+                registry.addComponent<GameEngine::Drawable>(youWin, GameEngine::Drawable{false});
+                registry.addComponent<GameEngine::Position>(
+                    youWin, GameEngine::Position{WINDOW_WIDTH / 2 - 220, WINDOW_HEIGHT / 2 - 120});
+                registry.addComponent<GameEngine::ZIndex>(youWin, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+                registry.addComponent<GameEngine::Color>(youWin, GameEngine::Color{255, 255, 255, 255});
+                std::string youWinText = "You Win !";
+                registry.addComponent<GameEngine::Text>(
+                    youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "../games/resources/R-Touhou/font/arial.ttf", 80});
+
+                return youWin;
+            }
+
+            GameEngine::Entity createShoot(GameEngine::Registry &registry, GameEngine::Entity playerId)
+            {
+                std::optional<GameEngine::Position> position = registry.getComponent<GameEngine::Position>()[playerId];
+                std::optional<GameEngine::Size> size = registry.getComponent<GameEngine::Size>()[playerId];
+
+                GameEngine::Entity bullet = registry.spawnEntity();
+                registry.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+                registry.addComponent<GameEngine::Position>(
+                    bullet, GameEngine::Position{
+                                position.value().x, position.value().y + size.value().height / 2});
+                registry.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+                registry.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+                registry.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+                registry.addComponent<GameEngine::Sprite>(
+                    bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                                sf::Sprite(), sf::Texture()});
+                registry.addComponent<GameEngine::ZIndex>(
+                    bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                registry.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+                registry.addComponent<GameEngine::Path>(
+                    bullet, GameEngine::Path{position.value().x, position.value().y, 1920 + 50, 1080 + 50});
+                return bullet;
+            };
+
+            void init(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
+            {
+                this->nbPlayer = nbPlayer;
+                this->nbEntities = nbEntities;
+                this->defaultNbEnemies = defaultNbEnemies;
+                this->registry = GameEngine::Registry(nbEntities);
+                this->entityVector = std::vector<GameEngine::Entity>(nbEntities);
+                this->enemiesVector = std::vector<GameEngine::Entity>(defaultNbEnemies);
+                this->enemiesPos = std::vector<GameEngine::Position>(defaultNbEnemies);
+                this->enemiesPosPair = std::vector<std::pair<float, float>>(defaultNbEnemies);
+                this->systemGroup = GameEngine::SystemGroup();
+                this->registry.registerComponent<GameEngine::Color>();
+                this->registry.registerComponent<GameEngine::ZIndex>();
+                this->registry.registerComponent<GameEngine::Outline>();
+                this->registry.registerComponent<GameEngine::Sprite>();
+                this->registry.registerComponent<GameEngine::SpriteTextureAnimation>();
+                this->registry.registerComponent<GameEngine::SpriteTextureRect>();
+                this->registry.registerComponent<GameEngine::Color>();//c
+                this->registry.registerComponent<GameEngine::ZIndex>();//c
+                this->registry.registerComponent<GameEngine::Outline>();//c
+                this->registry.registerComponent<GameEngine::Sprite>();//c
+                this->registry.registerComponent<GameEngine::SpriteTextureAnimation>();//c
+                this->registry.registerComponent<GameEngine::SpriteTextureRect>();//c
+                this->registry.registerComponent<GameEngine::Controllable>();
+                this->registry.registerComponent<GameEngine::Drawable>();
+                this->registry.registerComponent<GameEngine::Position>();
+                this->registry.registerComponent<GameEngine::Projectile>();
+                this->registry.registerComponent<GameEngine::Size>();
+                this->registry.registerComponent<GameEngine::Text>();
+                this->registry.registerComponent<GameEngine::Velocity>();
+                this->registry.registerComponent<GameEngine::Hitbox>();//s
+                this->registry.registerComponent<GameEngine::Life>();//s
+                this->registry.registerComponent<GameEngine::Path>();//s
+            }
+            void setup()
+            {
+                GameEngine::Entity score = createScore(this->registry);
+                entityVector.push_back(score);
+                for (int i = 0; i < nbPlayer; ++i) {
+                    GameEngine::Entity movableEntity = spawnMovableEntity(this->registry);
+                    entityVector.push_back(movableEntity);
+                }
+                GameEngine::Entity backgroundStar1 = createBackgroundStar(this->registry);
+                entityVector.push_back(backgroundStar1);
+                GameEngine::Entity backgroundStar2 = createBackgroundStar(this->registry);
+                getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
+                entityVector.push_back(backgroundStar2);
+                GameEngine::Entity groundDown = createGroundDown(this->registry);
+                entityVector.push_back(groundDown);
+                GameEngine::Entity groundUp = createGroundUp(this->registry);
+                entityVector.push_back(groundUp);
+                GameEngine::Entity gameOver = createGameOver(this->registry);
+                entityVector.push_back(gameOver);
+                GameEngine::Entity youWin = createYouWin(this->registry);
+                entityVector.push_back(youWin);
+                for (int i = 0; i < defaultNbEnemies; ++i) {
+                    GameEngine::Entity staticEntity = spawnEnemyEntity(this->registry);
+                    entityVector.push_back(staticEntity);
+                    enemiesVector.push_back(staticEntity);
+                }
+            };
+
+            GameEngine::Registry &getRegistry() { return registry; };
+            GameEngine::SystemGroup &getSystemGroup() { return systemGroup; };
+            std::vector<GameEngine::Entity> getEntityVector() { return entityVector; };
+            std::vector<GameEngine::Entity> getEnemiesVector() { return enemiesVector; };
+            std::vector<GameEngine::Position> getEnemiesPos() { return enemiesPos; };
+            std::vector<std::pair<float, float>> &getEnemiesPosPair() { return enemiesPosPair; };
+            std::size_t getNbEntities() { return nbEntities; };
+            std::size_t getNbPlayer() { return nbPlayer; };
+            std::size_t getDefaultNbEnemies() { return defaultNbEnemies; };
     };
 } // namespace Game
 #endif /* !AGAME_HPP_ */

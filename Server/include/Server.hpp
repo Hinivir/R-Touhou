@@ -28,6 +28,7 @@ class Server : protected ANetwork
     std::vector<asio::ip::udp::endpoint> clientsReady;
     std::vector<asio::ip::udp::endpoint> clientsSetup;
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
+    Game::ServerGame serverGame;
     bool test = false;
 
   public:
