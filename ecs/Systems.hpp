@@ -216,44 +216,55 @@ namespace GameEngine
             }
         }
 
-
         void movementSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
-            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT(GameEngine::Position, positions);
-            EXTRACT_COMPONENT_CONST(GameEngine::Projectile, projectiles);
+            EXTRACT_COMPONENT_CONST(GameEngine::Velocity, velocities);
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
-            EXTRACT_COMPONENT_CONST(GameEngine::Path, paths);
             EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
+            EXTRACT_COMPONENT(GameEngine::Path, paths);
 
-            for (size_t i = 0; i < velocities.size() && i < positions.size(); ++i) {
-                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velociyComponent, hasVelocity);
-                GameEngine::Velocity const &velocity = velociyComponent.value();
+            for (std::size_t i = 0; i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
+                // Position - Continues if position is undefined
                 FROM_COMPONENT_TO_VARIABLE(positions, i, positionComponent, hasPosition);
+                if (!hasPosition)
+                    continue;
                 GameEngine::Position &position = positionComponent.value();
-                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllableComponent, hasControllable);
-                GameEngine::Controllable const &controllable = controllableComponent.value();
-                FROM_COMPONENT_TO_VARIABLE_CONST(projectiles, i, projectileComponent, hasProjectile);
-                FROM_COMPONENT_TO_VARIABLE_CONST(paths, i, pathComponent, hasPath);
-                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize);
 
-                if (hasVelocity && hasPosition && hasPath && (!hasControllable || !controllable.isControllable) &&
-                    !hasProjectile) {
-                    position.x -= velocity.x;
-                    position.y -= velocity.y;
-                } else if (hasVelocity && hasPosition && hasPath && !hasControllable && hasProjectile) {
-                    position.x += velocity.x;
-                    position.y += velocity.y;
-                } else if (hasVelocity && hasPosition && !hasPath && !hasControllable && !hasProjectile &&
-                           sizeComponent.value().width == 1920 && sizeComponent.value().height == 1080) {
-                    if (position.x < -1920) {
-                        position.x = 1920;
-                    }
-                    position.x -= velocity.x;
-                    position.x -= velocity.x;
-                    position.y += rand() & 1 ? velocity.y : -velocity.y;
-                    position.x -= velocity.x;
-                    position.y += rand() & 1 ? velocity.y : -velocity.y;
+                // Controllable - Continues if controllable is defined and controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (hasControllable && controllable.value().isControllable)
+                    continue;
+
+                // Size - Continues if size is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, i, sizeComponent, hasSize);
+                if (!hasSize)
+                    continue;
+                GameEngine::Size const &size = sizeComponent.value();
+
+                // Path - Continues if path is undefined
+                FROM_COMPONENT_TO_VARIABLE(paths, i, pathComponent, hasPath);
+                if (!hasPath)
+                    continue;
+                GameEngine::Path &path = pathComponent.value();
+
+                // Velocity - Continues if velocity is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(velocities, i, velocityComponent, hasVelocity);
+                if (!hasVelocity)
+                    continue;
+                GameEngine::Velocity const &velocity = velocityComponent.value();
+
+                if (hasPosition && hasPath) {
+                    if (position.y > path.endY)
+                        position.y -= velocity.y;
+                    if (position.x > path.endX)
+                        position.x -= velocity.x;
+                    if (position.y < path.endY)
+                        position.y += velocity.y;
+                    if (position.x < path.endX)
+                        position.x += velocity.x;
                 }
             }
         }

@@ -150,11 +150,9 @@ void Server::commandReady() {
     clientsReady.push_back(senderEndpoint);
     sendMessage("Waiting other players...", senderEndpoint, false);
     sendMessage(READY, senderEndpoint, false);
-    // TODO: need to setup Game
     this->isInChat = false;
     this->isInSetup = true;
     this->isInGame = false;
-    // Need to put random number of enemies
     this->serverGame.init(this->playerNumber, 2048, 20);
     for (std::size_t i = this->serverGame.getNbPlayer(); i < this->serverGame.getDefaultNbEnemies() + this->serverGame.getNbPlayer(); i++) {
            float x = rand() % 1080 + 1920;
@@ -167,7 +165,6 @@ void Server::commandReady() {
     }
     this->serverGame.setup();
     this->serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
-    std::cout << "Enemies pos: " << this->serverGame.getEnemiesPosPair().size() << std::endl;
 }
 
 void Server::commandFull() {
@@ -214,12 +211,4 @@ void Server::handleGame() {
 void Server::runGame(Game::ServerGame &game)
 {
     asyncReceive(game);
-    asio::io_context &io_context(getIoContext());
-    std::thread t([&io_context]() { io_context.run(); });
-    while (1) {
-        if (test) {
-            std::cout << "test" << std::endl;
-            test = false;
-        }
-    }
 }

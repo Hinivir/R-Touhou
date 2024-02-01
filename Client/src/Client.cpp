@@ -165,6 +165,7 @@ void Client::handleGame() {
     for (auto pos : this->clientGame.getEnemiesPosPair()) {
         std::cout << "pos: " << pos.first << " " << pos.second << std::endl;
     }
+    this->clientGame.getSystemGroup().initEnemy(clientGame.getRegistry(), this->clientGame.getEnemiesPosPair());
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
 
@@ -178,7 +179,6 @@ void Client::handleGame() {
     }*/
     //std::cout << "my_player: " << my_player << std::endl;
 
-    this->clientGame.getSystemGroup().initEnemy(clientGame.getRegistry(), this->clientGame.getEnemiesPosPair());
 
     this->isInSetup = false;
     this->isInGame = true;
@@ -225,7 +225,7 @@ void Client::handleGame() {
         }
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
-        //this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
+        this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
         //this->clientGame.getSystemGroup().collisionSystem(clientGame.getRegistry(), totalScore);
         this->clientGame.getSystemGroup().deleteEntitiesSystem(clientGame.getRegistry());
         window.display();
