@@ -71,8 +71,8 @@ class Server : protected ANetwork
     }
 
     void handleMessageString();
-    void handleMessageSetup(){ handleMessageString(); }
-    void handleMessageGame(){ handleMessageString(); }
+    void handleMessageSetup();
+    void handleMessageGame();
 
     // command functions herited from ANetwork
     void commandConnect();

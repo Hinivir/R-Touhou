@@ -142,6 +142,16 @@ void Server::handleMessageString()
     sendMessageStringToOtherClients(msg);
 }
 
+void Server::handleMessageSetup()
+{
+    handleMessageString();
+}
+
+void Server::handleMessageGame()
+{
+    handleMessageString();
+}
+
 void Server::manageServer()
 {
     std::cout << "Waiting for clients..." << std::endl;
@@ -283,23 +293,7 @@ void Server::handleGame() {
 
     bool a = 0;
     while (1) {
-        if (a) {
-            positionMessage s = {1, 1, 1};
-            sendMessageToAllClients<positionMessage>(s);
-        } else {
-            inputMessage s = {1, sf::Keyboard::Key::Space};
-            sendMessageToAllClients<inputMessage>(s);
-        }
-        a = !a;
-        /*
-        if (i < 5) {
-            inputMessage s = {1, sf::Keyboard::Key::Space};
-            sendMessageToAllClients<inputMessage>(s);
-        } else {
-            positionMessage s = {1, {1, 1}};
-            sendMessageToAllClients<positionMessage>(s);
-        }
-        */
+        receiveMessage(false);
     }
     /*
     while (1) {
