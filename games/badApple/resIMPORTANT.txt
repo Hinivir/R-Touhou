@@ -1,0 +1,2 @@
+ Ressources for Bad Apple were extracted by Pasc99 at https://github.com/Pasc99/text2BAinWinConsole/.
+ We didn't ask permission, so if there's any problem with that, we'll remove Bad Apple from this project.
