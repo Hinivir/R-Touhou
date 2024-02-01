@@ -13,6 +13,9 @@
 #include <fstream>
 #include <iostream>
 
+static const sf::Color ColorDarkGray(85, 85, 85);
+static const sf::Color ColorLightGray(170, 170, 170);
+
 static void systemDrawBadAppleFromAscii(GameEngine::Registry &REGISTRY_DEFAULT_NAME, sf::RenderWindow &window, std::size_t const frame)
 {
     std::string str;
@@ -22,13 +25,20 @@ static void systemDrawBadAppleFromAscii(GameEngine::Registry &REGISTRY_DEFAULT_N
     sf::Vector2f position(0, 0);
 
     pixel.setSize(size);
-    pixel.setFillColor(sf::Color::White);
     if (file.is_open()) {
         while (std::getline(file, str)) {
             position.x = -1;
             for (auto const c: str) {
                 position.x += 1;
                 if (!('0' <= c && c <= '9') && !('A' <= c && c <= 'Z') && c != '@')
+                    continue;
+                if (c == 'M')
+                    pixel.setFillColor(sf::Color::White);
+                else if ('a' <= c && c <= 'z')
+                    pixel.setFillColor(ColorLightGray);
+                else if (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || c == '@')
+                    pixel.setFillColor(ColorDarkGray);
+                else
                     continue;
                 pixel.setPosition(position.x * size.x, position.y * size.y);
                 window.draw(pixel);
