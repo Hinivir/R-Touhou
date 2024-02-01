@@ -38,7 +38,9 @@
 #include <vector>
 
 #define WINDOW_WIDTH 1920
+#define WINDOW_WIDTH_FLOAT 1920.0
 #define WINDOW_HEIGHT 1080
+#define WINDOW_HEIGHT_FLOAT 1080.0
 
 bool isColliding(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width1,
     std::size_t height1, std::size_t width2, std::size_t height2)
