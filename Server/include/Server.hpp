@@ -17,6 +17,7 @@
 #include <map>
 #include <asio.hpp>
 #include "ANetwork.hpp"
+#include "ServerGame.hpp"
 
 class Server : protected ANetwork
 {
@@ -27,7 +28,7 @@ class Server : protected ANetwork
     std::vector<asio::ip::udp::endpoint> clientsReady;
     std::vector<asio::ip::udp::endpoint> clientsSetup;
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
-
+    bool test = false;
 
   public:
     Server(const std::string &ip, const std::string &port);
@@ -73,6 +74,7 @@ class Server : protected ANetwork
     void handleMessageString();
     void handleMessageSetup();
     void handleMessageGame();
+    void handleMessageGame(Game::ServerGame &game);
 
     // command functions herited from ANetwork
     void commandConnect();
@@ -83,7 +85,10 @@ class Server : protected ANetwork
     void commandClientDisconnect();
     void commandStartGame();
 
+    void asyncReceive(Game::ServerGame &game);
+
     void handleGame();
+    void runGame(Game::ServerGame &game);
 };
 
 #endif // R_TYPE_SERVER_HPP

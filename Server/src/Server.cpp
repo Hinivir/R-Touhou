@@ -75,7 +75,7 @@ std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
 }
 
 struct inputMessage {
-    int id;
+    std::size_t id;
     sf::Keyboard::Key key;
 
     friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
@@ -149,7 +149,32 @@ void Server::handleMessageSetup()
 
 void Server::handleMessageGame()
 {
-    handleMessageString();
+    inputMessage input = deserialize<inputMessage>(buffer);
+    std::cout << "input received: " << input << std::endl;
+    std::size_t id = input.id;
+    for (std::size_t i = 0; i < 10; i++) {
+        if (i == id) {
+            std::cout << "id: " << id << std::endl;
+            break;
+        }
+    }
+}
+
+void Server::handleMessageGame(Game::ServerGame &game)
+{
+    inputMessage input = deserialize<inputMessage>(buffer);
+    if (input.key == sf::Keyboard::Key::Up) {
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
+    } else if (input.key == sf::Keyboard::Key::Down)
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
+    else if (input.key == sf::Keyboard::Key::Left)
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
+    else if (input.key == sf::Keyboard::Key::Right)
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
+    float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
+    float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
+    positionMessage toSend = {int(input.id), x, y};
+    sendMessageToOtherClients<positionMessage>(toSend);
 }
 
 void Server::manageServer()
@@ -236,6 +261,20 @@ void Server::commandStartGame() {
     }
 }
 
+void Server::asyncReceive(Game::ServerGame &game)
+{
+    buffer.fill(0);
+    socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
+        [this, &game](std::error_code const &error, std::size_t bytesReceived) {
+            if (!error && bytesReceived > 0) {
+                handleMessageGame(game);
+                asyncReceive(game);
+            } else {
+                std::cerr << "Error in asyncReceive: " << error.message() << std::endl;
+            }
+    });
+}
+
 void Server::handleGame() {
     std::size_t nbEnemies = 30;
     Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
@@ -290,59 +329,18 @@ void Server::handleGame() {
 
     this->isInSetup = false;
     this->isInGame = true;
+    runGame(serverGame);
+}
 
-    bool a = 0;
+void Server::runGame(Game::ServerGame &game)
+{
+    asyncReceive(game);
+    asio::io_context &io_context(getIoContext());
+    std::thread t([&io_context]() { io_context.run(); });
     while (1) {
-        receiveMessage(false);
-    }
-    /*
-    while (1) {
-//        serverGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-//        system.controlSystem(serverGame.getRegistry());
-
-//        if (shootCoolDown == 7) {
-//            system.attackSystem(serverGame.getRegistry(), entityVector);
-//            shootCoolDown = 0;
-//        }
-//        if (enemyCoolDown == 50 && spawnEnemy) {
-//            for (int i = 0; i < std::rand() % 31; ++i) {
-//                GameEngine::Entity staticEntity = spawnEnemyEntity(serverGame.getRegistry());
-//                entityVector.push_back(staticEntity);
-//            }
-//            enemyCoolDown = 0;
-//            system.initEnemy(serverGame.getRegistry());
-//        }
-        enemyCoolDown++;
-//        shootCoolDown++;
-        system.movementSystem(serverGame.getRegistry());
-        system.collisionSystem(serverGame.getRegistry(), totalScore);
-        system.deleteEntitiesSystem(serverGame.getRegistry());
-
-        if (totalScore == 100) {
-            enemyCoolDown = 0;
-            spawnEnemy = false;
-            for (const auto &entity : entityVector)
-                serverGame.getRegistry().garbageEntities.push_back(entity);
-            serverGame.getRegistry().garbageEntities.push_back(movableEntity);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            serverGame.getRegistry().garbageEntities.push_back(groundDown);
-            serverGame.getRegistry().garbageEntities.push_back(groundUp);
-            serverGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
-        }
-        if (!isGameOver && serverGame.getRegistry().getComponent<GameEngine::Life>()[movableEntity].value().life <= 0) {
-            enemyCoolDown = 0;
-            spawnEnemy = false;
-            for (const auto &entity : entityVector)
-                serverGame.getRegistry().garbageEntities.push_back(entity);
-            serverGame.getRegistry().garbageEntities.push_back(movableEntity);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar1);
-            serverGame.getRegistry().garbageEntities.push_back(backgroundStar2);
-            serverGame.getRegistry().garbageEntities.push_back(groundDown);
-            serverGame.getRegistry().garbageEntities.push_back(groundUp);
-            serverGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
-            isGameOver = true;
+        if (test) {
+            std::cout << "test" << std::endl;
+            test = false;
         }
     }
-    */
 }
