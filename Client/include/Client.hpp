@@ -26,6 +26,10 @@ class Client : public ANetwork
     asio::ip::udp::endpoint senderEndpoint;
     std::size_t myNumber = 0;
 
+    int entityPos = -1;
+    float newPosX = 0;
+    float newPosY = 0;
+
   public:
     asio::ip::udp::endpoint serverEndpoint;
     std::vector <std::pair<float, float>> pos;

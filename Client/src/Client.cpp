@@ -167,6 +167,9 @@ void Client::handleMessageSetup() {
 bool Client::deserializePositionMessage() {
     try {
         positionMessage message = deserialize<positionMessage>(this->buffer);
+        entityPos = message.id;
+        newPosX = message.x;
+        newPosY = message.y;
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return false;
@@ -204,7 +207,6 @@ void Client::managePackageGame() {
 
 void Client::handleMessageGame() {
     std::cout << buffer.data() << std::endl;
-//    pos = deserialize<std::vector<std::pair<float, float>>>(this->buffer);
     managePackageGame();
 }
 
@@ -255,16 +257,19 @@ void Client::handleGame() {
     GameEngine::SystemGroup system;
 
     window.setFramerateLimit(60);
-
     for (std::size_t i = 0; i < playerNumber; i++) {
         GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
         if (i == myNumber - 1)
-            my_player = myNumber - 1;
+            my_player = i;
+        entityVector.push_back(movableEntity);
         playerVector.push_back(movableEntity);
     }
+    std::cout << "my_player: " << my_player << std::endl;
 
     GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
     entityVector.push_back(backgroundStar1);
+    //
+    std::cout << backgroundStar1 << std::endl;
     GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
     clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
     entityVector.push_back(backgroundStar2);
@@ -320,6 +325,12 @@ void Client::handleGame() {
         }
         enemyCoolDown++;
         shootCoolDown++;
+        if (entityPos != -1) {
+            std::cout << entityPos << std::endl;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().x = newPosX;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().y = newPosY;
+            entityPos = -1;
+        }
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
         system.movementSystem(clientGame.getRegistry());

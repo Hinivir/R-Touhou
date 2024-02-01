@@ -164,9 +164,9 @@ void Server::handleMessageGame(Game::ServerGame &game)
 {
     inputMessage input = deserialize<inputMessage>(buffer);
     if (input.key == sf::Keyboard::Key::Up) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
-    } else if (input.key == sf::Keyboard::Key::Down)
         game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
+    } else if (input.key == sf::Keyboard::Key::Down)
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
     else if (input.key == sf::Keyboard::Key::Left)
         game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
     else if (input.key == sf::Keyboard::Key::Right)
