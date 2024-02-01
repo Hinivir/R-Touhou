@@ -9,6 +9,7 @@
 #include "Systems.hpp"
 #include "Systems/Draw.hpp"
 #include "Systems/Sprite.hpp"
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -37,8 +38,9 @@ int main(void)
 {
     // Initialisation
     int nbRegistry = 1024;
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "ECS");
-    window.setFramerateLimit(60);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bad Apple");
+    sf::Music music;
+    window.setFramerateLimit(30);
     GameEngine::Registry registry(nbRegistry);
     GameEngine::SystemGroup system;
     // Registering components for system.spriteSystem and system.drawSystem
@@ -54,13 +56,11 @@ int main(void)
     registry.registerComponent<GameEngine::Text>();
     registry.registerComponent<GameEngine::ZIndex>();
     registry.registerComponent<MyGame::Gravity>();
-    // Test Entity
-    GameEngine::Entity entity = registry.spawnEntity();
-    registry.addComponent<MyGame::Gravity>(entity, MyGame::Gravity{true, 2});
-    registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable{true});
-    registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{100.0f, 100.0f});
-    registry.addComponent<GameEngine::Sprite>(
-        entity, GameEngine::Sprite{"./resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
+    // Music
+    if (music.openFromFile("badApple/res/BA.wav"))
+        music.play();
+    else
+        std::cerr << "Coudln't load \"badApple/res/BA.wav\"" << std::endl;
     // Main Loop
     while (window.isOpen()) {
         sf::Event event;
