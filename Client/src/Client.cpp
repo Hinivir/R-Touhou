@@ -38,7 +38,6 @@ void Client::commandDisconnect() {
 void Client::commandError() { std::cout << "Error sending confirmation message to server" << std::endl; }
 
 void Client::commandReady() {
-    // TODO: Setup game
     sendMessage<std::string>("start game\n", this->serverEndpoint, false);
 }
 
@@ -83,6 +82,7 @@ void Client::commandStartGame() {
     this->isInSetup = true;
     this->isInChat = false;
     while (this->clientGame.getEnemiesPosPair().empty()) { }
+    std::cout << "Enemies pos pair size: " << this->clientGame.getEnemiesPosPair().size() << std::endl;
     this->clientGame.init(this->playerNumber, 2048, this->clientGame.getEnemiesPosPair().size());
     this->clientGame.setup();
     this->clientGame.myPlayer = this->myPlayer;
@@ -110,7 +110,7 @@ void Client::handleGame() {
             window.close();
 
         //clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-        //this->clientGame.getSystemGroup().controlSystem(clientGame.getRegistry());
+        this->clientGame.getSystemGroup().controlSystem(clientGame.getRegistry());
 
         /*if (shootCoolDown == 7) {
             system.attackSystem(clientGame.getRegistry(), entityVector);
@@ -130,9 +130,9 @@ void Client::handleGame() {
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
 
-        //this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
+        this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
         //system.collisionSystem(clientGame.getRegistry(), totalScore);
-        //this->clientGame.getSystemGroup().deleteEntitiesSystem(clientGame.getRegistry());
+        this->clientGame.getSystemGroup().deleteEntitiesSystem(clientGame.getRegistry());
 
         window.display();
         window.clear();

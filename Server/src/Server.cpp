@@ -121,11 +121,13 @@ void Server::commandStartGame() {
         this->isInGame = true;
         std::cout << "boolean pass" << std::endl;
         this->serverGame.setup();
+        std::cout << "setup pass" << std::endl;
         handleGame();
     }
 }
 
 void Server::handleGame() {
+    std::cout << "Game is starting" << std::endl;
     for (std::size_t i = serverGame.getNbPlayer(); i < serverGame.getDefaultNbEnemies() + serverGame.getNbPlayer(); i++) {
         float x = rand() % 1080 + 1920;
         float y = rand() % 1000 - 50;
@@ -135,6 +137,9 @@ void Server::handleGame() {
             y += 1030;
         this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
     }
+    std::cout << "Enemies Pos generated" << std::endl;
     serverGame.getSystemGroup().initEnemy(serverGame.getRegistry(), this->serverGame.getEnemiesPosPair());
+    std::cout << "Enemies Pos set" << std::endl;
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(this->serverGame.getEnemiesPosPair());
+    std::cout << "Enemies Pos sent" << std::endl;
 }
