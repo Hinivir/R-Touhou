@@ -23,15 +23,63 @@ GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
     return entity;
 }
 
+std::pair<float, float> getRandomVelocity()
+{
+    int random = rand() % 8 + 1;
+    float velocityX = 0.0f;
+    float velocityY = 0.0f;
+
+    switch (random) {
+        case 1:
+            velocityX = 5.0f;
+            velocityY = 5.0f;
+            break;
+        case 2:
+            velocityX = -5.0f;
+            velocityY = 5.0f;
+            break;
+        case 3:
+            velocityX = 5.0f;
+            velocityY = -5.0f;
+            break;
+        case 4:
+            velocityX = -5.0f;
+            velocityY = -5.0f;
+            break;
+        case 5:
+            velocityX = 5.0f;
+            velocityY = 0.0f;
+            break;
+        case 6:
+            velocityX = -5.0f;
+            velocityY = 0.0f;
+            break;
+        case 7:
+            velocityX = 0.0f;
+            velocityY = 5.0f;
+            break;
+        case 8:
+            velocityX = 0.0f;
+            velocityY = -5.0f;
+            break;
+    }
+    return std::make_pair(velocityX, velocityY);
+}
+
 GameEngine::Entity createDuck(GameEngine::Registry &registry)
 {
     srand(static_cast<unsigned>(time(0)));
     GameEngine::Entity duck = spawnBaseEntity(registry);
     registry.addComponent<GameEngine::Sprite>(duck, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
-    registry.addComponent<GameEngine::Position>(duck, GameEngine::Position{static_cast<float>(rand() % 700), static_cast<float>(rand() % 500)});
+    float x = static_cast<float>(rand() % 700);
+    float y = static_cast<float>(rand() % 500);
+    registry.addComponent<GameEngine::Position>(duck, GameEngine::Position{x, y});
     registry.addComponent<GameEngine::Size>(duck, GameEngine::Size{50.0f, 50.0f});
-    registry.addComponent<GameEngine::Velocity>(duck, GameEngine::Velocity{0.07f, 0.07f});
+    std::pair<float, float> velocity = getRandomVelocity();
+    registry.addComponent<GameEngine::Velocity>(duck, GameEngine::Velocity{velocity.first, velocity.second});
     registry.addComponent<GameEngine::Drawable>(duck, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Path>(duck, GameEngine::Path{x, y, 800, 600});
+
     return duck;
 }
 
@@ -112,8 +160,11 @@ int main()
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
                 if (registry.getComponent<GameEngine::Sprite>()[duck].value().sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     score++;
-                    registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 700);
-                    registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 500);
+                    registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 600);
+                    registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 400);
+                    std::pair<float, float> velocity = getRandomVelocity();
+                    registry.getComponent<GameEngine::Velocity>()[duck].value().x = velocity.first;
+                    registry.getComponent<GameEngine::Velocity>()[duck].value().y = velocity.second;
                     registry.getComponent<GameEngine::Text>()[scoreEntity].value().string = "Score: " + std::to_string(score);
                 }
             }
@@ -129,17 +180,20 @@ int main()
         } else {
             duck.move(-speed, -speed); // Diagonal
         }
-
-        // If the duck goes off the window, reset its position and change direction
-        if (duck.getPosition().x > window.getSize().x || duck.getPosition().x < 0 ||
-            duck.getPosition().y > window.getSize().y || duck.getPosition().y < 0) {
-            duck.setPosition(rand() % 790, rand() % 590);
-            direction = rand() % 3;
-        }
 */
+        // If the duck goes off the window, reset its position and change direction
+        if (registry.getComponent<GameEngine::Position>()[duck].value().x > 800 || registry.getComponent<GameEngine::Position>()[duck].value().x < 0 ||
+            registry.getComponent<GameEngine::Position>()[duck].value().y > 600 || registry.getComponent<GameEngine::Position>()[duck].value().y < 0) {
+            registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 600);
+            registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 400);
+            std::pair<float, float> velocity = getRandomVelocity();
+            registry.getComponent<GameEngine::Velocity>()[duck].value().x = velocity.first;
+            registry.getComponent<GameEngine::Velocity>()[duck].value().y = velocity.second;
+        }
+
         GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
-        //system.movementSystem(registry);
+        system.movementSystem(registry);
         window.display();
         window.clear();
     }
