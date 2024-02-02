@@ -30,6 +30,9 @@ class Client : public ANetwork
     float newPosX = 0;
     float newPosY = 0;
 
+    float newBulletPosX = -1;
+    float newBulletPosY = -1;
+
     Game::ClientGame clientGame;
 
   public:
@@ -45,14 +48,14 @@ class Client : public ANetwork
     bool deserializePositionMessage();
     bool deserializeInputMessage();
     bool deserializeGarbageMessage();
-    bool deserializeShootMessage();
+    bool deserializeBulletMessage();
     void managePackageGame();
 
     std::vector<std::function<bool()>> deserializeFunctions = {
       [this]() { return this->deserializePositionMessage(); },
       [this]() { return this->deserializeInputMessage(); },
       [this]() { return this->deserializeGarbageMessage(); },
-      [this]() { return this->deserializeShootMessage(); }
+      [this]() { return this->deserializeBulletMessage(); }
     };
 
     void commandConnect();

@@ -14,6 +14,8 @@ namespace Game
 {
     class ServerGame : public AGame
     {
+        private:
+            std::vector<GameEngine::Entity> entityVector;
         public:
             bool isGameOver = false;
             int enemyCoolDown = 0;

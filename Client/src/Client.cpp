@@ -89,7 +89,7 @@ bool Client::deserializeInputMessage() {
     try {
         inputMessage message = deserialize<inputMessage>(this->buffer);
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+//        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -98,16 +98,6 @@ bool Client::deserializeInputMessage() {
 bool Client::deserializeGarbageMessage() {
     try {
         garbageMessage message = deserialize<garbageMessage>(this->buffer);
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        return false;
-    }
-    return true;
-}
-
-bool Client::deserializeShootMessage() {
-    try {
-        shootMessage message = deserialize<shootMessage>(this->buffer);
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return false;
@@ -187,6 +177,8 @@ void Client::handleGame() {
     this->isInGame = true;
     while (window.isOpen()) {
         sf::Event event;
+
+        //close window
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
@@ -194,9 +186,12 @@ void Client::handleGame() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
 
+        //input inGame
         for (auto const &key: kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
-                inputMessage message = {my_player, key};
+                if (key == sf::Keyboard::Space && shootCoolDown != 7)
+                    break;
+                inputMessage message = {'i', my_player, key};
                 std::array<char, 2048> sendBuffer;
                 serialize<inputMessage>(message, sendBuffer);
                 sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
@@ -204,8 +199,21 @@ void Client::handleGame() {
             }
         }
 
-        //clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-        this->clientGame.getSystemGroup().controlSystem(clientGame.getRegistry());
+        clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
+//        system.controlSystem(clientGame.getRegistry());
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y -= 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y < WINDOW_HEIGHT - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y += 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x -= 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x < WINDOW_WIDTH - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x += 10;
 
         /*if (shootCoolDown == 7) {
             system.attackSystem(clientGame.getRegistry(), entityVector);
@@ -227,6 +235,30 @@ void Client::handleGame() {
             clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(entityPos)].value().y = newPosY;
             entityPos = -1;
         }
+        if (newBulletPosX != -1) {
+            GameEngine::Entity bullet = clientGame.getRegistry().spawnEntity();
+            clientGame.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+            clientGame.getRegistry().addComponent<GameEngine::Position>(
+                bullet, GameEngine::Position{
+                            newBulletPosX, newBulletPosY + 50 / 2});
+            clientGame.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+            clientGame.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+            clientGame.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+            clientGame.getRegistry().addComponent<GameEngine::Sprite>(
+                bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                            sf::Sprite(), sf::Texture()});
+            clientGame.getRegistry().addComponent<GameEngine::ZIndex>(
+                bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+            clientGame.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+            clientGame.getRegistry().addComponent<GameEngine::Path>(
+                bullet, GameEngine::Path{newBulletPosX, newBulletPosY, 1920 + 50, 1080 + 50});
+            entityVector.push_back(bullet);
+            newBulletPosX = -1;
+            newBulletPosY = -1;
+            std::cout << entityVector.size() << std::endl;
+        }
+
+        //draw
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
         this->clientGame.getSystemGroup().movementSystem(clientGame.getRegistry());
@@ -249,6 +281,8 @@ void Client::handleGame() {
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
+
+        //game over
         if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[my_player].value().life <= 0) {
             enemyCoolDown = 0;
             spawnEnemy = false;
