@@ -23,6 +23,38 @@ GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry)
     return entity;
 }
 
+GameEngine::Entity createGameOver(GameEngine::Registry &registry)
+{
+    GameEngine::Entity gameOver = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
+    registry.addComponent<GameEngine::Position>(
+        gameOver, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
+    registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
+    std::string gameOverText = "Game Over";
+    registry.addComponent<GameEngine::Text>(
+        gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameOverText, "../resources/R-Touhou/font/arial.ttf", 80});
+
+    return gameOver;
+}
+
+GameEngine::Entity createYouWin(GameEngine::Registry &registry)
+{
+    GameEngine::Entity youWin = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Drawable>(youWin, GameEngine::Drawable{false});
+    registry.addComponent<GameEngine::Position>(
+        youWin, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
+    registry.addComponent<GameEngine::ZIndex>(youWin, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
+    registry.addComponent<GameEngine::Color>(youWin, GameEngine::Color{255, 255, 255, 255});
+    std::string youWinText = "You Win !";
+    registry.addComponent<GameEngine::Text>(
+        youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "../resources/R-Touhou/font/arial.ttf", 80});
+
+    return youWin;
+}
+
 std::pair<float, float> getRandomVelocity()
 {
     int random = rand() % 8 + 1;
@@ -111,6 +143,8 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
 
 int main()
 {
+    int score = 0;
+    //bool isGameOver = false;
     srand(static_cast<unsigned>(time(0)));
     std::vector<GameEngine::Entity> entityVector;
 
@@ -144,8 +178,8 @@ int main()
     GameEngine::Entity duck = createDuck(registry);
     entityVector.push_back(duck);
     GameEngine::Entity scoreEntity = createScore(registry);
-    entityVector.push_back(scoreEntity);
-    int score = 0;
+    GameEngine::Entity gameOver = createGameOver(registry);
+    GameEngine::Entity youWin = createYouWin(registry);
 
     float speed = 0.07f;
     int direction = rand() % 4;
@@ -154,6 +188,12 @@ int main()
         srand(static_cast<unsigned>(time(0)));
         sf::Event event;
         while (window.pollEvent(event)) {
+            if (score == 10) {
+                registry.garbageEntities.push_back(duck);
+                registry.garbageEntities.push_back(background);
+                window.clear(sf::Color::Black);
+                registry.getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+            }
             if (event.type == sf::Event::Closed)
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed) {
@@ -193,7 +233,7 @@ int main()
 
         GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
-        system.movementSystem(registry);
+        //system.movementSystem(registry);
         window.display();
         window.clear();
     }
