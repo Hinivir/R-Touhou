@@ -90,6 +90,7 @@ bool Client::deserializeBulletMessage() {
         bulletMessage message = deserialize<bulletMessage>(this->buffer);
         newBulletPosX = message.x;
         newBulletPosY = message.y;
+        std::cout << "new bullet at " << newBulletPosX << " " << newBulletPosY << std::endl;
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return false;
@@ -201,8 +202,8 @@ void Client::handleGame() {
         //input inGame
         for (auto const &key: kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
-                if (key == sf::Keyboard::Space && this->clientGame.shootCoolDown != 7)
-                    break;
+                //if (key == sf::Keyboard::Space && this->clientGame.shootCoolDown != 7)
+                //    break;
                 inputMessage message = {'i', my_player, key};
                 std::array<char, 2048> sendBuffer;
                 serialize<inputMessage>(message, sendBuffer);
@@ -227,10 +228,10 @@ void Client::handleGame() {
             if (clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x < WINDOW_WIDTH - 50)
                 clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x += 10;
 
-        /*if (shootCoolDown == 7) {
-            system.attackSystem(clientGame.getRegistry(), entityVector);
-            shootCoolDown = 0;
-        }*/
+        //if (shootCoolDown == 7) {
+         //   system.attackSystem(clientGame.getRegistry(), entityVector);
+            //shootCoolDown = 0;
+        //
         /*if (enemyCoolDown == 50 && spawnEnemy) {
             for (int i = 0; i < std::rand() % 31; ++i) {
                 GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
@@ -239,8 +240,8 @@ void Client::handleGame() {
             enemyCoolDown = 0;
             system.initEnemy(clientGame.getRegistry());
         }
-        enemyCoolDown++;
-        shootCoolDown++;*/
+        enemyCoolDown++;*/
+        //this->clientGame.shootCoolDown++;
         if (entityPos != -1) {
             std::cout << entityPos << std::endl;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(entityPos)].value().x = newPosX;

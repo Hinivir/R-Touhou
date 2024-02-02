@@ -91,27 +91,10 @@ void Server::handleMessageGame(Game::ServerGame &game) {
         sendMessageToOtherClients<positionMessage>(toSend);
     } else if (input.key == sf::Keyboard::Key::Space) {
         std::cout << "new bullet at " << x << " " << y << std::endl;
-        ///////
-        GameEngine::Entity bullet = game.getRegistry().spawnEntity();
-        game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
-        game.getRegistry().addComponent<GameEngine::Position>(
-            bullet, GameEngine::Position{
-                        x, y + 50 / 2});
-        game.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
-        game.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
-        game.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-        game.getRegistry().addComponent<GameEngine::Sprite>(
-            bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
-                        sf::Sprite(), sf::Texture()});
-        game.getRegistry().addComponent<GameEngine::ZIndex>(
-            bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
-        game.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
-        game.getRegistry().addComponent<GameEngine::Path>(
-            bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+        GameEngine::Entity bullet = game.createBullet(game.getRegistry(), game.getRegistry().getEntityById(input.id));
         game.getEntityVector().push_back(bullet);
         bulletMessage toSend = {'b', x, y};
         sendMessageToOtherClients<bulletMessage>(toSend);
-        ///////////
     }
 }
 
@@ -183,7 +166,6 @@ void Server::commandReady() {
                y += 50;
            while (x < 1030)
                x += 1030;
-            // x is larg and y is height
            this->serverGame.getEnemiesPosPair().push_back(std::pair<float, float>{x, y});
     }
     this->serverGame.setup();

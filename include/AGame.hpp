@@ -177,7 +177,7 @@ namespace Game
                 return youWin;
             }
 
-            GameEngine::Entity createShoot(GameEngine::Registry &registry, GameEngine::Entity playerId)
+            GameEngine::Entity createBullet(GameEngine::Registry &registry, GameEngine::Entity playerId)
             {
                 std::optional<GameEngine::Position> position = registry.getComponent<GameEngine::Position>()[playerId];
                 std::optional<GameEngine::Size> size = registry.getComponent<GameEngine::Size>()[playerId];
