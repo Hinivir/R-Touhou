@@ -85,6 +85,18 @@ bool Client::deserializePositionMessage() {
     return true;
 }
 
+bool Client::deserializeBulletMessage() {
+    try {
+        bulletMessage message = deserialize<bulletMessage>(this->buffer);
+        newBulletPosX = message.x;
+        newBulletPosY = message.y;
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool Client::deserializeInputMessage() {
     try {
         inputMessage message = deserialize<inputMessage>(this->buffer);
@@ -189,7 +201,7 @@ void Client::handleGame() {
         //input inGame
         for (auto const &key: kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
-                if (key == sf::Keyboard::Space && shootCoolDown != 7)
+                if (key == sf::Keyboard::Space && this->clientGame.shootCoolDown != 7)
                     break;
                 inputMessage message = {'i', my_player, key};
                 std::array<char, 2048> sendBuffer;
@@ -199,21 +211,21 @@ void Client::handleGame() {
             }
         }
 
-        clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
+        //clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
 //        system.controlSystem(clientGame.getRegistry());
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y > 0)
-                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y -= 10;
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().y > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().y -= 10;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y < WINDOW_HEIGHT - 50)
-                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y += 10;
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().y < WINDOW_HEIGHT - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().y += 10;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x > 0)
-                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x -= 10;
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x -= 10;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x < WINDOW_WIDTH - 50)
-                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x += 10;
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x < WINDOW_WIDTH - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[this->clientGame.getEntityVector().at(my_player)].value().x += 10;
 
         /*if (shootCoolDown == 7) {
             system.attackSystem(clientGame.getRegistry(), entityVector);
@@ -252,10 +264,10 @@ void Client::handleGame() {
             clientGame.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
             clientGame.getRegistry().addComponent<GameEngine::Path>(
                 bullet, GameEngine::Path{newBulletPosX, newBulletPosY, 1920 + 50, 1080 + 50});
-            entityVector.push_back(bullet);
+            this->clientGame.getEntityVector().push_back(bullet);
             newBulletPosX = -1;
             newBulletPosY = -1;
-            std::cout << entityVector.size() << std::endl;
+            std::cout << this->clientGame.getEntityVector().size() << std::endl;
         }
 
         //draw

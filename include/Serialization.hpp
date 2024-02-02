@@ -17,6 +17,23 @@
 std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>& pos);
 std::ostream &operator<<(std::ostream &os, const std::vector<std::pair<float, float>> &pos);
 
+inline std::ostream &operator<<(std::ostream &os, const sf::Keyboard::Key &key)
+{
+    os << static_cast<int>(key);
+    return os;
+}
+
+inline std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
+{
+    int k;
+    is >> k;
+    key = static_cast<sf::Keyboard::Key>(k);
+    if (is.fail()) {
+        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
+    }
+    return is;
+}
+
 struct positionMessage {
     char type = 'p';
     int id;
@@ -42,16 +59,16 @@ struct bulletMessage
     float x;
     float y;
 
-    friend std::ostream &operator<<(std::ostream &os, const shootMessage &message)
+    friend std::ostream &operator<<(std::ostream &os, const bulletMessage &message)
     {
         os << message.type << " " << message.x << " " << message.y;
         return os;
     }
-    friend std::istream &operator>>(std::istream &is, shootMessage &message)
+    friend std::istream &operator>>(std::istream &is, bulletMessage &message)
     {
-        is >> message.type >> message.x >> message.y >> message.id;
+        is >> message.type >> message.x >> message.y;
         if (is.fail()) {
-            throw std::runtime_error("Error while deserializing shootMessage");
+            throw std::runtime_error("Error while deserializing bulletMessage");
         }
         return is;
     }
@@ -97,23 +114,6 @@ struct garbageMessage
         return is;
     }
 };
-
-inline std::ostream &operator<<(std::ostream &os, const sf::Keyboard::Key &key)
-{
-    os << static_cast<int>(key);
-    return os;
-}
-
-inline std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
-{
-    int k;
-    is >> k;
-    key = static_cast<sf::Keyboard::Key>(k);
-    if (is.fail()) {
-        throw std::runtime_error("Error while deserializing sf::Keyboard::Key");
-    }
-    return is;
-}
 
 template <typename T>
 void serialize(T& data, std::array<char, 2048>& buffer) {

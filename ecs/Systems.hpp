@@ -157,8 +157,8 @@ namespace GameEngine
                 position.y = rand() % 1000 - 50;
                 if (position.y < 50)
                     position.y = 50;
-                if (position.y > 1030)
-                    position.y = 1030;
+                if (position.x > 1030)
+                    position.x = 1030;
                 //
                 path.startX = position.x;
                 path.startY = position.y;
