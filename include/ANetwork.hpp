@@ -111,13 +111,10 @@ class ANetwork
     void handleMessage()
     {
         if (isInChat) {
-            std::cout << "chat" << std::endl;
             handleMessageString();
         } else if (isInSetup) {
-            std::cout << "setup" << std::endl;
             handleMessageSetup();
         } else if (isInGame) {
-            std::cout << "game" << std::endl;
             handleMessageGame();
         } else
             std::cerr << "ERROR: cannot handle this message" << std::endl;

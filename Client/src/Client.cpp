@@ -158,13 +158,16 @@ void Client::commandStartGame() {
 void Client::handleGame() {
     this->clientGame.init(this->playerNumber, 2048, 20);
     while (this->clientGame.getEnemiesPosPair().size() != 20) { }
-    std::cout << "Game started: " << this->clientGame.getEnemiesPosPair().size() << std::endl;
-    std::size_t my_player;
-    this->clientGame.setup();
-
     for (auto pos : this->clientGame.getEnemiesPosPair()) {
         std::cout << "pos: " << pos.first << " " << pos.second << std::endl;
     }
+    std::cout << "Game started: " << this->clientGame.getEnemiesPosPair().size() << std::endl;
+    std::size_t my_player = this->playerNumber;
+    this->clientGame.setup();
+
+    /*for (auto pos : this->clientGame.getEnemiesPosPair()) {
+        std::cout << "pos: " << pos.first << " " << pos.second << std::endl;
+    }*/
     this->clientGame.getSystemGroup().initEnemy(clientGame.getRegistry(), this->clientGame.getEnemiesPosPair());
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "R-Touhou");
@@ -197,6 +200,7 @@ void Client::handleGame() {
                 std::array<char, 2048> sendBuffer;
                 serialize<inputMessage>(message, sendBuffer);
                 sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
+                break;
             }
         }
 

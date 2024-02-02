@@ -257,6 +257,20 @@ namespace GameEngine
                 GameEngine::Velocity const &velocity = velocityComponent.value();
 
                 if (hasPosition && hasPath) {
+                    if (path.endY <= 0) {
+                        if (position.y > path.endY || position.y < path.endY)
+                            position.y -= velocity.y;
+                        if (position.x > path.endX || position.x < path.endX)
+                            position.x -= velocity.x;
+                    } else if (path.endY >= 1920) {
+                        if (position.y > path.endY || position.y < path.endY)
+                            position.y += velocity.y;
+                        if (position.x > path.endX || position.x < path.endX)
+                            position.x += velocity.x;
+                    }
+                }
+/*
+                if (hasPosition && hasPath) {
                     if (position.y > path.endY)
                         position.y -= velocity.y;
                     if (position.x > path.endX)
@@ -266,6 +280,7 @@ namespace GameEngine
                     if (position.x < path.endX)
                         position.x += velocity.x;
                 }
+                    */
             }
         }
 /*

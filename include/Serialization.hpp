@@ -53,7 +53,7 @@ struct garbageMessage {
 
 inline std::ostream &operator<<(std::ostream &os, const sf::Keyboard::Key &key)
 {
-    os << key;
+    os << static_cast<int>(key);
     return os;
 }
 
@@ -67,6 +67,7 @@ inline std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
     }
     return is;
 }
+
 
 struct inputMessage {
     std::size_t id;
