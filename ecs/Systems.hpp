@@ -62,6 +62,8 @@ namespace GameEngine
             }
         }
 
+//        void controlSystem1P(GameEngine::Registry
+
         void controlSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
@@ -164,7 +166,6 @@ namespace GameEngine
             }
         }
 
-
         void initEnemy(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<std::pair<float, float>> &pos)
         {
             EXTRACT_COMPONENT(GameEngine::Position, positions);
@@ -215,7 +216,6 @@ namespace GameEngine
                 path.endY = -100 + size.width;
             }
         }
-
 
         void movementSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {

@@ -273,7 +273,7 @@ void Client::handleGame() {
     this->isInSetup = true;
     this->isInChat = false;
     while (pos.empty()) { }
-    std::cout << "Game started: " << pos.size() << std::endl;
+    std::cout << "Game started" << std::endl;
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
@@ -326,6 +326,8 @@ void Client::handleGame() {
     this->isInGame = true;
     while (window.isOpen()) {
         sf::Event event;
+
+        //close window
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
@@ -333,6 +335,7 @@ void Client::handleGame() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
 
+        //input inGame
         for (auto const &key: kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
                 if (key == sf::Keyboard::Space && shootCoolDown != 7)
@@ -346,7 +349,20 @@ void Client::handleGame() {
         }
 
         clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-        system.controlSystem(clientGame.getRegistry());
+//        system.controlSystem(clientGame.getRegistry());
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y -= 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y < WINDOW_HEIGHT - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y += 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x > 0)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x -= 10;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x < WINDOW_WIDTH - 50)
+                clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x += 10;
 
         if (shootCoolDown == 7) {
             system.attackSystem(clientGame.getRegistry(), entityVector);
@@ -390,6 +406,8 @@ void Client::handleGame() {
             newBulletPosY = -1;
             std::cout << entityVector.size() << std::endl;
         }
+
+        //draw
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
         system.movementSystem(clientGame.getRegistry());
@@ -398,6 +416,7 @@ void Client::handleGame() {
         window.display();
         window.clear();
 
+        //win
         if (totalScore == 100) {
             enemyCoolDown = 0;
             spawnEnemy = false;
@@ -412,6 +431,8 @@ void Client::handleGame() {
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         }
+
+        //game over
         if (!isGameOver && clientGame.getRegistry().getComponent<GameEngine::Life>()[my_player].value().life <= 0) {
             enemyCoolDown = 0;
             spawnEnemy = false;
