@@ -40,18 +40,37 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
 }
 
 struct positionMessage {
+    char type = 'c';
     int id;
     float x;
     float y;
 
     friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
-        os << message.id << " " << message.x << " " << message.y;
+        os << message.type << " " << message.id << " " << message.x << " " << message.y;
         return os;
     }
     friend std::istream &operator>>(std::istream &is, positionMessage &message) {
-        is >> message.id >> message.x >> message.y;
-        if (is.fail()) {
+        is >> message.type >> message.id >> message.x >> message.y;
+        if (is.fail() || message.type != 'c') {
             throw std::runtime_error("Error while deserializing positionMessage");
+        }
+        return is;
+    }
+};
+
+struct bulletMessage {
+    char type = 'b';
+    float x;
+    float y;
+
+    friend std::ostream &operator<<(std::ostream &os, const bulletMessage &message) {
+        os << message.type << " " << message.x << " " << message.y;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, bulletMessage &message) {
+        is >> message.type >> message.x >> message.y;
+        if (is.fail() || message.type != 'b') {
+            throw std::runtime_error("Error while deserializing bulletMessage");
         }
         return is;
     }
@@ -75,16 +94,17 @@ std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
 }
 
 struct inputMessage {
+    char type = 'i';
     std::size_t id;
     sf::Keyboard::Key key;
 
     friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
-        os << message.id << " " << message.key;
+        os << message.type << " " << message.id << " " << message.key;
         return os;
     }
     friend std::istream &operator>>(std::istream &is, inputMessage &message) {
-        is >> message.id >> message.key;
-        if (is.fail()) {
+        is >> message.type >> message.id >> message.key;
+        if (is.fail() || message.type != 'i') {
             throw std::runtime_error("Error while deserializing inputMessage");
         }
         return is;
@@ -92,15 +112,16 @@ struct inputMessage {
 };
 
 struct garbageMessage {
+    char type = 'g';
     int id;
 
     friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
-        os << message.id;
+        os << message.type << " " << message.id;
         return os;
     }
     friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
-        is >> message.id;
-        if (is.fail()) {
+        is >> message.type >> message.id;
+        if (is.fail() || message.type != 'g') {
             throw std::runtime_error("Error while deserializing garbageMessage");
         }
         return is;
@@ -160,21 +181,50 @@ void Server::handleMessageGame()
     }
 }
 
-void Server::handleMessageGame(Game::ServerGame &game)
-{
+void Server::handleMessageGame(Game::ServerGame &game) {
     inputMessage input = deserialize<inputMessage>(buffer);
-    if (input.key == sf::Keyboard::Key::Up) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
-    } else if (input.key == sf::Keyboard::Key::Down)
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
-    else if (input.key == sf::Keyboard::Key::Left)
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
-    else if (input.key == sf::Keyboard::Key::Right)
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
     float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
     float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
-    positionMessage toSend = {int(input.id), x, y};
-    sendMessageToOtherClients<positionMessage>(toSend);
+    if (input.key == sf::Keyboard::Key::Up) {
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
+        positionMessage toSend = {'p', int(input.id), x, y};
+        sendMessageToOtherClients<positionMessage>(toSend);
+    } else if (input.key == sf::Keyboard::Key::Down) {
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
+        positionMessage toSend = {'p', int(input.id), x, y};
+        sendMessageToOtherClients<positionMessage>(toSend);
+    } else if (input.key == sf::Keyboard::Key::Left) {
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
+        positionMessage toSend = {'p', int(input.id), x, y};
+        sendMessageToOtherClients<positionMessage>(toSend);
+    } else if (input.key == sf::Keyboard::Key::Right) {
+        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
+        positionMessage toSend = {'p', int(input.id), x, y};
+        sendMessageToOtherClients<positionMessage>(toSend);
+    } else if (input.key == sf::Keyboard::Key::Space) {
+        std::cout << "new bullet at " << x << " " << y << std::endl;
+        ///////
+        GameEngine::Entity bullet = game.getRegistry().spawnEntity();
+        game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+        game.getRegistry().addComponent<GameEngine::Position>(
+            bullet, GameEngine::Position{
+                        x, y + 50 / 2});
+        game.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+        game.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+        game.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+        game.getRegistry().addComponent<GameEngine::Sprite>(
+            bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                        sf::Sprite(), sf::Texture()});
+        game.getRegistry().addComponent<GameEngine::ZIndex>(
+            bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+        game.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+        game.getRegistry().addComponent<GameEngine::Path>(
+            bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+        game.getEntityVector().push_back(bullet);
+        bulletMessage toSend = {'b', x, y};
+        sendMessageToOtherClients<bulletMessage>(toSend);
+        ///////////
+    }
 }
 
 void Server::manageServer()
@@ -284,31 +334,30 @@ void Server::handleGame() {
     int shootCoolDown = 0;
     int enemyCoolDown = 0;
     bool spawnEnemy = true;
-    std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> enemyVector;
 
     GameEngine::SystemGroup system;
 
     for (std::size_t i = 0; i < playerNumber; i++) {
         GameEngine::Entity movableEntity = spawnMovableEntity(serverGame.getRegistry());
-        entityVector.push_back(movableEntity);
+        serverGame.getEntityVector().push_back(movableEntity);
     }
     GameEngine::Entity backgroundStar1 = createBackgroundStar(serverGame.getRegistry());
-    entityVector.push_back(backgroundStar1);
+    serverGame.getEntityVector().push_back(backgroundStar1);
     GameEngine::Entity backgroundStar2 = createBackgroundStar(serverGame.getRegistry());
     serverGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-    entityVector.push_back(backgroundStar2);
+    serverGame.getEntityVector().push_back(backgroundStar2);
     GameEngine::Entity groundDown = createGroundDown(serverGame.getRegistry());
-    entityVector.push_back(groundDown);
+    serverGame.getEntityVector().push_back(groundDown);
     GameEngine::Entity groundUp = createGroundUp(serverGame.getRegistry());
-    entityVector.push_back(groundUp);
+    serverGame.getEntityVector().push_back(groundUp);
     GameEngine::Entity score = createScore(serverGame.getRegistry());
     GameEngine::Entity gameOver = createGameOver(serverGame.getRegistry());
     GameEngine::Entity youWin = createYouWin(serverGame.getRegistry());
 
     for (int i = 0; i < nbEnemies; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(serverGame.getRegistry());
-        entityVector.push_back(staticEntity);
+        serverGame.getEntityVector().push_back(staticEntity);
         enemyVector.push_back(staticEntity);
     }
     //  get message from server that gives us nb enemies and their position

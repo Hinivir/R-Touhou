@@ -43,34 +43,37 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
 }
 
 struct positionMessage {
+    char type = 'c';
     int id;
     float x;
     float y;
 
     friend std::ostream &operator<<(std::ostream &os, const positionMessage &message) {
-        os << message.id << " " << message.x << " " << message.y;
+        os << message.type << " " << message.id << " " << message.x << " " << message.y;
         return os;
     }
     friend std::istream &operator>>(std::istream &is, positionMessage &message) {
-        is >> message.id >> message.x >> message.y;
-        if (is.fail()) {
+        is >> message.type >> message.id >> message.x >> message.y;
+        if (is.fail() || message.type != 'c') {
             throw std::runtime_error("Error while deserializing positionMessage");
         }
         return is;
     }
 };
 
-struct garbageMessage {
-    int id;
+struct bulletMessage {
+    char type = 'b';
+    float x;
+    float y;
 
-    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
-        os << message.id;
+    friend std::ostream &operator<<(std::ostream &os, const bulletMessage &message) {
+        os << message.type << " " << message.x << " " << message.y;
         return os;
     }
-    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
-        is >> message.id;
-        if (is.fail()) {
-            throw std::runtime_error("Error while deserializing garbageMessage");
+    friend std::istream &operator>>(std::istream &is, bulletMessage &message) {
+        is >> message.type >> message.x >> message.y;
+        if (is.fail() || message.type != 'b') {
+            throw std::runtime_error("Error while deserializing bulletMessage");
         }
         return is;
     }
@@ -94,17 +97,35 @@ std::istream &operator>>(std::istream &is, sf::Keyboard::Key &key)
 }
 
 struct inputMessage {
+    char type = 'i';
     std::size_t id;
     sf::Keyboard::Key key;
 
     friend std::ostream &operator<<(std::ostream &os, const inputMessage &message) {
-        os << message.id << " " << message.key;
+        os << message.type << " " << message.id << " " << message.key;
         return os;
     }
     friend std::istream &operator>>(std::istream &is, inputMessage &message) {
-        is >> message.id >> message.key;
-        if (is.fail()) {
+        is >> message.type >> message.id >> message.key;
+        if (is.fail() || message.type != 'i') {
             throw std::runtime_error("Error while deserializing inputMessage");
+        }
+        return is;
+    }
+};
+
+struct garbageMessage {
+    char type = 'g';
+    int id;
+
+    friend std::ostream &operator<<(std::ostream &os, const garbageMessage &message) {
+        os << message.type << " " << message.id;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, garbageMessage &message) {
+        is >> message.type >> message.id;
+        if (is.fail() || message.type != 'g') {
+            throw std::runtime_error("Error while deserializing garbageMessage");
         }
         return is;
     }
@@ -171,7 +192,6 @@ bool Client::deserializePositionMessage() {
         newPosX = message.x;
         newPosY = message.y;
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -190,6 +210,19 @@ bool Client::deserializeInputMessage() {
 bool Client::deserializeGarbageMessage() {
     try {
         garbageMessage message = deserialize<garbageMessage>(this->buffer);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool Client::deserializeBulletMessage() {
+    try {
+        bulletMessage message = deserialize<bulletMessage>(this->buffer);
+        newBulletPosX = message.x;
+        newBulletPosY = message.y;
+        std::cout << "new bullet at " << newBulletPosX << " " << newBulletPosY << std::endl;
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return false;
@@ -301,10 +334,13 @@ void Client::handleGame() {
 
         for (auto const &key: kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
-                inputMessage message = {my_player, key};
+                if (key == sf::Keyboard::Space && shootCoolDown != 7)
+                    break;
+                inputMessage message = {'i', my_player, key};
                 std::array<char, 2048> sendBuffer;
                 serialize<inputMessage>(message, sendBuffer);
                 sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
+                break;
             }
         }
 
@@ -330,6 +366,28 @@ void Client::handleGame() {
             clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().x = newPosX;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().y = newPosY;
             entityPos = -1;
+        }
+        if (newBulletPosX != -1) {
+            GameEngine::Entity bullet = clientGame.getRegistry().spawnEntity();
+            clientGame.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+            clientGame.getRegistry().addComponent<GameEngine::Position>(
+                bullet, GameEngine::Position{
+                            newBulletPosX, newBulletPosY + 50 / 2});
+            clientGame.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+            clientGame.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+            clientGame.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+            clientGame.getRegistry().addComponent<GameEngine::Sprite>(
+                bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                            sf::Sprite(), sf::Texture()});
+            clientGame.getRegistry().addComponent<GameEngine::ZIndex>(
+                bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+            clientGame.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+            clientGame.getRegistry().addComponent<GameEngine::Path>(
+                bullet, GameEngine::Path{newBulletPosX, newBulletPosY, 1920 + 50, 1080 + 50});
+            entityVector.push_back(bullet);
+            newBulletPosX = -1;
+            newBulletPosY = -1;
+            std::cout << entityVector.size() << std::endl;
         }
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);

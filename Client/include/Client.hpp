@@ -30,6 +30,9 @@ class Client : public ANetwork
     float newPosX = 0;
     float newPosY = 0;
 
+    float newBulletPosX = -1;
+    float newBulletPosY = -1;
+
   public:
     asio::ip::udp::endpoint serverEndpoint;
     std::vector <std::pair<float, float>> pos;
@@ -43,12 +46,14 @@ class Client : public ANetwork
     bool deserializePositionMessage();
     bool deserializeInputMessage();
     bool deserializeGarbageMessage();
+    bool deserializeBulletMessage();
     void managePackageGame();
 
     std::vector<std::function<bool()>> deserializeFunctions = {
       [this]() { return this->deserializePositionMessage(); },
       [this]() { return this->deserializeInputMessage(); },
-      [this]() { return this->deserializeGarbageMessage(); }
+      [this]() { return this->deserializeGarbageMessage(); },
+      [this]() { return this->deserializeBulletMessage(); }
     };
 
     void commandConnect();

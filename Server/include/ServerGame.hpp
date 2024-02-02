@@ -14,6 +14,8 @@ namespace Game
 {
     class ServerGame : public AGame
     {
+        private:
+            std::vector<GameEngine::Entity> entityVector;
         public:
             ServerGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
                 : AGame(nbPlayer, nbEntities, defaultNbEnemies)
@@ -29,6 +31,8 @@ namespace Game
             GameEngine::Entity createScore(GameEngine::Registry &registry);
             GameEngine::Entity createGameOver(GameEngine::Registry &registry);
             GameEngine::Entity createYouWin(GameEngine::Registry &registry);
+
+            std::vector<GameEngine::Entity> &getEntityVector() { return entityVector; };
     };
 } // namespace Game
 
