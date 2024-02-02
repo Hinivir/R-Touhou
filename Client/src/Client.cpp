@@ -43,7 +43,7 @@ std::istream& operator>>(std::istream& is, std::vector<std::pair<float, float>>&
 }
 
 struct positionMessage {
-    char type = 'c';
+    char type = 'p';
     int id;
     float x;
     float y;
@@ -54,7 +54,7 @@ struct positionMessage {
     }
     friend std::istream &operator>>(std::istream &is, positionMessage &message) {
         is >> message.type >> message.id >> message.x >> message.y;
-        if (is.fail() || message.type != 'c') {
+        if (is.fail() || message.type != 'p') {
             throw std::runtime_error("Error while deserializing positionMessage");
         }
         return is;
@@ -192,6 +192,7 @@ bool Client::deserializePositionMessage() {
         newPosX = message.x;
         newPosY = message.y;
     } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -201,7 +202,7 @@ bool Client::deserializeInputMessage() {
     try {
         inputMessage message = deserialize<inputMessage>(this->buffer);
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+//        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -211,7 +212,7 @@ bool Client::deserializeGarbageMessage() {
     try {
         garbageMessage message = deserialize<garbageMessage>(this->buffer);
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+//        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
