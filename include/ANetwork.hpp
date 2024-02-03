@@ -19,6 +19,7 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include "Components/Position.hpp"
+#include "Serialization.hpp"
 
 #define CONNECTED "101: You are connected!\n"
 #define DISCONNECTED "103: You are disconnected!\n"
