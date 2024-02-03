@@ -25,7 +25,6 @@ int main(int const argc, char const *const *const argv)
     }
     Client new_client(argv[1], argv[2]);
     new_client.receiveMessage(true);
-    std::cout << new_client.getBuffer().begin() << std::endl;
     asio::io_context &io_context(new_client.getIoContext());
     std::thread t([&io_context]() { io_context.run(); });
     while (new_client.isConnected()) {
