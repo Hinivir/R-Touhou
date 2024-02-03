@@ -46,24 +46,24 @@ int main()
         GameEngine::Size, GameEngine::Sprite, GameEngine::SpriteTextureAnimation, GameEngine::SpriteTextureRect,
         GameEngine::Text, GameEngine::Velocity, GameEngine::ZIndex)*/
 
-    registry.registerComponent<GameEngine::Color>();//c
-    registry.registerComponent<GameEngine::ZIndex>();//c
-    registry.registerComponent<GameEngine::Outline>();//c
-    registry.registerComponent<GameEngine::Sprite>();//c
-    registry.registerComponent<GameEngine::SpriteTextureAnimation>();//c
-    registry.registerComponent<GameEngine::SpriteTextureRect>();//c
+    registry.registerComponent<GameEngine::Color>();                  // c
+    registry.registerComponent<GameEngine::ZIndex>();                 // c
+    registry.registerComponent<GameEngine::Outline>();                // c
+    registry.registerComponent<GameEngine::Sprite>();                 // c
+    registry.registerComponent<GameEngine::SpriteTextureAnimation>(); // c
+    registry.registerComponent<GameEngine::SpriteTextureRect>();      // c
 
-    registry.registerComponent<GameEngine::Hitbox>();//s
-    registry.registerComponent<GameEngine::Life>();//s
-    registry.registerComponent<GameEngine::Path>();//s
+    registry.registerComponent<GameEngine::Hitbox>(); // s
+    registry.registerComponent<GameEngine::Life>();   // s
+    registry.registerComponent<GameEngine::Path>();   // s
 
-    registry.registerComponent<GameEngine::Controllable>();//sc
-    registry.registerComponent<GameEngine::Drawable>();//sc
-    registry.registerComponent<GameEngine::Position>();//sc
-    registry.registerComponent<GameEngine::Projectile>();//sc
-    registry.registerComponent<GameEngine::Size>();//sc
-    registry.registerComponent<GameEngine::Text>();//sc
-    registry.registerComponent<GameEngine::Velocity>();//sc
+    registry.registerComponent<GameEngine::Controllable>(); // sc
+    registry.registerComponent<GameEngine::Drawable>();     // sc
+    registry.registerComponent<GameEngine::Position>();     // sc
+    registry.registerComponent<GameEngine::Projectile>();   // sc
+    registry.registerComponent<GameEngine::Size>();         // sc
+    registry.registerComponent<GameEngine::Text>();         // sc
+    registry.registerComponent<GameEngine::Velocity>();     // sc
 
     GameEngine::Entity movableEntity = spawnMovableEntity(registry);
     entityVector.push_back(movableEntity);

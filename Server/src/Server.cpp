@@ -33,10 +33,7 @@ Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetw
     }
 }
 
-Server::~Server(void)
-{
-    socket.close();
-}
+Server::~Server(void) { socket.close(); }
 
 void Server::handleMessageString()
 {
@@ -54,10 +51,7 @@ void Server::handleMessageString()
     sendMessageStringToOtherClients(msg);
 }
 
-void Server::handleMessageSetup()
-{
-    handleMessageString();
-}
+void Server::handleMessageSetup() { handleMessageString(); }
 
 void Server::handleMessageGame()
 {
@@ -72,7 +66,8 @@ void Server::handleMessageGame()
     }
 }
 
-void Server::handleMessageGame(Game::ServerGame &game) {
+void Server::handleMessageGame(Game::ServerGame &game)
+{
     try {
         inputMessage input = deserialize<inputMessage>(buffer);
         float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
@@ -97,20 +92,16 @@ void Server::handleMessageGame(Game::ServerGame &game) {
             ///////
             GameEngine::Entity bullet = game.getRegistry().spawnEntity();
             game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
-            game.getRegistry().addComponent<GameEngine::Position>(
-                bullet, GameEngine::Position{
-                            x, y + 50 / 2});
+            game.getRegistry().addComponent<GameEngine::Position>(bullet, GameEngine::Position{x, y + 50 / 2});
             game.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
             game.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
             game.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-            game.getRegistry().addComponent<GameEngine::Sprite>(
-                bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
-                            sf::Sprite(), sf::Texture()});
+            game.getRegistry().addComponent<GameEngine::Sprite>(bullet,
+                GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png", sf::Sprite(), sf::Texture()});
             game.getRegistry().addComponent<GameEngine::ZIndex>(
                 bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
             game.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
-            game.getRegistry().addComponent<GameEngine::Path>(
-                bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+            game.getRegistry().addComponent<GameEngine::Path>(bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
             game.getEntityVector().push_back(bullet);
             bulletMessage toSend = {'b', x, y};
             sendMessageToOtherClients<bulletMessage>(toSend);
@@ -135,7 +126,8 @@ void Server::manageServer()
     }
 }
 
-void Server::commandConnect() {
+void Server::commandConnect()
+{
     std::stringstream ss;
 
     if (std::find(clients.begin(), clients.end(), senderEndpoint) == clients.end()) {
@@ -152,11 +144,12 @@ void Server::commandConnect() {
     }
 }
 
-void Server::commandDisconnect() {
+void Server::commandDisconnect()
+{
     sendMessage(DISCONNECTED, senderEndpoint, false);
     std::size_t idx = 0;
 
-    for (const auto& client : clients) {
+    for (const auto &client : clients) {
         if (client == senderEndpoint) {
             clients.erase(clients.begin() + idx);
             auto playerNumberIt = playerNumberMap.find(senderEndpoint);
@@ -171,11 +164,10 @@ void Server::commandDisconnect() {
     std::cout << "connected number " << clients.size() << std::endl;
 }
 
-void Server::commandError() {
-    sendMessage(ERROR_MSG, senderEndpoint, false);
-}
+void Server::commandError() { sendMessage(ERROR_MSG, senderEndpoint, false); }
 
-void Server::commandReady() {
+void Server::commandReady()
+{
     clientsReady.push_back(senderEndpoint);
     sendMessage("Waiting other players...", senderEndpoint, false);
     sendMessage(READY, senderEndpoint, false);
@@ -183,18 +175,14 @@ void Server::commandReady() {
     this->isInChat = false;
     this->isInSetup = true;
     this->isInGame = false;
-
 }
 
-void Server::commandFull() {
-    sendMessage(SERVER_FULL, senderEndpoint, false);
-}
+void Server::commandFull() { sendMessage(SERVER_FULL, senderEndpoint, false); }
 
-void Server::commandClientDisconnect() {
-    sendMessageToOtherClients(CLIENT_DISCONNECTED);
-}
+void Server::commandClientDisconnect() { sendMessageToOtherClients(CLIENT_DISCONNECTED); }
 
-void Server::commandStartGame() {
+void Server::commandStartGame()
+{
     clientsSetup.push_back(senderEndpoint);
     if (clientsSetup.size() == clientsReady.size() && clientsSetup.size() == clients.size()) {
         sendMessageStringToAllClients(START_GAME);
@@ -209,18 +197,19 @@ void Server::commandStartGame() {
 void Server::asyncReceive(Game::ServerGame &game)
 {
     buffer.fill(0);
-    socket.async_receive_from(asio::buffer(buffer), senderEndpoint,
-        [this, &game](std::error_code const &error, std::size_t bytesReceived) {
+    socket.async_receive_from(
+        asio::buffer(buffer), senderEndpoint, [this, &game](std::error_code const &error, std::size_t bytesReceived) {
             if (!error && bytesReceived > 0) {
                 handleMessageGame(game);
                 asyncReceive(game);
             } else {
                 std::cerr << "Error in asyncReceive: " << error.message() << std::endl;
             }
-    });
+        });
 }
 
-void Server::handleGame() {
+void Server::handleGame()
+{
     std::size_t nbEnemies = 30;
     Game::ServerGame serverGame(this->playerNumber, 2048, nbEnemies);
     int nbRegistry = 2048;
@@ -257,7 +246,7 @@ void Server::handleGame() {
     }
     //  get message from server that gives us nb enemies and their position
 
-    //generate random pos
+    // generate random pos
     std::vector<std::pair<float, float>> enemyPositionVector;
     for (std::size_t i = 0; i < nbEnemies; i++) {
         float x = rand() % 1080 + 1920;
@@ -286,6 +275,6 @@ void Server::runGame(Game::ServerGame &game)
             std::cout << "test" << std::endl;
             test = false;
         }
-//        test = !test;
+        //        test = !test;
     }
 }

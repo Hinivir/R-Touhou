@@ -14,21 +14,19 @@ namespace Game
 {
     class ClientGame : public AGame
     {
-        public:
-            ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
-                : AGame(nbPlayer, nbEntities, defaultNbEnemies)
-            {
-            };
-            ~ClientGame() = default;
-            GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);
-            GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry);
-            GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry);
-            GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry);
-            GameEngine::Entity createGroundDown(GameEngine::Registry &registry);
-            GameEngine::Entity createGroundUp(GameEngine::Registry &registry);
-            GameEngine::Entity createScore(GameEngine::Registry &registry);
-            GameEngine::Entity createGameOver(GameEngine::Registry &registry);
-            GameEngine::Entity createYouWin(GameEngine::Registry &registry);
+      public:
+        ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
+            : AGame(nbPlayer, nbEntities, defaultNbEnemies){};
+        ~ClientGame() = default;
+        GameEngine::Entity spawnBaseEntity(GameEngine::Registry &registry);
+        GameEngine::Entity spawnMovableEntity(GameEngine::Registry &registry);
+        GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry);
+        GameEngine::Entity createBackgroundStar(GameEngine::Registry &registry);
+        GameEngine::Entity createGroundDown(GameEngine::Registry &registry);
+        GameEngine::Entity createGroundUp(GameEngine::Registry &registry);
+        GameEngine::Entity createScore(GameEngine::Registry &registry);
+        GameEngine::Entity createGameOver(GameEngine::Registry &registry);
+        GameEngine::Entity createYouWin(GameEngine::Registry &registry);
     };
 } // namespace Game
 

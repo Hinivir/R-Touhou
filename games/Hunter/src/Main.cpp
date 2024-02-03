@@ -28,8 +28,7 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     GameEngine::Entity gameOver = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(gameOver, GameEngine::Drawable{false});
-    registry.addComponent<GameEngine::Position>(
-        gameOver, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
+    registry.addComponent<GameEngine::Position>(gameOver, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
     registry.addComponent<GameEngine::ZIndex>(gameOver, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
     registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
     std::string gameOverText = "Game Over";
@@ -44,8 +43,7 @@ GameEngine::Entity createYouWin(GameEngine::Registry &registry)
     GameEngine::Entity youWin = registry.spawnEntity();
 
     registry.addComponent<GameEngine::Drawable>(youWin, GameEngine::Drawable{false});
-    registry.addComponent<GameEngine::Position>(
-        youWin, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
+    registry.addComponent<GameEngine::Position>(youWin, GameEngine::Position{800 / 2 - 160, 600 / 2 - 10});
     registry.addComponent<GameEngine::ZIndex>(youWin, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE});
     registry.addComponent<GameEngine::Color>(youWin, GameEngine::Color{255, 255, 255, 255});
     std::string youWinText = "You Win !";
@@ -62,38 +60,38 @@ std::pair<float, float> getRandomVelocity()
     float velocityY = 0.0f;
 
     switch (random) {
-        case 1:
-            velocityX = 5.0f;
-            velocityY = 5.0f;
-            break;
-        case 2:
-            velocityX = -5.0f;
-            velocityY = 5.0f;
-            break;
-        case 3:
-            velocityX = 5.0f;
-            velocityY = -5.0f;
-            break;
-        case 4:
-            velocityX = -5.0f;
-            velocityY = -5.0f;
-            break;
-        case 5:
-            velocityX = 5.0f;
-            velocityY = 0.0f;
-            break;
-        case 6:
-            velocityX = -5.0f;
-            velocityY = 0.0f;
-            break;
-        case 7:
-            velocityX = 0.0f;
-            velocityY = 5.0f;
-            break;
-        case 8:
-            velocityX = 0.0f;
-            velocityY = -5.0f;
-            break;
+    case 1:
+        velocityX = 5.0f;
+        velocityY = 5.0f;
+        break;
+    case 2:
+        velocityX = -5.0f;
+        velocityY = 5.0f;
+        break;
+    case 3:
+        velocityX = 5.0f;
+        velocityY = -5.0f;
+        break;
+    case 4:
+        velocityX = -5.0f;
+        velocityY = -5.0f;
+        break;
+    case 5:
+        velocityX = 5.0f;
+        velocityY = 0.0f;
+        break;
+    case 6:
+        velocityX = -5.0f;
+        velocityY = 0.0f;
+        break;
+    case 7:
+        velocityX = 0.0f;
+        velocityY = 5.0f;
+        break;
+    case 8:
+        velocityX = 0.0f;
+        velocityY = -5.0f;
+        break;
     }
     return std::make_pair(velocityX, velocityY);
 }
@@ -102,7 +100,8 @@ GameEngine::Entity createDuck(GameEngine::Registry &registry)
 {
     srand(static_cast<unsigned>(time(0)));
     GameEngine::Entity duck = spawnBaseEntity(registry);
-    registry.addComponent<GameEngine::Sprite>(duck, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(
+        duck, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
     float x = static_cast<float>(rand() % 700);
     float y = static_cast<float>(rand() % 500);
     registry.addComponent<GameEngine::Position>(duck, GameEngine::Position{x, y});
@@ -118,7 +117,8 @@ GameEngine::Entity createDuck(GameEngine::Registry &registry)
 GameEngine::Entity createBackground(GameEngine::Registry &registry)
 {
     GameEngine::Entity background = registry.spawnEntity();
-    registry.addComponent<GameEngine::Sprite>(background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::Sprite>(
+        background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg", sf::Sprite(), sf::Texture()});
     registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Size>(background, GameEngine::Size{800.0f, 600.0f});
     registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
@@ -144,7 +144,7 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
 int main()
 {
     int score = 0;
-    //bool isGameOver = false;
+    // bool isGameOver = false;
     srand(static_cast<unsigned>(time(0)));
     std::vector<GameEngine::Entity> entityVector;
 
@@ -198,32 +198,36 @@ int main()
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                if (registry.getComponent<GameEngine::Sprite>()[duck].value().sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (registry.getComponent<GameEngine::Sprite>()[duck].value().sprite.getGlobalBounds().contains(
+                        static_cast<sf::Vector2f>(mousePosition))) {
                     score++;
                     registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 600);
                     registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 400);
                     std::pair<float, float> velocity = getRandomVelocity();
                     registry.getComponent<GameEngine::Velocity>()[duck].value().x = velocity.first;
                     registry.getComponent<GameEngine::Velocity>()[duck].value().y = velocity.second;
-                    registry.getComponent<GameEngine::Text>()[scoreEntity].value().string = "Score: " + std::to_string(score);
+                    registry.getComponent<GameEngine::Text>()[scoreEntity].value().string =
+                        "Score: " + std::to_string(score);
                 }
             }
         }
-/*
-        // Move the duck based on the current direction
-        if (direction == 0) {
-            duck.move(speed, 0); // Horizontal
-        } else if (direction == 1) {
-            duck.move(0, speed); // Vertical
-        } else if (direction == 2) {
-            duck.move(speed, speed); // Diagonal
-        } else {
-            duck.move(-speed, -speed); // Diagonal
-        }
-*/
+        /*
+                // Move the duck based on the current direction
+                if (direction == 0) {
+                    duck.move(speed, 0); // Horizontal
+                } else if (direction == 1) {
+                    duck.move(0, speed); // Vertical
+                } else if (direction == 2) {
+                    duck.move(speed, speed); // Diagonal
+                } else {
+                    duck.move(-speed, -speed); // Diagonal
+                }
+        */
         // If the duck goes off the window, reset its position and change direction
-        if (registry.getComponent<GameEngine::Position>()[duck].value().x > 800 || registry.getComponent<GameEngine::Position>()[duck].value().x < 0 ||
-            registry.getComponent<GameEngine::Position>()[duck].value().y > 600 || registry.getComponent<GameEngine::Position>()[duck].value().y < 0) {
+        if (registry.getComponent<GameEngine::Position>()[duck].value().x > 800 ||
+            registry.getComponent<GameEngine::Position>()[duck].value().x < 0 ||
+            registry.getComponent<GameEngine::Position>()[duck].value().y > 600 ||
+            registry.getComponent<GameEngine::Position>()[duck].value().y < 0) {
             registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 600);
             registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 400);
             std::pair<float, float> velocity = getRandomVelocity();
@@ -233,7 +237,7 @@ int main()
 
         GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
-        //system.movementSystem(registry);
+        // system.movementSystem(registry);
         window.display();
         window.clear();
     }
