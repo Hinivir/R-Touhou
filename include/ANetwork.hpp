@@ -31,7 +31,8 @@
 #define START_GAME "108: Game is starting!\n"
 
 template <typename T>
-void serialize(T& data, std::array<char, 2048>& buffer) {
+void serialize(T &data, std::array<char, 2048> &buffer)
+{
     std::ostringstream os;
     os << data;
     std::size_t size = os.str().copy(buffer.data(), buffer.size());
@@ -39,7 +40,8 @@ void serialize(T& data, std::array<char, 2048>& buffer) {
 }
 
 template <typename T>
-T deserialize(std::array<char, 2048>& buffer) {
+T deserialize(std::array<char, 2048> &buffer)
+{
     T data;
     std::istringstream is(std::string(buffer.data()));
     is >> data;

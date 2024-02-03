@@ -62,7 +62,7 @@ namespace GameEngine
             }
         }
 
-//        void controlSystem1P(GameEngine::Registry
+        //        void controlSystem1P(GameEngine::Registry
 
         void controlSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME)
         {
@@ -152,7 +152,7 @@ namespace GameEngine
 
                 GameEngine::Path &path = pathComponent.value();
                 GameEngine::Size const &size = sizeComponent.value();
-                //useless
+                // useless
                 position.x = rand() % 1080 + 1920;
                 position.y = rand() % 1000 - 50;
                 if (position.y < 50)
@@ -257,7 +257,6 @@ namespace GameEngine
                 }
             }
         }
-
 
         void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score, std::vector<int> &garbageToSend)
         {
@@ -379,7 +378,6 @@ namespace GameEngine
             }
         }
 
-
         void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
@@ -479,7 +477,7 @@ namespace GameEngine
                                 life.life -= 1;
                                 break;
                             } else {
-                                r.garbageEntities.push_back(std::size_t(playerID));//
+                                r.garbageEntities.push_back(std::size_t(playerID)); //
                                 break;
                             }
                         }
@@ -574,7 +572,6 @@ namespace GameEngine
             }
         }
 
-
         void deleteEntitiesSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<int> &garbageToSend)
         {
             auto &positions = r.getComponent<Position>();
@@ -608,8 +605,6 @@ namespace GameEngine
                 }
             }
         }
-
-
     };
 } // namespace GameEngine
 

@@ -15,19 +15,20 @@ namespace GameEngine
     class Registry;
 
     /// @brief Entity class used to represent an entity in the ECS
-    class Entity {
-        public:
-            friend class Registry;
+    class Entity
+    {
+      public:
+        friend class Registry;
 
-            /// @brief Explicit constructor to create an entity
-            /// @param entity Number of the entity
-            explicit Entity(std::size_t entity) : _entity(entity){};
+        /// @brief Explicit constructor to create an entity
+        /// @param entity Number of the entity
+        explicit Entity(std::size_t entity) : _entity(entity){};
 
-            /// @brief Default destructor
-            ~Entity() = default;
+        /// @brief Default destructor
+        ~Entity() = default;
 
-            /// @brief Overload to be able to use the Entity class as a std::size_t
-            operator std::size_t() const { return _entity; };
+        /// @brief Overload to be able to use the Entity class as a std::size_t
+        operator std::size_t() const { return _entity; };
 
       private:
         /// @brief Number of the entity

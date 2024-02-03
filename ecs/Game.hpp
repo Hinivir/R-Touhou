@@ -15,10 +15,12 @@
 #include <vector>
 #include <string>
 
-namespace GameEngine {
-    class Game {
-    public:
-        Game(std::string gameName, std::size_t maxEntities) : gameName(gameName), maxEntities(maxEntities) {};
+namespace GameEngine
+{
+    class Game
+    {
+      public:
+        Game(std::string gameName, std::size_t maxEntities) : gameName(gameName), maxEntities(maxEntities){};
         ~Game();
 
         std::string gameName;
@@ -27,6 +29,6 @@ namespace GameEngine {
         Registry registry = Registry(maxEntities);
         System systems;
     };
-}
+} // namespace GameEngine
 
-#endif //GAME_HPP
+#endif // GAME_HPP

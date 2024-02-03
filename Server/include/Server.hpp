@@ -37,37 +37,37 @@ class Server : protected ANetwork
     void verifConnected();
     bool handleCommand(std::array<char, 2048> buffer, size_t size);
 
-    void sendMessageStringToAllClients(const std::string& message)
+    void sendMessageStringToAllClients(const std::string &message)
     {
-        for (const auto& client : clients)
+        for (const auto &client : clients)
             sendMessage<std::string>(message, client, false);
     }
 
-    void sendMessageStringToOtherClients(const std::string& message)
+    void sendMessageStringToOtherClients(const std::string &message)
     {
-        for (const auto& client : clients)
+        for (const auto &client : clients)
             if (client != senderEndpoint)
                 sendMessage<std::string>(message, client, false);
     }
 
-    template<typename messageClient>
-    void sendMessageToOtherClients(messageClient& pos)
+    template <typename messageClient>
+    void sendMessageToOtherClients(messageClient &pos)
     {
         std::array<char, 2048> buffer;
 
         serialize<messageClient>(pos, buffer);
-        for (const auto& client : clients)
+        for (const auto &client : clients)
             if (client != senderEndpoint)
                 sendMessage<std::array<char, 2048>>(buffer, client, false);
     }
 
-    template<typename messageClient>
-    void sendMessageToAllClients(messageClient & pos)
+    template <typename messageClient>
+    void sendMessageToAllClients(messageClient &pos)
     {
         std::array<char, 2048> buffer;
 
         serialize<messageClient>(pos, buffer);
-        for (const auto& client : clients)
+        for (const auto &client : clients)
             sendMessage<std::array<char, 2048>>(buffer, client, false);
     }
 

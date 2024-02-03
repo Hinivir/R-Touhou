@@ -17,10 +17,11 @@ namespace GameEngine
 {
     using OutlineColorValue = GameEngine::Color;
     using OutlineThicknessValue = int;
-    struct Outline {
+    struct Outline
+    {
         GameEngine::OutlineThicknessValue thickness = GAME_ENGINE_OUTLINE_THICKNESS_DEFAULT;
         GameEngine::OutlineColorValue color = GAME_ENGINE_OUTLINE_COLOR_DEFAULT;
     };
-}
+} // namespace GameEngine
 
-#endif //L_TYPE_GAME_RTOUHOU_OUTLINE_HPP
+#endif // L_TYPE_GAME_RTOUHOU_OUTLINE_HPP

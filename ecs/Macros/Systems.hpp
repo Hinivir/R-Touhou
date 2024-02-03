@@ -27,12 +27,10 @@
     auto const &VARIABLE = REGISTRY.getComponent<COMPONENT>()
 
 #define EXTRACT_EVENT(EVENT, VARIABLE) auto &VARIABLE = REGISTRY_DEFAULT_NAME.getComponent<EVENT>()
-#define EXTRACT_EVENT_CONST(EVENT, VARIABLE)                                                                   \
-    auto const &VARIABLE = REGISTRY_DEFAULT_NAME.getComponent<EVENT>()
+#define EXTRACT_EVENT_CONST(EVENT, VARIABLE) auto const &VARIABLE = REGISTRY_DEFAULT_NAME.getComponent<EVENT>()
 
 #define EXTRACT_EVENT_FROM(EVENT, VARIABLE, REGISTRY) auto &VARIABLE = REGISTRY.getComponent<EVENT>()
-#define EXTRACT_EVENT_FROM_CONST(EVENT, VARIABLE, REGISTRY)                                                    \
-    auto const &VARIABLE = REGISTRY.getComponent<EVENT>()
+#define EXTRACT_EVENT_FROM_CONST(EVENT, VARIABLE, REGISTRY) auto const &VARIABLE = REGISTRY.getComponent<EVENT>()
 
 #define FROM_COMPONENT_TO_VARIABLE(COMPONENT, ID, VARIABLE, VARIABLE_HAS)                                              \
     bool const VARIABLE_HAS = DO_COMPONENT_CONTAINS_AT(COMPONENT, ID);                                                 \

@@ -168,10 +168,7 @@ class SparseArray
     };
 
     /// @brief Clear the SparseArray
-    void clear()
-    {
-        _data.clear();
-    };
+    void clear() { _data.clear(); };
 
     /// @brief Get the index of the given value
     /// @param val Value to get the index of

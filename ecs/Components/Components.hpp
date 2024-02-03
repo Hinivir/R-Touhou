@@ -6,7 +6,7 @@
 */
 
 #ifndef COMPONENTS_HPP
-    #define COMPONENTS_HPP
+#define COMPONENTS_HPP
 
 #include "Components/Color.hpp"
 #include "Components/Controllable.hpp"
@@ -24,4 +24,4 @@
 #include "Components/Path.hpp"
 #include "Components/Text.hpp"
 #include "Components/Outline.hpp"
-#endif //COMPONENTS_HPP
+#endif // COMPONENTS_HPP
