@@ -187,9 +187,7 @@ void Server::handleMessageGame(Game::ServerGame &game) {
         float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
         float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
         if (input.key == sf::Keyboard::Key::Up) {
-            std::cout << "player " << input.id << " moved from " << x;
             game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
-            std::cout << " to " << game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y << std::endl;
             positionMessage toSend = {'p', int(input.id), x, y};
             sendMessageToOtherClients<positionMessage>(toSend);
         } else if (input.key == sf::Keyboard::Key::Down) {
@@ -205,7 +203,6 @@ void Server::handleMessageGame(Game::ServerGame &game) {
             positionMessage toSend = {'p', int(input.id), x, y};
             sendMessageToOtherClients<positionMessage>(toSend);
         } else if (input.key == sf::Keyboard::Key::Space) {
-            std::cout << "new bullet at " << x << " " << y << std::endl;
             ///////
             GameEngine::Entity bullet = game.getRegistry().spawnEntity();
             game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
@@ -230,7 +227,6 @@ void Server::handleMessageGame(Game::ServerGame &game) {
         }
     } catch (std::exception const &e) {
         garbageMessage toSend = deserialize<garbageMessage>(buffer);
-        std::cout << buffer.data() << std::endl;
         sendMessageToOtherClients<garbageMessage>(toSend);
     }
 }

@@ -192,7 +192,6 @@ bool Client::deserializePositionMessage() {
         newPosX = message.x;
         newPosY = message.y;
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -202,7 +201,6 @@ bool Client::deserializeInputMessage() {
     try {
         inputMessage message = deserialize<inputMessage>(this->buffer);
     } catch (std::exception &e) {
-//        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -212,7 +210,6 @@ bool Client::deserializeGarbageMessage() {
     try {
         garbageMessage message = deserialize<garbageMessage>(this->buffer);
     } catch (std::exception &e) {
-//        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -223,9 +220,7 @@ bool Client::deserializeBulletMessage() {
         bulletMessage message = deserialize<bulletMessage>(this->buffer);
         newBulletPosX = message.x;
         newBulletPosY = message.y;
-        std::cout << "new bullet at " << newBulletPosX << " " << newBulletPosY << std::endl;
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
         return false;
     }
     return true;
@@ -240,7 +235,6 @@ void Client::managePackageGame() {
 }
 
 void Client::handleMessageGame() {
-    std::cout << buffer.data() << std::endl;
     managePackageGame();
 }
 
@@ -298,12 +292,10 @@ void Client::handleGame() {
         entityVector.push_back(movableEntity);
         playerVector.push_back(movableEntity);
     }
-    std::cout << "my_player: " << my_player << std::endl;
 
     GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
     entityVector.push_back(backgroundStar1);
     //
-    std::cout << backgroundStar1 << std::endl;
     GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
     clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
     entityVector.push_back(backgroundStar2);
@@ -349,7 +341,6 @@ void Client::handleGame() {
         }
 
         clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
-//        system.controlSystem(clientGame.getRegistry());
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             if (clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y > 0)
@@ -400,7 +391,6 @@ void Client::handleGame() {
         enemyCoolDown++;
         shootCoolDown++;
         if (entityPos != -1) {
-            std::cout << entityPos << std::endl;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().x = newPosX;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(entityPos)].value().y = newPosY;
             entityPos = -1;
@@ -471,7 +461,6 @@ void Client::handleGame() {
             isGameOver = true;
         }
         while (!garbageToSend.empty()) {
-            std::cout << "sending garbage: " << garbageToSend.size() << std::endl;
             garbageMessage message = {'g', garbageToSend.back()};
             std::array<char, 2048> sendBuffer;
             serialize<garbageMessage>(message, sendBuffer);
@@ -479,7 +468,6 @@ void Client::handleGame() {
             garbageToSend.pop_back();
         }
         while (!garbageToAdd.empty()) {
-            std::cout << "adding garbage: " << garbageToAdd.size() << std::endl;
             clientGame.getRegistry().garbageEntities.push_back(garbageToAdd.back());
             garbageToAdd.pop_back();
         }

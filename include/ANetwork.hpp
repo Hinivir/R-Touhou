@@ -125,16 +125,13 @@ class ANetwork
 
     void handleMessage()
     {
-        if (isInChat) {
-            std::cout << "chat" << std::endl;
+        if (isInChat)
             handleMessageString();
-        } else if (isInSetup) {
-            std::cout << "setup" << std::endl;
+        else if (isInSetup)
             handleMessageSetup();
-        } else if (isInGame) {
-            std::cout << "game" << std::endl;
+        else if (isInGame)
             handleMessageGame();
-        } else
+        else
             std::cerr << "ERROR: cannot handle this message" << std::endl;
     }
     virtual void handleMessageString() = 0;
