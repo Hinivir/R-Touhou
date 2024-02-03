@@ -182,48 +182,56 @@ void Server::handleMessageGame()
 }
 
 void Server::handleMessageGame(Game::ServerGame &game) {
-    inputMessage input = deserialize<inputMessage>(buffer);
-    float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
-    float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
-    if (input.key == sf::Keyboard::Key::Up) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
-        positionMessage toSend = {'p', int(input.id), x, y};
-        sendMessageToOtherClients<positionMessage>(toSend);
-    } else if (input.key == sf::Keyboard::Key::Down) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
-        positionMessage toSend = {'p', int(input.id), x, y};
-        sendMessageToOtherClients<positionMessage>(toSend);
-    } else if (input.key == sf::Keyboard::Key::Left) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
-        positionMessage toSend = {'p', int(input.id), x, y};
-        sendMessageToOtherClients<positionMessage>(toSend);
-    } else if (input.key == sf::Keyboard::Key::Right) {
-        game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
-        positionMessage toSend = {'p', int(input.id), x, y};
-        sendMessageToOtherClients<positionMessage>(toSend);
-    } else if (input.key == sf::Keyboard::Key::Space) {
-        std::cout << "new bullet at " << x << " " << y << std::endl;
-        ///////
-        GameEngine::Entity bullet = game.getRegistry().spawnEntity();
-        game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
-        game.getRegistry().addComponent<GameEngine::Position>(
-            bullet, GameEngine::Position{
-                        x, y + 50 / 2});
-        game.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
-        game.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
-        game.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
-        game.getRegistry().addComponent<GameEngine::Sprite>(
-            bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
-                        sf::Sprite(), sf::Texture()});
-        game.getRegistry().addComponent<GameEngine::ZIndex>(
-            bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
-        game.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
-        game.getRegistry().addComponent<GameEngine::Path>(
-            bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
-        game.getEntityVector().push_back(bullet);
-        bulletMessage toSend = {'b', x, y};
-        sendMessageToOtherClients<bulletMessage>(toSend);
-        ///////////
+    try {
+        inputMessage input = deserialize<inputMessage>(buffer);
+        float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
+        float y = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y;
+        if (input.key == sf::Keyboard::Key::Up) {
+            std::cout << "player " << input.id << " moved from " << x;
+            game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y -= 10;
+            std::cout << " to " << game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y << std::endl;
+            positionMessage toSend = {'p', int(input.id), x, y};
+            sendMessageToOtherClients<positionMessage>(toSend);
+        } else if (input.key == sf::Keyboard::Key::Down) {
+            game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().y += 10;
+            positionMessage toSend = {'p', int(input.id), x, y};
+            sendMessageToOtherClients<positionMessage>(toSend);
+        } else if (input.key == sf::Keyboard::Key::Left) {
+            game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x -= 10;
+            positionMessage toSend = {'p', int(input.id), x, y};
+            sendMessageToOtherClients<positionMessage>(toSend);
+        } else if (input.key == sf::Keyboard::Key::Right) {
+            game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x += 10;
+            positionMessage toSend = {'p', int(input.id), x, y};
+            sendMessageToOtherClients<positionMessage>(toSend);
+        } else if (input.key == sf::Keyboard::Key::Space) {
+            std::cout << "new bullet at " << x << " " << y << std::endl;
+            ///////
+            GameEngine::Entity bullet = game.getRegistry().spawnEntity();
+            game.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+            game.getRegistry().addComponent<GameEngine::Position>(
+                bullet, GameEngine::Position{
+                            x, y + 50 / 2});
+            game.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+            game.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+            game.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+            game.getRegistry().addComponent<GameEngine::Sprite>(
+                bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                            sf::Sprite(), sf::Texture()});
+            game.getRegistry().addComponent<GameEngine::ZIndex>(
+                bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+            game.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+            game.getRegistry().addComponent<GameEngine::Path>(
+                bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+            game.getEntityVector().push_back(bullet);
+            bulletMessage toSend = {'b', x, y};
+            sendMessageToOtherClients<bulletMessage>(toSend);
+            ///////////
+        }
+    } catch (std::exception const &e) {
+        garbageMessage toSend = deserialize<garbageMessage>(buffer);
+        std::cout << buffer.data() << std::endl;
+        sendMessageToOtherClients<garbageMessage>(toSend);
     }
 }
 
@@ -391,5 +399,6 @@ void Server::runGame(Game::ServerGame &game)
             std::cout << "test" << std::endl;
             test = false;
         }
+//        test = !test;
     }
 }

@@ -258,7 +258,8 @@ namespace GameEngine
             }
         }
 
-        void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
+
+        void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score, std::vector<int> &garbageToSend)
         {
             EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
             EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
@@ -358,6 +359,127 @@ namespace GameEngine
                                 break;
                             } else {
                                 r.garbageEntities.push_back(std::size_t(playerID));
+                                garbageToSend.push_back(playerID);
+                                break;
+                            }
+                        }
+                        if (hasProjectile && hasProjectilePosition && hasProjectileSize && hasProjectileHitbox) {
+                            if (isColliding(enemyPosition.value().x, enemyPosition.value().y,
+                                    projectilePosition.value().x, projectilePosition.value().y, enemySize.value().width,
+                                    enemySize.value().height, projectileSize.value().width,
+                                    projectileSize.value().height)) {
+                                r.garbageEntities.push_back(std::size_t(enemyID));
+                                r.garbageEntities.push_back(std::size_t(j));
+                                score += 5;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        void collisionSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, int &score)
+        {
+            EXTRACT_COMPONENT_CONST(GameEngine::Controllable, controllables);
+            EXTRACT_COMPONENT_CONST(GameEngine::Position, positions);
+            EXTRACT_COMPONENT_CONST(GameEngine::Hitbox, hitboxes);
+            EXTRACT_COMPONENT_CONST(GameEngine::Size, sizes);
+            EXTRACT_COMPONENT(GameEngine::Life, lives);
+            EXTRACT_COMPONENT(GameEngine::Projectile, projectiles);
+            std::vector<std::size_t> players;
+            std::vector<std::size_t> enemies;
+
+            for (std::size_t i = 0; i < controllables.size() && i < positions.size(); ++i) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) != r.garbageEntities.end())
+                    continue;
+                // Controllable - Continues if controllable is undefined or not controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, i, controllable, hasControllable);
+                if (!hasControllable || !controllable.value().isControllable)
+                    continue;
+
+                // Position - Continues if position is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, i, _position, hasPosition);
+                if (!hasPosition)
+                    continue;
+
+                // Life - Continues if life is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(lives, i, _life, hasLife);
+                if (!hasLife)
+                    continue;
+
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, i, _hitbox, hasHitbox);
+                if (!hasHitbox)
+                    continue;
+
+                players.push_back(i);
+            }
+
+            for (std::size_t e = 0; e < positions.size(); ++e) {
+                if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), e) != r.garbageEntities.end())
+                    continue;
+                // Controllable - Continues if controllable is undefined or not controllable
+                FROM_COMPONENT_TO_VARIABLE_CONST(controllables, e, controllable, hasControllable);
+                if (hasControllable && controllable.value().isControllable)
+                    continue;
+
+                // Position - Continues if position is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, e, _position, hasPosition);
+                if (!hasPosition)
+                    continue;
+
+                // Life - Continues if life is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(lives, e, _life, hasLife);
+                if (!hasLife)
+                    continue;
+
+                // Hitbox - Continues if hitbox is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, e, _hitbox, hasHitbox);
+                if (!hasHitbox)
+                    continue;
+
+                // Projectile - Continues if projectile is undefined
+                FROM_COMPONENT_TO_VARIABLE(projectiles, e, projectileComponent, hasProjectile);
+                if (hasProjectile)
+                    continue;
+
+                enemies.push_back(e);
+            }
+
+            for (auto const &playerID : players) {
+                // Player - Continues if player is undefined
+                FROM_COMPONENT_TO_VARIABLE_CONST(positions, playerID, playerPosition, hasPlayerPosition);
+                FROM_COMPONENT_TO_VARIABLE_CONST(sizes, playerID, playerSize, hasPlayerHitbox);
+                FROM_COMPONENT_TO_VARIABLE(lives, playerID, playerLife, hasLife);
+                if (!hasPlayerPosition || !hasPlayerHitbox || !hasLife)
+                    continue;
+                for (auto const &enemyID : enemies) {
+                    for (std::size_t j = 0; j < positions.size(); ++j) {
+                        if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), j) != r.garbageEntities.end())
+                            continue;
+                        if (playerID == j)
+                            continue;
+                        // Enemy, Player and Lives - Continues if one of these is undefined
+                        FROM_COMPONENT_TO_VARIABLE_CONST(positions, enemyID, enemyPosition, hasEnemyPosition);
+                        FROM_COMPONENT_TO_VARIABLE_CONST(sizes, enemyID, enemySize, hasEnemySize);
+                        FROM_COMPONENT_TO_VARIABLE_CONST(hitboxes, enemyID, enemyHitbox, hasEnemyHitbox);
+                        FROM_COMPONENT_TO_VARIABLE(projectiles, j, projectileComponent, hasProjectile);
+                        FROM_COMPONENT_TO_VARIABLE(positions, j, projectilePosition, hasProjectilePosition);
+                        FROM_COMPONENT_TO_VARIABLE(sizes, j, projectileSize, hasProjectileSize);
+                        FROM_COMPONENT_TO_VARIABLE(hitboxes, j, projectileHitbox, hasProjectileHitbox);
+                        if (!hasEnemyPosition || !hasEnemySize || !hasEnemyHitbox)
+                            continue;
+                        GameEngine::Life &life = playerLife.value();
+                        if (isColliding(playerPosition.value().x, playerPosition.value().y, enemyPosition.value().x,
+                                enemyPosition.value().y, playerSize.value().width, playerSize.value().height,
+                                enemySize.value().width, enemySize.value().height)) {
+                            if (life.life > 0) {
+                                life.life -= 1;
+                                break;
+                            } else {
+                                r.garbageEntities.push_back(std::size_t(playerID));//
                                 break;
                             }
                         }
@@ -436,6 +558,7 @@ namespace GameEngine
                                 continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
+                            //
                         }
                     } else {
                         if (pos.value().x <= path.value().endX || pos.value().y <= path.value().endY) {
@@ -444,11 +567,49 @@ namespace GameEngine
                                 continue;
                             auto entityId = r.getEntityById(i);
                             r.garbageEntities.push_back((std::size_t)entityId);
+                            //
                         }
                     }
                 }
             }
         }
+
+
+        void deleteEntitiesSystem(GameEngine::Registry &REGISTRY_DEFAULT_NAME, std::vector<int> &garbageToSend)
+        {
+            auto &positions = r.getComponent<Position>();
+            auto &paths = r.getComponent<Path>();
+            auto &projectiles = r.getComponent<Projectile>();
+
+            for (size_t i = 0; i < positions.size(); ++i) {
+                FROM_COMPONENT_TO_VARIABLE(positions, i, pos, _hasPosition);
+                FROM_COMPONENT_TO_VARIABLE(paths, i, path, _hasPath);
+                FROM_COMPONENT_TO_VARIABLE(projectiles, i, projectile, _hasProjectile);
+                if (_hasPosition && _hasPath) {
+                    if (_hasProjectile) {
+                        if (pos.value().x >= path.value().endX || pos.value().y >= path.value().endY) {
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) !=
+                                r.garbageEntities.end())
+                                continue;
+                            auto entityId = r.getEntityById(i);
+                            r.garbageEntities.push_back((std::size_t)entityId);
+                            garbageToSend.push_back(i);
+                        }
+                    } else {
+                        if (pos.value().x <= path.value().endX || pos.value().y <= path.value().endY) {
+                            if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) !=
+                                r.garbageEntities.end())
+                                continue;
+                            auto entityId = r.getEntityById(i);
+                            r.garbageEntities.push_back((std::size_t)entityId);
+                            garbageToSend.push_back(i);
+                        }
+                    }
+                }
+            }
+        }
+
+
     };
 } // namespace GameEngine
 

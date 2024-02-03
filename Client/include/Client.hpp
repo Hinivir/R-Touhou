@@ -32,6 +32,8 @@ class Client : public ANetwork
 
     float newBulletPosX = -1;
     float newBulletPosY = -1;
+    std::vector<int> garbageToSend;
+    std::vector<int> garbageToAdd;
 
   public:
     asio::ip::udp::endpoint serverEndpoint;

@@ -365,7 +365,28 @@ void Client::handleGame() {
                 clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x += 10;
 
         if (shootCoolDown == 7) {
-            system.attackSystem(clientGame.getRegistry(), entityVector);
+            float x = clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().x;
+            float y = clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector.at(my_player)].value().y;
+                                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                        GameEngine::Entity bullet = clientGame.getRegistry().spawnEntity();
+                        clientGame.getRegistry().addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+                        clientGame.getRegistry().addComponent<GameEngine::Position>(
+                            bullet, GameEngine::Position{
+                                        x, y + 50 / 2});
+                        clientGame.getRegistry().addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+                        clientGame.getRegistry().addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+                        clientGame.getRegistry().addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+                        clientGame.getRegistry().addComponent<GameEngine::Sprite>(
+                            bullet, GameEngine::Sprite{"./../games/resources/R-Touhou/graphics/bullet.png",
+                                        sf::Sprite(), sf::Texture()});
+                        clientGame.getRegistry().addComponent<GameEngine::ZIndex>(
+                            bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+                        clientGame.getRegistry().addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile{});
+                        clientGame.getRegistry().addComponent<GameEngine::Path>(
+                            bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+                        entityVector.push_back(bullet);
+                    }
+//            system.attackSystem(clientGame.getRegistry(), entityVector);
             shootCoolDown = 0;
         }
         if (enemyCoolDown == 50 && spawnEnemy) {
@@ -411,8 +432,9 @@ void Client::handleGame() {
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
         system.movementSystem(clientGame.getRegistry());
-        system.collisionSystem(clientGame.getRegistry(), totalScore);
-        system.deleteEntitiesSystem(clientGame.getRegistry());
+/////////////
+        system.collisionSystem(clientGame.getRegistry(), totalScore, garbageToSend);
+        system.deleteEntitiesSystem(clientGame.getRegistry(), garbageToSend);
         window.display();
         window.clear();
 
@@ -447,6 +469,19 @@ void Client::handleGame() {
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
+        }
+        while (!garbageToSend.empty()) {
+            std::cout << "sending garbage: " << garbageToSend.size() << std::endl;
+            garbageMessage message = {'g', garbageToSend.back()};
+            std::array<char, 2048> sendBuffer;
+            serialize<garbageMessage>(message, sendBuffer);
+            sendMessage<std::array<char,2048>>(sendBuffer, this->serverEndpoint, false);
+            garbageToSend.pop_back();
+        }
+        while (!garbageToAdd.empty()) {
+            std::cout << "adding garbage: " << garbageToAdd.size() << std::endl;
+            clientGame.getRegistry().garbageEntities.push_back(garbageToAdd.back());
+            garbageToAdd.pop_back();
         }
     }
 }
