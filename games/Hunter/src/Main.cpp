@@ -33,7 +33,7 @@ GameEngine::Entity createGameOver(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Color>(gameOver, GameEngine::Color{255, 255, 255, 255});
     std::string gameOverText = "Game Over";
     registry.addComponent<GameEngine::Text>(
-        gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameOverText, "../resources/R-Touhou/font/arial.ttf", 80});
+        gameOver, GameEngine::Text{sf::Text(), sf::Font(), gameOverText, "resources/R-Touhou/font/arial.ttf", 80});
 
     return gameOver;
 }
@@ -48,7 +48,7 @@ GameEngine::Entity createYouWin(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Color>(youWin, GameEngine::Color{255, 255, 255, 255});
     std::string youWinText = "You Win !";
     registry.addComponent<GameEngine::Text>(
-        youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "../resources/R-Touhou/font/arial.ttf", 80});
+        youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "resources/R-Touhou/font/arial.ttf", 80});
 
     return youWin;
 }
@@ -101,7 +101,7 @@ GameEngine::Entity createDuck(GameEngine::Registry &registry)
     srand(static_cast<unsigned>(time(0)));
     GameEngine::Entity duck = spawnBaseEntity(registry);
     registry.addComponent<GameEngine::Sprite>(
-        duck, GameEngine::Sprite{"../resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
+        duck, GameEngine::Sprite{"resources/R-Touhou/graphics/Fish.png", sf::Sprite(), sf::Texture()});
     float x = static_cast<float>(rand() % 700);
     float y = static_cast<float>(rand() % 500);
     registry.addComponent<GameEngine::Position>(duck, GameEngine::Position{x, y});
@@ -118,7 +118,7 @@ GameEngine::Entity createBackground(GameEngine::Registry &registry)
 {
     GameEngine::Entity background = registry.spawnEntity();
     registry.addComponent<GameEngine::Sprite>(
-        background, GameEngine::Sprite{"../resources/R-Touhou/graphics/Background.jpg", sf::Sprite(), sf::Texture()});
+        background, GameEngine::Sprite{"resources/R-Touhou/graphics/Background.jpg", sf::Sprite(), sf::Texture()});
     registry.addComponent<GameEngine::Position>(background, GameEngine::Position{0.0f, 0.0f});
     registry.addComponent<GameEngine::Size>(background, GameEngine::Size{800.0f, 600.0f});
     registry.addComponent<GameEngine::Drawable>(background, GameEngine::Drawable{true});
@@ -136,7 +136,7 @@ GameEngine::Entity createScore(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Color>(score, GameEngine::Color{255, 255, 255, 255});
     std::string scoreText = "Score: 0";
     registry.addComponent<GameEngine::Text>(
-        score, GameEngine::Text{sf::Text(), sf::Font(), scoreText, "../resources/R-Touhou/font/arial.ttf", 24});
+        score, GameEngine::Text{sf::Text(), sf::Font(), scoreText, "resources/R-Touhou/font/arial.ttf", 24});
 
     return score;
 }
@@ -197,9 +197,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed) {
-                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                if (registry.getComponent<GameEngine::Sprite>()[duck].value().sprite.getGlobalBounds().contains(
-                        static_cast<sf::Vector2f>(mousePosition))) {
+                if (system.mouseClickSystem(registry, window, duck)) {
                     score++;
                     registry.getComponent<GameEngine::Position>()[duck].value().x = static_cast<float>(rand() % 600);
                     registry.getComponent<GameEngine::Position>()[duck].value().y = static_cast<float>(rand() % 400);
@@ -237,7 +235,7 @@ int main()
 
         GameEngine::System::sprite(registry);
         GameEngine::System::draw(registry, window);
-        // system.movementSystem(registry);
+        //system.movementSystem(registry);
         window.display();
         window.clear();
     }

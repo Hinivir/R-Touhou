@@ -22,6 +22,7 @@ include(Client/Client.cmake)
 include(Server/Server.cmake)
 include(games/guideExample/Build.cmake)
 include(games/R-Type/R-Type.cmake)
+include(games/Hunter/Hunter.cmake)
 
 if (DEFINED INSTALL)
 
