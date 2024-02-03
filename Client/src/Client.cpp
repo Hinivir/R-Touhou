@@ -318,7 +318,6 @@ void Client::handleGame()
             entityVector.push_back(bullet);
             newBulletPosX = -1;
             newBulletPosY = -1;
-            std::cout << entityVector.size() << std::endl;
         }
 
         // draw

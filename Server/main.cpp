@@ -22,7 +22,8 @@ int main(const int argc, const char **argv)
     std::string ip;
     std::string port;
 
-    handleError(argc, argv);
+    if (!handleError(argc, argv))
+        return 84;
     ip = argv[1];
     port = argv[2];
     Server server(ip, port);
