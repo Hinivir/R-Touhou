@@ -74,7 +74,7 @@ In-game functions
 
 .. code-block:: cpp
 
-    void runGame();
+    void handleGame();
     bool checkCollision(int newPosX, int newPosY, int otherPosX, int otherPosY);
     void upFunction(bool isReceived);
     void downFunction(bool isReceived);

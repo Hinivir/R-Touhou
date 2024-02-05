@@ -11,7 +11,8 @@
 namespace GameEngine
 {
     template <int UNIQUE_ID>
-    struct GenericEventBase {
+    struct GenericEventBase
+    {
     };
 } // namespace GameEngine
 

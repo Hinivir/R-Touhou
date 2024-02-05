@@ -13,18 +13,8 @@ set(PROJECT_NAME "L-Type")
 
 set(CPACK_PACKAGE_NAME "L-Type")
 
-include(FetchContent)
-FetchContent_Declare(SFML
-  GIT_REPOSITORY https://github.com/SFML/SFML.git
-  GIT_TAG        2.6.x
-)
-FetchContent_MakeAvailable(SFML)
-
-FetchContent_Declare(asiocmake
-  GIT_REPOSITORY https://github.com/OlivierLDff/asio.cmake.git
-  GIT_TAG        main
-)
-FetchContent_MakeAvailable(asiocmake)
+include (cmake/fetchASIO.cmake)
+include (cmake/fetchSFML.cmake)
 
 project(${PROJECT_NAME} LANGUAGES CXX)
 
