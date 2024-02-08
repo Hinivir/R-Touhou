@@ -18,8 +18,8 @@ include (cmake/fetchSFML.cmake)
 
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-include(app/Client/Client.cmake)
-include(app/Server/Server.cmake)
+include(Client/Client.cmake)
+include(Server/Server.cmake)
 include(games/badApple/Build.cmake)
 include(games/guideExample/Build.cmake)
 include(games/R-Type/R-Type.cmake)
