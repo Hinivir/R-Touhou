@@ -20,6 +20,7 @@
 
 #include "Components/Position.hpp"
 #include "Serialization.hpp"
+#include "INetwork.hpp"
 
 #define CONNECTED "101: You are connected!\n"
 #define DISCONNECTED "103: You are disconnected!\n"
@@ -31,8 +32,11 @@
 #define START_GAME "108: Game is starting!\n"
 
 template <typename T>
-void serialize(T &data, std::array<char, 2048> &buffer)
+void serialize(T &data, std::array<char, 2048> &buffer)//std::vector<uint8_t> &buffer
 {
+    // for later
+    memcpy(buffer.data(), &data, sizeof(T));
+
     std::ostringstream os;
     os << data;
     std::size_t size = os.str().copy(buffer.data(), buffer.size());
@@ -48,7 +52,7 @@ T deserialize(std::array<char, 2048> &buffer)
     return data;
 }
 
-class ANetwork
+class ANetwork: public INetwork
 {
   protected:
     std::array<char, 2048> buffer;
@@ -137,20 +141,6 @@ class ANetwork
         else
             std::cerr << "ERROR: cannot handle this message" << std::endl;
     }
-    virtual void handleMessageString() = 0;
-    virtual void handleMessageSetup() = 0;
-    virtual void handleMessageGame() = 0;
-
-    // all these functions will be virtual in the future so we can override them
-    virtual void commandConnect() = 0;
-    virtual void commandDisconnect() = 0;
-    virtual void commandError() = 0;
-    virtual void commandReady() = 0;
-    virtual void commandFull() = 0;
-    virtual void commandClientDisconnect() = 0;
-    virtual void commandStartGame() = 0;
-
-    virtual void handleGame() = 0;
 
     asio::io_context &getIoContext() { return this->ioContext; }
     std::array<char, 2048> getBuffer() { return this->buffer; }
