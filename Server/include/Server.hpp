@@ -19,7 +19,7 @@
 #include "ANetwork.hpp"
 #include "ServerGame.hpp"
 
-class Server : protected ANetwork
+class Server : public ANetwork
 {
   private:
     std::size_t _port;
