@@ -233,7 +233,13 @@ void Server::handleGame()
             y += 1030;
         enemyPositionVector.push_back(std::pair<float, float>{x, y});
     }
-    system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
+    for (std::size_t i = 0; i < enemyPositionVector.size(); ++i) {
+        float x = enemyPositionVector[i].first;
+        float y = enemyPositionVector[i].second;
+        serverGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().x = x;
+        serverGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().y = y;
+        std::cout << "enemy: " << x << " " << y << std::endl;
+    }
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
     //setup des players
@@ -318,7 +324,7 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             };
             std::cout << toSend << std::endl;
             sendMessageToAllClients<positionMessage>(toSend);
-            sleep(1);
+//            sleep(1);
         }
     }
 }
