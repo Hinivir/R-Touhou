@@ -26,9 +26,8 @@ class Client : public ANetwork
     asio::ip::udp::endpoint senderEndpoint;
     std::size_t myNumber = 0;
 
-    int entityPos = -1;
-    float newPosX = 0;
-    float newPosY = 0;
+    bool receivePackage = true;
+    std::vector<positionMessage> posToUpdate;
 
     float newBulletPosX = -1;
     float newBulletPosY = -1;
