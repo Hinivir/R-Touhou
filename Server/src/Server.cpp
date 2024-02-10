@@ -243,8 +243,15 @@ void Server::handleGame()
     gameOver = createGameOver(serverGame.getRegistry());
     youWin = createYouWin(serverGame.getRegistry());
 
+    for (auto &entity: serverGame.getEntityVector()) {
+        float x = serverGame.getRegistry().getComponent<GameEngine::Position>()[entity].value().x;
+        float y = serverGame.getRegistry().getComponent<GameEngine::Position>()[entity].value().y;
+        std::cout << "entity: " << x << " " << y << std::endl;
+    }
+
     this->isInSetup = false;
     this->isInGame = true;
+
     runGame(serverGame, system);
 }
 
@@ -300,16 +307,18 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             game.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
         }
-        std::cout << game.getEntityVector().size() << std::endl;
+//        std::cout << game.getEntityVector().size() << std::endl;
         for (auto &entity: game.getEntityVector()) {
-            std::cout << "sending entity " << entity << std::endl;
+//            std::cout << "sending entity " << entity << std::endl;
             positionMessage toSend = {
                 'p',
                 int(entity),
                 game.getRegistry().getComponent<GameEngine::Position>()[entity].value().x,
                 game.getRegistry().getComponent<GameEngine::Position>()[entity].value().y
             };
+            std::cout << toSend << std::endl;
             sendMessageToAllClients<positionMessage>(toSend);
+            sleep(1);
         }
     }
 }

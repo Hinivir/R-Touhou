@@ -252,18 +252,17 @@ void Client::handleGame()
         while (posToUpdate.size() > 0) {
             receivePackage = false;
             std::cout << posToUpdate.size() << " is" << std::endl;
-            std::cout << "1" << std::endl;
             positionMessage message = posToUpdate.back();
-            std::cout << "player " << message.id << " x: " << message.x << " y: " << message.y << std::endl;
-            std::cout << "2" << std::endl;
             posToUpdate.pop_back();
             std::cout << "3" << std::endl;
-            // crash here
-            std::cout << "changing from " << clientGame.getRegistry().getComponent<GameEngine::Position>()[playerVector[message.id]].value().x << " to " << message.x << std::endl;
-            std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[playerVector[message.id]].value().y << std::endl;
+            std::cout << message << " is message" << std::endl;
+            std::cout << "3.5" << std::endl;
+            /////// crash here
+            std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y << std::endl;
+            ///////
             std::cout << "4" << std::endl;
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[playerVector[message.id]].value().x = message.x;
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[playerVector[message.id]].value().y = message.y;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().x = message.x;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y = message.y;
             std::cout << "5" << std::endl;
         }
         receivePackage = true;
