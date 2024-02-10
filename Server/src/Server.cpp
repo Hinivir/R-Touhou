@@ -66,6 +66,7 @@ void Server::handleMessageGame()
     }
 }
 
+
 void Server::handleMessageGame(Game::ServerGame &game)
 {
     try {
@@ -171,10 +172,6 @@ void Server::commandReady()
     clientsReady.push_back(senderEndpoint);
     sendMessage("Waiting other players...", senderEndpoint, false);
     sendMessage(READY, senderEndpoint, false);
-    // TODO: need to setup Game
-    this->isInChat = false;
-    this->isInSetup = true;
-    this->isInGame = false;
 }
 
 void Server::commandFull() { sendMessage(SERVER_FULL, senderEndpoint, false); }
@@ -183,15 +180,13 @@ void Server::commandClientDisconnect() { sendMessageToOtherClients(CLIENT_DISCON
 
 void Server::commandStartGame()
 {
-    clientsSetup.push_back(senderEndpoint);
-    if (clientsSetup.size() == clientsReady.size() && clientsSetup.size() == clients.size()) {
-        sendMessageStringToAllClients(START_GAME);
-        std::cout << "All clients are ready. Starting the game!" << std::endl;
-        this->isInChat = false;
-        this->isInSetup = false;
-        this->isInGame = true;
-        handleGame();
+    if (clientsReady.size() != clients.size()) {
+        return;
     }
+    std::cout << "Starting game..." << std::endl;
+    sendMessageToAllClients(START_GAME);
+    std::thread gameThread(&Server::handleGame, this);
+    gameThread.detach();
 }
 
 void Server::asyncReceive(Game::ServerGame &game)
@@ -267,9 +262,6 @@ void Server::handleGame()
 
 void Server::runGame(Game::ServerGame &game)
 {
-    asyncReceive(game);
-    asio::io_context &io_context(getIoContext());
-    std::thread t([&io_context]() { io_context.run(); });
     while (1) {
         if (test) {
             std::cout << "test" << std::endl;

@@ -79,8 +79,8 @@ class ANetwork: public INetwork
     };
 
     const std::map<std::string, std::function<void(ANetwork &)>> serverCommandHandler = {
-        {"connect\n", &ANetwork::commandConnect},
         {"disconnect\n", &ANetwork::commandDisconnect},
+        {"connect\n", &ANetwork::commandConnect},
         {"ready\n", &ANetwork::commandReady},
         {"start game\n", &ANetwork::commandStartGame},
     };
