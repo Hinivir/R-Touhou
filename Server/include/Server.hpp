@@ -30,6 +30,13 @@ class Server : public ANetwork
     std::map<asio::ip::udp::endpoint, int> playerNumberMap;
     bool test = false;
 
+    int inputId = -1;
+    int changeX = 0;
+    int changeY = 0;
+
+    bool isNewBullet = false;
+    int bulletId = -1;
+
   public:
     Server(const std::string &ip, const std::string &port);
     ~Server();

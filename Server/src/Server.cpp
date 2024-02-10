@@ -58,17 +58,32 @@ void Server::handleMessageGame()
     inputMessage input = deserialize<inputMessage>(buffer);
     std::cout << "input received: " << input << std::endl;
     std::size_t id = input.id;
-    for (std::size_t i = 0; i < 10; i++) {
-        if (i == id) {
-            std::cout << "id: " << id << std::endl;
-            break;
-        }
+    if (input.key == sf::Keyboard::Key::Up) {
+        inputId = id;
+        changeX = 0;
+        changeY = -10;
+    } else if (input.key == sf::Keyboard::Key::Down) {
+        inputId = id;
+        changeX = 0;
+        changeY = 10;
+    } else if (input.key == sf::Keyboard::Key::Left) {
+        inputId = id;
+        changeX = -10;
+        changeY = 0;
+    } else if (input.key == sf::Keyboard::Key::Right) {
+        inputId = id;
+        changeX = 10;
+        changeY = 0;
+    } else if (input.key == sf::Keyboard::Key::Space) {
+        isNewBullet = true;
+        bulletId = id;
     }
 }
 
 
 void Server::handleMessageGame(Game::ServerGame &game)
 {
+    std::cout << "handleMessageGame" << std::endl;
     try {
         inputMessage input = deserialize<inputMessage>(buffer);
         float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
@@ -184,9 +199,11 @@ void Server::commandStartGame()
         return;
     }
     std::cout << "Starting game..." << std::endl;
+    this->isInSetup = false;
+    this->isInChat = false;
+    this->isInGame = true;
     sendMessageToAllClients(START_GAME);
-    std::thread gameThread(&Server::handleGame, this);
-    gameThread.detach();
+    handleGame();
 }
 
 void Server::asyncReceive(Game::ServerGame &game)
@@ -239,9 +256,6 @@ void Server::handleGame()
         serverGame.getEntityVector().push_back(staticEntity);
         enemyVector.push_back(staticEntity);
     }
-    //  get message from server that gives us nb enemies and their position
-
-    // generate random pos
     std::vector<std::pair<float, float>> enemyPositionVector;
     for (std::size_t i = 0; i < nbEnemies; i++) {
         float x = rand() % 1080 + 1920;
@@ -254,7 +268,6 @@ void Server::handleGame()
     }
     system.initEnemy(serverGame.getRegistry(), enemyPositionVector);
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
-
     this->isInSetup = false;
     this->isInGame = true;
     runGame(serverGame);
@@ -262,11 +275,10 @@ void Server::handleGame()
 
 void Server::runGame(Game::ServerGame &game)
 {
+    asyncReceive(game);
+    asio::io_context &io_context(getIoContext());
+    std::thread t([&io_context]() { io_context.run(); });
     while (1) {
-        if (test) {
-            std::cout << "test" << std::endl;
-            test = false;
-        }
-        //        test = !test;
+        //gameloop
     }
 }

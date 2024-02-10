@@ -362,16 +362,5 @@ void Client::handleGame()
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
         }
-        while (!garbageToSend.empty()) {
-            garbageMessage message = {'g', garbageToSend.back()};
-            std::array<char, 2048> sendBuffer;
-            serialize<garbageMessage>(message, sendBuffer);
-            sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
-            garbageToSend.pop_back();
-        }
-        while (!garbageToAdd.empty()) {
-            clientGame.getRegistry().garbageEntities.push_back(garbageToAdd.back());
-            garbageToAdd.pop_back();
-        }
     }
 }
