@@ -157,3 +157,20 @@ GameEngine::Entity createYouWin(GameEngine::Registry &registry)
 
     return youWin;
 }
+
+GameEngine::Entity createBullet(GameEngine::Registry &registry, float x, float y)
+{
+    GameEngine::Entity bullet = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+    registry.addComponent<GameEngine::Position>(bullet, GameEngine::Position{x, y + 50 / 2});
+    registry.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+    registry.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+    registry.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Sprite>(
+        bullet, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/bullet.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::Path>(bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+
+    return bullet;
+}
