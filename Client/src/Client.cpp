@@ -170,6 +170,7 @@ void Client::handleGame()
     bool isGameOver = false;
     int shootCoolDown = 0;
     std::vector<GameEngine::Entity> entityVector;
+    std::vector<GameEngine::Entity> enemyVector;
     std::vector<GameEngine::Entity> playerVector;
     std::size_t my_player;
 
@@ -178,6 +179,7 @@ void Client::handleGame()
     GameEngine::SystemGroup system;
 
     window.setFramerateLimit(60);
+
     for (std::size_t i = 0; i < playerNumber; i++) {
         GameEngine::Entity movableEntity = spawnMovableEntity(clientGame.getRegistry());
         if (i == myNumber - 1)
@@ -186,22 +188,41 @@ void Client::handleGame()
         playerVector.push_back(movableEntity);
     }
 
-    GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
-    entityVector.push_back(backgroundStar1);
-    GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
-    clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-    entityVector.push_back(backgroundStar2);
-    GameEngine::Entity groundDown = createGroundDown(clientGame.getRegistry());
-    entityVector.push_back(groundDown);
-    GameEngine::Entity groundUp = createGroundUp(clientGame.getRegistry());
-    entityVector.push_back(groundUp);
+//    GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
+//    entityVector.push_back(backgroundStar1);
+//    GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
+//    clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
+//    entityVector.push_back(backgroundStar2);
+//    GameEngine::Entity groundDown = createGroundDown(clientGame.getRegistry());
+//    entityVector.push_back(groundDown);
+//    GameEngine::Entity groundUp = createGroundUp(clientGame.getRegistry());
+//    entityVector.push_back(groundUp);
+
     GameEngine::Entity score = createScore(clientGame.getRegistry());
     GameEngine::Entity gameOver = createGameOver(clientGame.getRegistry());
     GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
 
+    for (int i = 0; i < 30; ++i) {
+        GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
+        entityVector.push_back(staticEntity);
+        enemyVector.push_back(staticEntity);
+    }
+
     system.initEnemy(clientGame.getRegistry(), pos);
     for (auto &enemy: pos) {
         std::cout << "enemy: " << enemy.first << " " << enemy.second << std::endl;
+    }
+    std::cout << "------------------------"<< std::endl;
+
+
+    sendMessage<std::string>("got\n", this->serverEndpoint, false);
+
+    for (std::size_t i = 0; i < pos.size(); ++i) {
+        float x = pos[i].first;
+        float y = pos[i].second;
+        clientGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().x = x;
+        clientGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().y = y;
+        std::cout << "enemy: " << x << " " << y << std::endl;
     }
 
     this->isInSetup = false;

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <map>
 #include <asio.hpp>
+#include "Systems.hpp"
 #include "ANetwork.hpp"
 #include "ServerGame.hpp"
 
@@ -36,6 +37,15 @@ class Server : public ANetwork
 
     bool isNewBullet = false;
     int bulletId = -1;
+    std::vector<GameEngine::Entity> enemyVector;
+    std::vector<GameEngine::Entity> entityVector;
+    std::vector<GameEngine::Entity> playerVector;
+    int nbRegistry = 2048;
+    std::size_t nbEnemies = 30;
+
+    GameEngine::Entity score;
+    GameEngine::Entity gameOver;
+    GameEngine::Entity youWin;
 
   public:
     Server(const std::string &ip, const std::string &port);
@@ -95,7 +105,7 @@ class Server : public ANetwork
     void asyncReceive(Game::ServerGame &game);
 
     void handleGame();
-    void runGame(Game::ServerGame &game);
+    void runGame(Game::ServerGame &game, GameEngine::SystemGroup &system);
 };
 
 #endif // R_TYPE_SERVER_HPP
