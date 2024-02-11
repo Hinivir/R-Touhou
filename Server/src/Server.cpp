@@ -20,12 +20,6 @@
 #include <variant>
 #include <thread>
 
-bool collide(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2, std::size_t width1,
-    std::size_t height1, std::size_t width2, std::size_t height2)
-{
-    return (x1 < x2 + width2 && x1 + width1 > x2 && y1 < y2 + height2 && y1 + height1 > y2);
-}
-
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
     _port = std::stoi(port);
@@ -304,39 +298,7 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
 //        enemyCoolDown++;
 
         system.movementSystem(game.getRegistry());
-//        system.collisionSystem(game.getRegistry(), totalScore, garbageToSend);
-
-
-
-/////////// new collision system //////////////
-        for (auto &enemy: enemyVector) {
-            for (auto &player: playerVector) {
-                if (collide(game.getRegistry().getComponent<GameEngine::Position>()[enemy].value().x,
-                    game.getRegistry().getComponent<GameEngine::Position>()[enemy].value().y,
-                    game.getRegistry().getComponent<GameEngine::Position>()[player].value().x,
-                    game.getRegistry().getComponent<GameEngine::Position>()[player].value().y,
-                    game.getRegistry().getComponent<GameEngine::Size>()[enemy].value().width,
-                    game.getRegistry().getComponent<GameEngine::Size>()[enemy].value().height,
-                    game.getRegistry().getComponent<GameEngine::Size>()[player].value().width,
-                    game.getRegistry().getComponent<GameEngine::Size>()[player].value().height)) {
-                    std::cout << "player" << std::endl;//collision with player
-                    break;
-                }
-            }
-            for (auto &bullet: bulletVector) {
-                if (collide(game.getRegistry().getComponent<GameEngine::Position>()[enemy].value().x,
-                    game.getRegistry().getComponent<GameEngine::Position>()[enemy].value().y,
-                    game.getRegistry().getComponent<GameEngine::Position>()[bullet].value().x,
-                    game.getRegistry().getComponent<GameEngine::Position>()[bullet].value().y,
-                    game.getRegistry().getComponent<GameEngine::Size>()[enemy].value().width,
-                    game.getRegistry().getComponent<GameEngine::Size>()[enemy].value().height,
-                    game.getRegistry().getComponent<GameEngine::Size>()[bullet].value().width,
-                    game.getRegistry().getComponent<GameEngine::Size>()[bullet].value().height)) {
-                    std::cout << "bullet" << std::endl;//collision with bullet
-                    break;
-                }
-            }
-        }
+        system.collisionSystem(game.getRegistry(), totalScore, garbageToSend, playerVector, enemyVector, bulletVector);
 
         system.deleteEntitiesSystem(game.getRegistry(), garbageToSend);
 
