@@ -251,19 +251,17 @@ void Client::handleGame()
 
         while (posToUpdate.size() > 0) {
             receivePackage = false;
-            std::cout << posToUpdate.size() << " is" << std::endl;
             positionMessage message = posToUpdate.back();
             posToUpdate.pop_back();
-            std::cout << "3" << std::endl;
             std::cout << message << " is message" << std::endl;
-            std::cout << "3.5" << std::endl;
             /////// crash here
             std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y << std::endl;
             ///////
-            std::cout << "4" << std::endl;
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().x = message.x;
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y = message.y;
-            std::cout << "5" << std::endl;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().y = message.y;
+            std::cout << "----------" << std::endl;
+            std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y << std::endl;
+            std::cout << "----------" << std::endl;
         }
         receivePackage = true;
 
@@ -277,8 +275,6 @@ void Client::handleGame()
         // draw
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
-        window.display();
-        window.clear();
 
         // win
         if (totalScore == 100) {
@@ -290,5 +286,7 @@ void Client::handleGame()
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
         }
+        window.display();
+        window.clear();
     }
 }

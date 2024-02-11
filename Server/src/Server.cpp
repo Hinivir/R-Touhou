@@ -13,10 +13,12 @@
 #include "ServerGame.hpp"
 
 #include <iostream>
+#include <chrono>
 #include <map>
 #include <string>
 #include <vector>
 #include <variant>
+#include <thread>
 
 Server::Server(const std::string &ip, const std::string &port) : ANetwork::ANetwork(ip, port)
 {
@@ -263,17 +265,21 @@ void Server::handleGame()
 
 void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
 {
+    asio::steady_timer timer(getIoContext());
     int totalScore = 0;
     bool isGameOver = false;
     int shootCoolDown = 0;
     int enemyCoolDown = 0;
     std::vector<int> garbageToSend;
     bool spawnEnemy = true;
+    const int targetFps = 15; //reduce for lower framerate
+    const std::chrono::duration<double> frameDuration(1.0 / targetFps);
 
     asyncReceive(game);
     asio::io_context &io_context(getIoContext());
     std::thread t([&io_context]() { io_context.run(); });
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         game.getRegistry().getComponent<GameEngine::Text>()[score].value().string =
             ("Score: " + std::to_string(totalScore));
 
@@ -287,9 +293,13 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
         }
         enemyCoolDown++;
 
+        std::cout << "\n\n\n" << std::endl;
+        std::cout << game.getRegistry().getComponent<GameEngine::Position>()[4].value().x << std::endl;
         system.movementSystem(game.getRegistry());
         system.collisionSystem(game.getRegistry(), totalScore, garbageToSend);
         system.deleteEntitiesSystem(game.getRegistry(), garbageToSend);
+        std::cout << game.getRegistry().getComponent<GameEngine::Position>()[4].value().x << std::endl;
+        std::cout << "\n\n\n" << std::endl;
 
         // win
         if (totalScore == 100) {
@@ -324,7 +334,14 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             };
             std::cout << toSend << std::endl;
             sendMessageToAllClients<positionMessage>(toSend);
-//            sleep(1);
+        }
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time);
+        auto sleep_duration = frameDuration - elapsed_time;
+        if (sleep_duration > std::chrono::duration<double>(0)) {
+            // Sleep to cap the frame rate
+            timer.expires_after(std::chrono::duration_cast<std::chrono::steady_clock::duration>(sleep_duration));
+            timer.wait();
         }
     }
 }
