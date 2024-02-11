@@ -111,8 +111,8 @@ bool Client::deserializeBulletMessage()
 {
     try {
         bulletMessage message = deserialize<bulletMessage>(this->buffer);
-        newBulletPosX = message.x;
-        newBulletPosY = message.y;
+        if (receivePackage)
+            newBullets.push_back(message);
     } catch (std::exception &e) {
         return false;
     }
@@ -252,17 +252,21 @@ void Client::handleGame()
         }
         shootCoolDown++;
 
-        if (newBulletPosX != -1) {
-            GameEngine::Entity bullet = createBullet(clientGame.getRegistry(), newBulletPosX, newBulletPosY);
+        receivePackage = false;
+        while (newBullets.size() > 0) {
+            bulletMessage message = newBullets.back();
+            newBullets.pop_back();
+            GameEngine::Entity bullet = createBullet(clientGame.getRegistry(), message.x, message.y);
             entityVector.push_back(bullet);
-            newBulletPosX = -1;
-            newBulletPosY = -1;
         }
+//        receivePackage = true;
 
         while (posToUpdate.size() > 0) {
-            receivePackage = false;
+//            receivePackage = false;
             positionMessage message = posToUpdate.back();
             posToUpdate.pop_back();
+            if (message.id > entityVector.size())
+                continue;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().y = message.y;
         }

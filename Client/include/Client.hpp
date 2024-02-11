@@ -27,10 +27,10 @@ class Client : public ANetwork
     std::size_t myNumber = 0;
 
     bool receivePackage = true;
-    std::vector<positionMessage> posToUpdate;
 
-    float newBulletPosX = -1;
-    float newBulletPosY = -1;
+    std::vector<positionMessage> posToUpdate;
+    std::vector<bulletMessage> newBullets;
+
     std::vector<int> garbageToSend;
     std::vector<int> garbageToAdd;
 
