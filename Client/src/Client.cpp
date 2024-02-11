@@ -159,7 +159,7 @@ void Client::handleGame()
 {
     this->isInSetup = true;
     this->isInChat = false;
-    while (pos.empty()) { }
+    while (pos.size() < 30) { }
     std::cout << "Game started" << std::endl;
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
