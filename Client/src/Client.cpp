@@ -124,7 +124,7 @@ bool Client::deserializeScoreMessage()
 {
     try {
         scoreMessage message = deserialize<scoreMessage>(this->buffer);
-        totalScore = message.score;
+        totalScore += 5;
     } catch (std::exception &e) {
         return false;
     }
@@ -208,6 +208,7 @@ void Client::handleGame()
     localVector.push_back(groundDown);
     GameEngine::Entity groundUp = createGroundUp(clientGame.getLocalRegistry());
     localVector.push_back(groundUp);
+    std::size_t deadPlayers = 0;
 
     for (int i = 0; i < 30; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
@@ -215,18 +216,11 @@ void Client::handleGame()
         enemyVector.push_back(staticEntity);
     }
 
-    //system.initEnemy(clientGame.getRegistry(), pos);
-    for (auto &enemy: pos) {
-        std::cout << "enemy: " << enemy.first << " " << enemy.second << std::endl;
-    }
-    std::cout << "------------------------"<< std::endl;
-
     for (std::size_t i = 0; i < pos.size(); ++i) {
         float x = pos[i].first;
         float y = pos[i].second;
         clientGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().x = x;
         clientGame.getRegistry().getComponent<GameEngine::Position>()[enemyVector[i]].value().y = y;
-        std::cout << "enemy: " << x << " " << y << std::endl;
     }
 
     GameEngine::Entity score = createScore(clientGame.getRegistry());
@@ -246,25 +240,32 @@ void Client::handleGame()
             window.close();
 
         // input inGame
-        for (auto const &key : kepMap) {
-            if (sf::Keyboard::isKeyPressed(key)) {
-                if (key == sf::Keyboard::Space && shootCoolDown < 7)
+        if (isAlive) {
+            for (auto const &key : kepMap) {
+                if (sf::Keyboard::isKeyPressed(key)) {
+                    if (key == sf::Keyboard::Space && shootCoolDown < 7)
+                        break;
+                    else if (key == sf::Keyboard::Space && shootCoolDown >= 7)
+                        shootCoolDown = 0;
+                    inputMessage message = {'i', my_player, key};
+                    std::array<char, 2048> sendBuffer;
+                    serialize<inputMessage>(message, sendBuffer);
+                    sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
                     break;
-                else if (key == sf::Keyboard::Space && shootCoolDown >= 7)
-                    shootCoolDown = 0;
-                inputMessage message = {'i', my_player, key};
-                std::array<char, 2048> sendBuffer;
-                serialize<inputMessage>(message, sendBuffer);
-                sendMessage<std::array<char, 2048>>(sendBuffer, this->serverEndpoint, false);
-                break;
+                }
             }
         }
         shootCoolDown++;
+        clientGame.getRegistry().getComponent<GameEngine::Text>()[score].value().string = ("Score: " + std::to_string(totalScore));
 
         receivePackage = false;
 
         while (garbageToAdd.size() > 0) {
             int id = garbageToAdd.back();
+            if (id == my_player)
+                isAlive = false;
+            if (find(playerVector.begin(), playerVector.end(), id) != playerVector.end())
+                deadPlayers += 1;
             garbageToAdd.pop_back();
             clientGame.getRegistry().garbageEntities.push_back(id);
         }
@@ -289,21 +290,21 @@ void Client::handleGame()
         }
         receivePackage = true;
 
-        // draw
-        GameEngine::System::sprite(clientGame.getLocalRegistry());
-        GameEngine::System::draw(clientGame.getLocalRegistry(), window);
-        GameEngine::System::sprite(clientGame.getRegistry());
-        GameEngine::System::draw(clientGame.getRegistry(), window);
-
         // win
         if (totalScore == 100) {
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
-        }
-        // game over
-        if (isGameOver) {
+        } else  if (deadPlayers == playerNumber) {
+            isGameOver = true;
             window.clear(sf::Color::Black);
             clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+        }
+        // draw
+        GameEngine::System::sprite(clientGame.getLocalRegistry());
+        GameEngine::System::draw(clientGame.getLocalRegistry(), window);
+        if (!isGameOver && totalScore < 100) {
+            GameEngine::System::sprite(clientGame.getRegistry());
+            GameEngine::System::draw(clientGame.getRegistry(), window);
         }
         window.display();
         window.clear();

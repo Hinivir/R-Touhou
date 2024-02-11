@@ -19,7 +19,7 @@ namespace Game
 
       public:
         ClientGame(std::size_t nbPlayer, std::size_t nbEntities, std::size_t defaultNbEnemies)
-            : AGame(nbPlayer, nbEntities, defaultNbEnemies), localRegistry(4){
+            : AGame(nbPlayer, nbEntities, defaultNbEnemies), localRegistry(7) {
             localRegistry.registerComponent<GameEngine::Color>();
             localRegistry.registerComponent<GameEngine::ZIndex>();
             localRegistry.registerComponent<GameEngine::Outline>();

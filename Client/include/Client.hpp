@@ -28,6 +28,7 @@ class Client : public ANetwork
     std::size_t myNumber = 0;
 
     bool receivePackage = true;
+    bool isAlive = true;
 
     std::vector<positionMessage> posToUpdate;
     std::vector<bulletMessage> newBullets;
