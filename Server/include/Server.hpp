@@ -38,9 +38,10 @@ class Server : public ANetwork
 
     bool isNewBullet = false;
     int bulletId = -1;
-    std::vector<GameEngine::Entity> enemyVector;
     std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> playerVector;
+    std::vector<GameEngine::Entity> enemyVector;
+    std::vector<GameEngine::Entity> bulletVector;
     int nbRegistry = 2048;
     std::size_t nbEnemies = 30;
 
