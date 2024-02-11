@@ -24,15 +24,15 @@ class Client : public ANetwork
 {
   private:
     asio::ip::udp::endpoint senderEndpoint;
+    int totalScore = 0;
     std::size_t myNumber = 0;
 
-    int entityPos = -1;
-    float newPosX = 0;
-    float newPosY = 0;
+    bool receivePackage = true;
+    bool isAlive = true;
 
-    float newBulletPosX = -1;
-    float newBulletPosY = -1;
-    std::vector<int> garbageToSend;
+    std::vector<positionMessage> posToUpdate;
+    std::vector<bulletMessage> newBullets;
+
     std::vector<int> garbageToAdd;
 
   public:
@@ -49,11 +49,15 @@ class Client : public ANetwork
     bool deserializeInputMessage();
     bool deserializeGarbageMessage();
     bool deserializeBulletMessage();
+    bool deserializeScoreMessage();
     void managePackageGame();
 
     std::vector<std::function<bool()>> deserializeFunctions = {[this]() { return this->deserializePositionMessage(); },
-        [this]() { return this->deserializeInputMessage(); }, [this]() { return this->deserializeGarbageMessage(); },
-        [this]() { return this->deserializeBulletMessage(); }};
+        [this]() { return this->deserializeInputMessage(); },
+        [this]() { return this->deserializeGarbageMessage(); },
+        [this]() { return this->deserializeBulletMessage(); },
+        [this]() { return this->deserializeScoreMessage(); },
+    };
 
     void commandConnect();
     void commandDisconnect();

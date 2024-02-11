@@ -5,7 +5,8 @@
 ** server_init.cpp
 */
 
-#include "include/Server.hpp"
+#include "Server.hpp"
+#include "ANetwork.hpp"
 #include <sstream>
 
 bool handleError(const int argc, const char **argv)
@@ -19,13 +20,20 @@ bool handleError(const int argc, const char **argv)
 
 int main(const int argc, const char **argv)
 {
-    std::string ip;
-    std::string port;
-
     if (!handleError(argc, argv))
         return 84;
-    ip = argv[1];
-    port = argv[2];
-    Server server(ip, port);
-    server.manageServer();
+    Server server(argv[1], argv[2]);
+    server.receiveMessage(true);
+    asio::io_context &io_context(server.getIoContext());
+    std::thread t([&io_context]() { io_context.run(); });
+    while (server.isConnected()) {
+        std::string message;
+        std::getline(std::cin, message);
+        message += "\n";
+        std::cout << "you wrote: " << message << std::endl;
+//        server.sendMessage<std::string>(message, server.serverEndpoint, true);
+    }
+    io_context.stop();
+    t.join();
+    return 0;
 }

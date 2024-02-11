@@ -25,6 +25,7 @@ namespace GameEngine
         explicit Entity(std::size_t entity) : _entity(entity){};
 
         /// @brief Default destructor
+        Entity() = default;
         ~Entity() = default;
 
         /// @brief Overload to be able to use the Entity class as a std::size_t

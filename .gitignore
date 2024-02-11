@@ -2,6 +2,8 @@
 .vscode/
 build/
 private/
+.idea
+cmake-build-debug/
 
 # OBJECTS
 *~

@@ -102,4 +102,24 @@ struct garbageMessage
     }
 };
 
+struct scoreMessage
+{
+    char type = 's';
+    int score;
+
+    friend std::ostream &operator<<(std::ostream &os, const scoreMessage &message)
+    {
+        os << message.type << " " << message.score;
+        return os;
+    }
+    friend std::istream &operator>>(std::istream &is, scoreMessage &message)
+    {
+        is >> message.type >> message.score;
+        if (is.fail() || message.type != 's') {
+            throw std::runtime_error("Error while deserializing scoreMessage");
+        }
+        return is;
+    }
+};
+
 #endif /* !SERIALIZATION_HPP_ */

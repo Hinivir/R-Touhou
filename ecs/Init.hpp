@@ -51,6 +51,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = spawnBaseEntity(registry);
 
+    registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable({true}));
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{15.5f, 0.0f});
@@ -60,6 +61,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Path>(entity, GameEngine::Path{30.0f, 30.0f, 0.0f, 0.0f});
     registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{2});
     registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
+    registry.addComponent<GameEngine::ZIndex>(entity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
     return entity;
 }
 
@@ -156,4 +158,22 @@ GameEngine::Entity createYouWin(GameEngine::Registry &registry)
         youWin, GameEngine::Text{sf::Text(), sf::Font(), youWinText, "../games/resources/R-Touhou/font/arial.ttf", 80});
 
     return youWin;
+}
+
+GameEngine::Entity createBullet(GameEngine::Registry &registry, float x, float y)
+{
+    GameEngine::Entity bullet = registry.spawnEntity();
+
+    registry.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile());
+    registry.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
+    registry.addComponent<GameEngine::Position>(bullet, GameEngine::Position{x, y + 50 / 2});
+    registry.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});
+    registry.addComponent<GameEngine::Hitbox>(bullet, GameEngine::Hitbox{});
+    registry.addComponent<GameEngine::Drawable>(bullet, GameEngine::Drawable{true});
+    registry.addComponent<GameEngine::Sprite>(
+        bullet, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/bullet.png", sf::Sprite(), sf::Texture()});
+    registry.addComponent<GameEngine::ZIndex>(bullet, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
+    registry.addComponent<GameEngine::Path>(bullet, GameEngine::Path{x, y, 1920 + 50, 1080 + 50});
+
+    return bullet;
 }
