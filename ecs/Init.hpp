@@ -162,6 +162,7 @@ GameEngine::Entity createBullet(GameEngine::Registry &registry, float x, float y
 {
     GameEngine::Entity bullet = registry.spawnEntity();
 
+    registry.addComponent<GameEngine::Projectile>(bullet, GameEngine::Projectile());
     registry.addComponent<GameEngine::Size>(bullet, GameEngine::Size{10, 10});
     registry.addComponent<GameEngine::Position>(bullet, GameEngine::Position{x, y + 50 / 2});
     registry.addComponent<GameEngine::Velocity>(bullet, GameEngine::Velocity{25.0f, 0.0f});

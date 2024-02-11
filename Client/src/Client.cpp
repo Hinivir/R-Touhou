@@ -249,28 +249,21 @@ void Client::handleGame()
         }
         shootCoolDown++;
 
-        while (posToUpdate.size() > 0) {
-            receivePackage = false;
-            positionMessage message = posToUpdate.back();
-            posToUpdate.pop_back();
-            std::cout << message << " is message" << std::endl;
-            /////// crash here
-            std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y << std::endl;
-            ///////
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;
-            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().y = message.y;
-            std::cout << "----------" << std::endl;
-            std::cout << clientGame.getRegistry().getComponent<GameEngine::Position>()[entityVector[message.id]].value().y << std::endl;
-            std::cout << "----------" << std::endl;
-        }
-        receivePackage = true;
-
         if (newBulletPosX != -1) {
             GameEngine::Entity bullet = createBullet(clientGame.getRegistry(), newBulletPosX, newBulletPosY);
             entityVector.push_back(bullet);
             newBulletPosX = -1;
             newBulletPosY = -1;
         }
+
+        while (posToUpdate.size() > 0) {
+            receivePackage = false;
+            positionMessage message = posToUpdate.back();
+            posToUpdate.pop_back();
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;
+            clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().y = message.y;
+        }
+        receivePackage = true;
 
         // draw
         GameEngine::System::sprite(clientGame.getRegistry());
