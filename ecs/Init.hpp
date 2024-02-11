@@ -51,6 +51,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
 {
     GameEngine::Entity entity = spawnBaseEntity(registry);
 
+    registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable({true}));
     registry.addComponent<GameEngine::Size>(entity, GameEngine::Size{50.0f, 50.0f});
     registry.addComponent<GameEngine::Position>(entity, GameEngine::Position{30.0f, 30.0f});
     registry.addComponent<GameEngine::Velocity>(entity, GameEngine::Velocity{15.5f, 0.0f});

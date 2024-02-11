@@ -52,7 +52,10 @@ void Server::handleMessageString()
     sendMessageStringToOtherClients(msg);
 }
 
-void Server::handleMessageSetup() { handleMessageString(); }
+void Server::handleMessageSetup() {
+    handleMessageString();
+    playersReady += 1;
+}
 
 void Server::handleMessageGame()
 {
@@ -245,7 +248,9 @@ void Server::handleGame()
     sendMessageToAllClients<std::vector<std::pair<float, float>>>(enemyPositionVector);
 
     //setup des players
-    receiveMessage(false);
+    while (playersReady != playerNumber) {
+        receiveMessage(false);
+    }
 
     score = createScore(serverGame.getRegistry());
     gameOver = createGameOver(serverGame.getRegistry());

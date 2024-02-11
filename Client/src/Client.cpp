@@ -208,9 +208,6 @@ void Client::handleGame()
     }
     std::cout << "------------------------"<< std::endl;
 
-
-    sendMessage<std::string>("got\n", this->serverEndpoint, false);
-
     for (std::size_t i = 0; i < pos.size(); ++i) {
         float x = pos[i].first;
         float y = pos[i].second;
@@ -222,6 +219,7 @@ void Client::handleGame()
     GameEngine::Entity score = createScore(clientGame.getRegistry());
     GameEngine::Entity gameOver = createGameOver(clientGame.getRegistry());
     GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
+    sendMessage<std::string>("got\n", this->serverEndpoint, false);
 
     this->isInSetup = false;
     this->isInGame = true;

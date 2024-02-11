@@ -51,6 +51,7 @@ GameEngine::Entity Game::ClientGame::spawnEnemyEntity(GameEngine::Registry &regi
     registry.addComponent<GameEngine::Sprite>(
         entity, GameEngine::Sprite{"../games/resources/R-Touhou/graphics/Enemy.png", sf::Sprite(), sf::Texture()});
     registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
+    registry.addComponent<GameEngine::Drawable>(entity, GameEngine::Drawable({true}));
     return entity;
 }
 
