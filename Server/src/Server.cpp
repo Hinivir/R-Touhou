@@ -231,10 +231,10 @@ void Server::handleGame()
     for (std::size_t i = 0; i < nbEnemies; i++) {
         float x = rand() % 1080 + 1920;
         float y = rand() % 1000 - 50;
-        while (x < 50)
-            x += 50;
-        while (y < 1030)
-            y += 1030;
+        while (y < 50)
+            y += 50;
+        while (x < 1030)
+            x += 1030;
         enemyPositionVector.push_back(std::pair<float, float>{x, y});
     }
     for (std::size_t i = 0; i < enemyPositionVector.size(); ++i) {
@@ -326,8 +326,8 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
 
         //send packages to clients
         for (auto &entity: game.getEntityVector()) {
-            if (std::find(game.getRegistry().garbageEntities.begin(), game.getRegistry().garbageEntities.end(), entity) != game.getRegistry().garbageEntities.end())
-                continue;
+            //-if (std::find(game.getRegistry().garbageEntities.begin(), game.getRegistry().garbageEntities.end(), entity) != game.getRegistry().garbageEntities.end())
+                //continue;
             positionMessage toSend = {
                 'p',
                 int(entity),

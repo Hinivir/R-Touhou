@@ -206,7 +206,7 @@ void Client::handleGame()
         enemyVector.push_back(staticEntity);
     }
 
-    system.initEnemy(clientGame.getRegistry(), pos);
+    //system.initEnemy(clientGame.getRegistry(), pos);
     for (auto &enemy: pos) {
         std::cout << "enemy: " << enemy.first << " " << enemy.second << std::endl;
     }
@@ -265,6 +265,7 @@ void Client::handleGame()
 //            receivePackage = false;
             positionMessage message = posToUpdate.back();
             posToUpdate.pop_back();
+            std::cout << message << std::endl;
             if (message.id > entityVector.size())
                 continue;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;

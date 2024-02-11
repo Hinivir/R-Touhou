@@ -61,6 +61,7 @@ GameEngine::Entity spawnEnemyEntity(GameEngine::Registry &registry)
     registry.addComponent<GameEngine::Path>(entity, GameEngine::Path{30.0f, 30.0f, 0.0f, 0.0f});
     registry.addComponent<GameEngine::Life>(entity, GameEngine::Life{2});
     registry.addComponent<GameEngine::Controllable>(entity, GameEngine::Controllable{false});
+    registry.addComponent<GameEngine::ZIndex>(entity, GameEngine::ZIndex{GAME_ENGINE_Z_INDEX_VALUE_DEFAULT_VALUE - 1});
     return entity;
 }
 
