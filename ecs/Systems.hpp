@@ -274,21 +274,36 @@ namespace GameEngine
                                 r.getComponent<GameEngine::Size>()[enemy].value().height,
                                 r.getComponent<GameEngine::Size>()[player].value().width,
                                 r.getComponent<GameEngine::Size>()[player].value().height)) {
-                        std::cout << "player" << std::endl;//collision with player
-                        //TODO: remove health from player si health > 0
+                                    if (r.getComponent<GameEngine::Life>()[player].value().life > 0) {
+                                        r.getComponent<GameEngine::Life>()[player].value().life -= 1;
+                                        break;
+                                    } else {
+                                        r.garbageEntities.push_back(player);
+                                        garbageToSend.push_back(player);
+                                        break;
+                                    }
+//                        std::cout << "player" << std::endl;//collision with player
                         //TODO: if health == 0, remove player from the game and pass isAlive to false
                         break;
                     }
                 }
                 for (auto &bullet: bulletVector) {
-                    if (isColliding(r.getComponent<GameEngine::Position>()[enemy].value().x,
-                                r.getComponent<GameEngine::Position>()[enemy].value().y,
-                                r.getComponent<GameEngine::Position>()[bullet].value().x,
-                                r.getComponent<GameEngine::Position>()[bullet].value().y,
-                                r.getComponent<GameEngine::Size>()[enemy].value().width,
-                                r.getComponent<GameEngine::Size>()[enemy].value().height,
-                                r.getComponent<GameEngine::Size>()[bullet].value().width,
-                                r.getComponent<GameEngine::Size>()[bullet].value().height)) {
+                    if (isColliding(
+                        r.getComponent<GameEngine::Position>()[enemy].value().x,
+                        r.getComponent<GameEngine::Position>()[enemy].value().y,
+                        r.getComponent<GameEngine::Position>()[bullet].value().x,
+                        r.getComponent<GameEngine::Position>()[bullet].value().y,
+                        r.getComponent<GameEngine::Size>()[enemy].value().width,
+                        r.getComponent<GameEngine::Size>()[enemy].value().height,
+                        r.getComponent<GameEngine::Size>()[bullet].value().width,
+                        r.getComponent<GameEngine::Size>()[bullet].value().height))
+                    {
+//                        r.getComponent<GameEngine::Position>()[enemy].value().x += 3000;
+                        score += 5;
+                        r.garbageEntities.push_back(enemy);
+                        r.garbageEntities.push_back(bullet);
+                        garbageToSend.push_back(enemy);
+                        garbageToSend.push_back(bullet);
                         std::cout << "bullet" << std::endl;//collision with bullet
                         // TODO: change the pos of the enemy and not adding it to the garbage
                         break;
@@ -516,10 +531,8 @@ namespace GameEngine
                             if (std::find(r.garbageEntities.begin(), r.garbageEntities.end(), i) !=
                                 r.garbageEntities.end())
                                 continue;
-                            // TODO: change the pos of the enemy and not adding it to the garbage
                             auto entityId = r.getEntityById(i);
-                            r.garbageEntities.push_back((std::size_t)entityId);
-                            garbageToSend.push_back(i);
+                            r.getComponent<GameEngine::Position>()[entityId].value().x += 3000;
                         }
                     }
                 }

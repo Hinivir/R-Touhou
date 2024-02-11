@@ -101,6 +101,7 @@ bool Client::deserializeGarbageMessage()
 {
     try {
         garbageMessage message = deserialize<garbageMessage>(this->buffer);
+        garbageToAdd.push_back(message.id);
     } catch (std::exception &e) {
         return false;
     }
@@ -117,6 +118,18 @@ bool Client::deserializeBulletMessage()
         return false;
     }
     return true;
+}
+
+bool Client::deserializeScoreMessage()
+{
+    try {
+        scoreMessage message = deserialize<scoreMessage>(this->buffer);
+        totalScore = message.score;
+    } catch (std::exception &e) {
+        return false;
+    }
+    return true;
+
 }
 
 void Client::managePackageGame()
@@ -164,7 +177,6 @@ void Client::handleGame()
     isInChat = false;
     Game::ClientGame clientGame(this->playerNumber, 2048, 30);
     int nbRegistry = 2048;
-    int totalScore = 0;
     bool isGameOver = false;
     int shootCoolDown = 0;
     std::vector<GameEngine::Entity> entityVector;
@@ -187,10 +199,8 @@ void Client::handleGame()
         playerVector.push_back(movableEntity);
     }
 
-    std::cout << "1" << std::endl;
     GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getLocalRegistry());
     localVector.push_back(backgroundStar1);
-    std::cout << "2" << std::endl;
     GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getLocalRegistry());
     clientGame.getLocalRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
     localVector.push_back(backgroundStar2);
@@ -198,7 +208,6 @@ void Client::handleGame()
     localVector.push_back(groundDown);
     GameEngine::Entity groundUp = createGroundUp(clientGame.getLocalRegistry());
     localVector.push_back(groundUp);
-    std::cout << "10" << std::endl;
 
     for (int i = 0; i < 30; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
@@ -253,6 +262,13 @@ void Client::handleGame()
         shootCoolDown++;
 
         receivePackage = false;
+
+        while (garbageToAdd.size() > 0) {
+            int id = garbageToAdd.back();
+            garbageToAdd.pop_back();
+            clientGame.getRegistry().garbageEntities.push_back(id);
+        }
+
         while (newBullets.size() > 0) {
             bulletMessage message = newBullets.back();
             newBullets.pop_back();

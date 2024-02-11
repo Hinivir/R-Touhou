@@ -270,10 +270,11 @@ void Server::handleGame()
 void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
 {
     asio::steady_timer timer(getIoContext());
-    int totalScore = 0;
+    int totalScore = -1;
+    int newScore = 0;
     bool isGameOver = false;
-    int shootCoolDown = 0;
-    int enemyCoolDown = 0;
+    int shootCoolDown = 0;//delete
+    int enemyCoolDown = 0;//delete
     std::vector<int> garbageToSend;
     bool spawnEnemy = true;
     const int targetFps = 15; //reduce for lower framerate
@@ -286,16 +287,6 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
         auto start_time = std::chrono::high_resolution_clock::now();
         game.getRegistry().getComponent<GameEngine::Text>()[score].value().string =
             ("Score: " + std::to_string(totalScore));
-
-//        if (enemyCoolDown == 50 && spawnEnemy) {
-//            for (int i = 0; i < std::rand() % 31; ++i) {
-//                GameEngine::Entity staticEntity = spawnEnemyEntity(game.getRegistry());
-////                game.getEntityVector().push_back(staticEntity);
-//            }
-//            enemyCoolDown = 0;
-//            system.initEnemy(game.getRegistry());
-//        }
-//        enemyCoolDown++;
 
         system.movementSystem(game.getRegistry());
         system.collisionSystem(game.getRegistry(), totalScore, garbageToSend, playerVector, enemyVector, bulletVector);
@@ -337,6 +328,19 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             };
 //            std::cout << toSend << std::endl;
             sendMessageToAllClients<positionMessage>(toSend);
+        }
+
+        while (garbageToSend.size() > 0) {
+            int id = garbageToSend.back();
+            garbageToSend.pop_back();
+            garbageMessage message = {'g', id};
+            sendMessageToAllClients<garbageMessage>(message);
+        }
+
+        if (totalScore != newScore) {
+            totalScore = newScore;
+            scoreMessage toSend = {'s', totalScore};
+            sendMessageToAllClients<scoreMessage>(toSend);
         }
 
         //fps
