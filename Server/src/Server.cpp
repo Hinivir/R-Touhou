@@ -87,7 +87,6 @@ void Server::handleMessageGame()
 
 void Server::handleMessageGame(Game::ServerGame &game)
 {
-    std::cout << "handleMessageGame" << std::endl;
     try {
         inputMessage input = deserialize<inputMessage>(buffer);
         float x = game.getRegistry().getComponent<GameEngine::Position>()[input.id].value().x;
@@ -298,13 +297,9 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
         }
         enemyCoolDown++;
 
-        std::cout << "\n\n\n" << std::endl;
-        std::cout << game.getRegistry().getComponent<GameEngine::Position>()[4].value().x << std::endl;
         system.movementSystem(game.getRegistry());
         system.collisionSystem(game.getRegistry(), totalScore, garbageToSend);
         system.deleteEntitiesSystem(game.getRegistry(), garbageToSend);
-        std::cout << game.getRegistry().getComponent<GameEngine::Position>()[4].value().x << std::endl;
-        std::cout << "\n\n\n" << std::endl;
 
         // win
         if (totalScore == 100) {
@@ -328,9 +323,11 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             game.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
             isGameOver = true;
         }
-//        std::cout << game.getEntityVector().size() << std::endl;
+
+        //send packages to clients
         for (auto &entity: game.getEntityVector()) {
-//            std::cout << "sending entity " << entity << std::endl;
+            if (std::find(game.getRegistry().garbageEntities.begin(), game.getRegistry().garbageEntities.end(), entity) != game.getRegistry().garbageEntities.end())
+                continue;
             positionMessage toSend = {
                 'p',
                 int(entity),
@@ -340,11 +337,12 @@ void Server::runGame(Game::ServerGame &game, GameEngine::SystemGroup &system)
             std::cout << toSend << std::endl;
             sendMessageToAllClients<positionMessage>(toSend);
         }
+
+        //fps
         auto end_time = std::chrono::high_resolution_clock::now();
         auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time);
         auto sleep_duration = frameDuration - elapsed_time;
         if (sleep_duration > std::chrono::duration<double>(0)) {
-            // Sleep to cap the frame rate
             timer.expires_after(std::chrono::duration_cast<std::chrono::steady_clock::duration>(sleep_duration));
             timer.wait();
         }

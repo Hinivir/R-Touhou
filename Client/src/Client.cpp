@@ -170,6 +170,7 @@ void Client::handleGame()
     std::vector<GameEngine::Entity> entityVector;
     std::vector<GameEngine::Entity> enemyVector;
     std::vector<GameEngine::Entity> playerVector;
+    std::vector<GameEngine::Entity> localVector;
     std::size_t my_player;
 
     // client
@@ -186,15 +187,18 @@ void Client::handleGame()
         playerVector.push_back(movableEntity);
     }
 
-//    GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getRegistry());
-//    entityVector.push_back(backgroundStar1);
-//    GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getRegistry());
-//    clientGame.getRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
-//    entityVector.push_back(backgroundStar2);
-//    GameEngine::Entity groundDown = createGroundDown(clientGame.getRegistry());
-//    entityVector.push_back(groundDown);
-//    GameEngine::Entity groundUp = createGroundUp(clientGame.getRegistry());
-//    entityVector.push_back(groundUp);
+    std::cout << "1" << std::endl;
+    GameEngine::Entity backgroundStar1 = createBackgroundStar(clientGame.getLocalRegistry());
+    localVector.push_back(backgroundStar1);
+    std::cout << "2" << std::endl;
+    GameEngine::Entity backgroundStar2 = createBackgroundStar(clientGame.getLocalRegistry());
+    clientGame.getLocalRegistry().getComponent<GameEngine::Position>()[backgroundStar2].value().x = 1920;
+    localVector.push_back(backgroundStar2);
+    GameEngine::Entity groundDown = createGroundDown(clientGame.getLocalRegistry());
+    localVector.push_back(groundDown);
+    GameEngine::Entity groundUp = createGroundUp(clientGame.getLocalRegistry());
+    localVector.push_back(groundUp);
+    std::cout << "10" << std::endl;
 
     for (int i = 0; i < 30; ++i) {
         GameEngine::Entity staticEntity = spawnEnemyEntity(clientGame.getRegistry());
@@ -231,6 +235,7 @@ void Client::handleGame()
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             window.close();
+
         // input inGame
         for (auto const &key : kepMap) {
             if (sf::Keyboard::isKeyPressed(key)) {
@@ -264,6 +269,8 @@ void Client::handleGame()
         receivePackage = true;
 
         // draw
+        GameEngine::System::sprite(clientGame.getLocalRegistry());
+        GameEngine::System::draw(clientGame.getLocalRegistry(), window);
         GameEngine::System::sprite(clientGame.getRegistry());
         GameEngine::System::draw(clientGame.getRegistry(), window);
 
