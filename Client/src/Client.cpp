@@ -183,6 +183,7 @@ void Client::handleGame()
     std::vector<GameEngine::Entity> enemyVector;
     std::vector<GameEngine::Entity> playerVector;
     std::vector<GameEngine::Entity> localVector;
+    std::vector<int> deadPlayerVector;
     std::size_t my_player;
 
     // client
@@ -265,8 +266,13 @@ void Client::handleGame()
             int id = garbageToAdd.back();
             if (id == my_player)
                 isAlive = false;
-            if (find(playerVector.begin(), playerVector.end(), id) != playerVector.end())
+            if (
+                find(playerVector.begin(), playerVector.end(), id) != playerVector.end() &&
+                find(deadPlayerVector.begin(), deadPlayerVector.end(), id) == deadPlayerVector.end()
+            ) {
                 deadPlayers += 1;
+                deadPlayerVector.push_back(id);
+                }
             garbageToAdd.pop_back();
             clientGame.getRegistry().garbageEntities.push_back(id);
         }
@@ -277,13 +283,10 @@ void Client::handleGame()
             GameEngine::Entity bullet = createBullet(clientGame.getRegistry(), message.x, message.y);
             entityVector.push_back(bullet);
         }
-//        receivePackage = true;
 
         while (posToUpdate.size() > 0) {
-//            receivePackage = false;
             positionMessage message = posToUpdate.back();
             posToUpdate.pop_back();
-            std::cout << message << std::endl;
             if (message.id > entityVector.size())
                 continue;
             clientGame.getRegistry().getComponent<GameEngine::Position>()[message.id].value().x = message.x;
@@ -292,10 +295,10 @@ void Client::handleGame()
         receivePackage = true;
 
         // win
-        if (totalScore == 100) {
+        if (totalScore >= 100) {
             window.clear(sf::Color::Black);
             clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
-        } else  if (deadPlayers == playerNumber) {
+        } else if (deadPlayers == playerNumber) {
             isGameOver = true;
             window.clear(sf::Color::Black);
             clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
