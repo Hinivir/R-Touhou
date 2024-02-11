@@ -224,8 +224,9 @@ void Client::handleGame()
     }
 
     GameEngine::Entity score = createScore(clientGame.getRegistry());
-    GameEngine::Entity gameOver = createGameOver(clientGame.getRegistry());
-    GameEngine::Entity youWin = createYouWin(clientGame.getRegistry());
+
+    GameEngine::Entity gameOver = createGameOver(clientGame.getLocalRegistry());
+    GameEngine::Entity youWin = createYouWin(clientGame.getLocalRegistry());
     sendMessage<std::string>("got\n", this->serverEndpoint, false);
 
     this->isInSetup = false;
@@ -293,11 +294,11 @@ void Client::handleGame()
         // win
         if (totalScore == 100) {
             window.clear(sf::Color::Black);
-            clientGame.getRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+            clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
         } else  if (deadPlayers == playerNumber) {
             isGameOver = true;
             window.clear(sf::Color::Black);
-            clientGame.getRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
         }
         // draw
         GameEngine::System::sprite(clientGame.getLocalRegistry());
