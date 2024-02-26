@@ -21,6 +21,7 @@
 #include "Systems/Sprite.hpp"
 
 #include <variant>
+#include <fstream>
 
 static const std::vector<sf::Keyboard::Key> kepMap = {
     {sf::Keyboard::Key::Up},
@@ -170,6 +171,7 @@ void Client::commandStartGame()
 
 void Client::handleGame()
 {
+    std::ofstream file(".highscore", std::ios_base::app);
     this->isInSetup = true;
     this->isInChat = false;
     while (pos.size() < 30) { }
@@ -298,10 +300,14 @@ void Client::handleGame()
         if (totalScore >= 100) {
             window.clear(sf::Color::Black);
             clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[youWin].value().isVisible = true;
+            file << "1OO - WIN" << std::endl;
+            file.close();
         } else if (deadPlayers == playerNumber) {
             isGameOver = true;
             window.clear(sf::Color::Black);
             clientGame.getLocalRegistry().getComponent<GameEngine::Drawable>()[gameOver].value().isVisible = true;
+            file << std::to_string(totalScore) << " - GAME OVER" << std::endl;
+            file.close();
         }
         // draw
         GameEngine::System::sprite(clientGame.getLocalRegistry());
